@@ -1,0 +1,8 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    url: ${APP_DB_URL:jdbc:postgresql://localhost:5432/fortis-website}
+    username: ${APP_DB_USERNAME:postgres}
+    password: ${APP_DB_PASSWORD:postgres}

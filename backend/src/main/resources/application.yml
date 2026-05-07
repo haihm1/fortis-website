@@ -1,0 +1,32 @@
+spring:
+  application:
+    name: fortis-website-api
+  profiles:
+    default: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+server:
+  port: 9090
+
+app:
+  cors:
+    allowed-origins: http://localhost:5173,http://127.0.0.1:5173,http://localhost:4173,http://127.0.0.1:4173
+  storage:
+    upload-dir: storage/uploads
+  contact:
+    notification-email: ${APP_CONTACT_NOTIFICATION_EMAIL:}
+  company:
+    default-address: Ha Noi, Viet Nam
+    default-hotline: "+84 000 000 000"
+    default-email: sales@fortisvn.vn
+  security:
+    jwt-secret: ${APP_JWT_SECRET:fortis-vn-super-secret-key-change-in-production-2026}
+    jwt-expiration-seconds: 28800
