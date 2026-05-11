@@ -12,9 +12,9 @@ export function HeroSection({ company, slides, activeSlide, onSelectSlide }) {
           <a className="primary-button" href="#featured-products">
             {company.primaryActionLabel}
           </a>
-          <a className="secondary-button" href="#credentials">
+          {/* <a className="secondary-button" href="#credentials">
             {company.secondaryActionLabel}
-          </a>
+          </a> */}
         </div>
 
         <div className="hero-facts" aria-label="Company highlights">

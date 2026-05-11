@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import { AdminRoute } from './components/admin/AdminRoute'
 import { SiteLayout } from './layouts/SiteLayout'
+import { ContactPage } from './pages/ContactPage'
 import { HomePage } from './pages/HomePage'
 import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from './pages/admin/AdminLoginPage'
@@ -82,6 +83,7 @@ function App() {
           <Route index element={<HomePage locale={locale} />} />
           <Route path="/products" element={<ProductCatalogPage locale={locale} />} />
           <Route path="/products/:slug" element={<ProductDetailPage locale={locale} />} />
+          <Route path="/contact" element={<ContactPage locale={locale} />} />
         </Route>
       </Routes>
     </BrowserRouter>

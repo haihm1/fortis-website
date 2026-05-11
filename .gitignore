@@ -1,0 +1,2 @@
+# Production secrets for root-level Docker Compose (see DEPLOYMENT.md)
+.env.production

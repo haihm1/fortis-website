@@ -38,6 +38,7 @@ public class SecurityConfig {
 				.formLogin(AbstractHttpConfigurer::disable)
 				.authorizeHttpRequests(authorize -> authorize
 						.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+						.requestMatchers(HttpMethod.GET, "/", "/health").permitAll()
 						.requestMatchers("/api/public/**", "/api/auth/login", "/uploads/**").permitAll()
 						.requestMatchers("/api/auth/me").authenticated()
 						.requestMatchers("/api/admin/contacts/**").hasAnyRole("SUPER_ADMIN", "CONTACT_MANAGER")

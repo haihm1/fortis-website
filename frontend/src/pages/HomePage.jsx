@@ -1,10 +1,17 @@
 import { useEffect, useMemo, useState } from 'react'
+import { useJsonLd } from '../hooks/useJsonLd'
+import { useSeoMeta } from '../hooks/useSeoMeta'
 import { getFallbackHomeContent } from '../locales/homeContentFallback'
 import { CertificatesSection } from '../sections/CertificatesSection'
 import { CoreValuesSection } from '../sections/CoreValuesSection'
 import { FeaturedProductsSection } from '../sections/FeaturedProductsSection'
 import { HeroSection } from '../sections/HeroSection'
 import { loadHomeContent } from '../services/homeContentApi'
+import {
+  SEO,
+  buildOrganizationSchema,
+  buildWebsiteSchema,
+} from '../data/seoConfig'
 
 const UI_COPY = {
   vi: {
@@ -67,6 +74,11 @@ export function HomePage({ locale }) {
   }, [pageData?.heroSlides])
 
   const copy = useMemo(() => UI_COPY[locale] ?? UI_COPY.vi, [locale])
+  const seo = SEO.home[locale] ?? SEO.home.vi
+
+  useSeoMeta({ title: seo.title, description: seo.description, path: seo.path, locale })
+  useJsonLd('organization', buildOrganizationSchema())
+  useJsonLd('website', buildWebsiteSchema())
 
   return (
     <main>
@@ -77,11 +89,11 @@ export function HomePage({ locale }) {
         onSelectSlide={setActiveSlide}
       />
 
-      <div className={`status-strip ${usingFallback ? 'status-warning' : ''}`}>
+      {/* <div className={`status-strip ${usingFallback ? 'status-warning' : ''}`}>
         <span className="status-dot" aria-hidden="true"></span>
         <span>{usingFallback ? copy.apiFallback : copy.apiLive}</span>
         {loading ? <span className="status-loading">Loading...</span> : null}
-      </div>
+      </div> */}
 
       <CoreValuesSection
         section={pageData.coreValuesSection}
@@ -93,11 +105,11 @@ export function HomePage({ locale }) {
         products={pageData.featuredProducts}
       />
 
-      <CertificatesSection
+      {/* <CertificatesSection
         section={pageData.credentialsSection}
         certificates={pageData.certificates}
         partners={pageData.partners}
-      />
+      /> */}
     </main>
   )
 }

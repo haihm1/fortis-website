@@ -310,63 +310,127 @@ export function AdminDashboardPage({ adminAuth, onLogout }) {
           {activeTab === 'contacts' ? (
             <section className="admin-panel">
               <div className="admin-panel-header">
-                <h2>Yêu cầu liên hệ</h2>
-                <p>{contacts.length} yêu cầu</p>
+                <div>
+                  <h2>Yêu cầu báo giá / liên hệ</h2>
+                  <p className="admin-label">{contacts.length} yêu cầu đã nhận</p>
+                </div>
               </div>
               {contactMessage ? <p className="form-message">{contactMessage}</p> : null}
-              <div className="admin-table-list">
-                {contacts.map((contact) => (
-                  <article key={contact.id} className="admin-card">
-                    <div className="admin-card-grid">
-                      <div>
-                        <strong>{contact.fullName}</strong>
-                        <p>{contact.companyName || 'Chưa có công ty'}</p>
-                        <p>{contact.email}</p>
-                        <p>{contact.phoneNumber || 'Chưa có số điện thoại'}</p>
-                      </div>
-                      <div>
-                        <p className="admin-label">Sản phẩm quan tâm</p>
-                        <p>{contact.productInterest || 'Chưa chọn sản phẩm'}</p>
-                        <p className="admin-label">Số lượng dự kiến</p>
-                        <p>{contact.requestedQuantity || 'Chưa cung cấp'}</p>
-                        <p className="admin-label">Thị trường mục tiêu</p>
-                        <p>{contact.targetMarket || 'Chưa cung cấp'}</p>
-                      </div>
-                    </div>
-                    {contact.specificationDetails ? (
-                      <div className="admin-message-box">
-                        <strong>Quy cách chi tiết</strong>
-                        <p>{contact.specificationDetails}</p>
-                      </div>
-                    ) : null}
-                    {contact.attachmentUrl ? (
-                      <div className="admin-message-box">
-                        <strong>Tệp đính kèm</strong>
-                        <p>
-                          <a href={contact.attachmentUrl} target="_blank" rel="noreferrer">
-                            {contact.attachmentUrl}
-                          </a>
-                        </p>
-                      </div>
-                    ) : null}
-                    <p className="admin-message-box">{contact.message}</p>
-                    <div className="admin-card-actions">
-                      <span>{new Date(contact.createdAt).toLocaleString()}</span>
-                      <select
-                        value={contact.status}
-                        onChange={(event) =>
-                          handleContactStatusChange(contact.id, event.target.value)
-                        }
-                      >
-                        <option value="NEW">NEW</option>
-                        <option value="IN_PROGRESS">IN_PROGRESS</option>
-                        <option value="QUOTED">QUOTED</option>
-                        <option value="CLOSED">CLOSED</option>
-                      </select>
-                    </div>
-                  </article>
-                ))}
-              </div>
+              {contacts.length === 0 ? (
+                <div className="admin-empty-state">
+                  <p>Chưa có yêu cầu liên hệ nào.</p>
+                </div>
+              ) : (
+                <div className="admin-table-list">
+                  {contacts.map((contact) => {
+                    const statusConfig = {
+                      NEW: { label: 'Mới', className: 'status-new' },
+                      IN_PROGRESS: { label: 'Đang xử lý', className: 'status-inprogress' },
+                      QUOTED: { label: 'Đã báo giá', className: 'status-quoted' },
+                      CLOSED: { label: 'Đã đóng', className: 'status-closed' },
+                    }
+                    const status = statusConfig[contact.status] ?? { label: contact.status, className: '' }
+
+                    return (
+                      <article key={contact.id} className="admin-contact-card">
+                        <div className="admin-contact-header">
+                          <div className="admin-contact-identity">
+                            <strong className="admin-contact-name">{contact.fullName}</strong>
+                            {contact.companyName ? (
+                              <span className="admin-contact-company">{contact.companyName}</span>
+                            ) : null}
+                          </div>
+                          <div className="admin-contact-meta">
+                            <span className={`admin-status-badge ${status.className}`}>
+                              {status.label}
+                            </span>
+                            <time className="admin-contact-time">
+                              {new Date(contact.createdAt).toLocaleString('vi-VN')}
+                            </time>
+                          </div>
+                        </div>
+
+                        <div className="admin-contact-body">
+                          <div className="admin-contact-channels">
+                            {contact.email ? (
+                              <a href={`mailto:${contact.email}`} className="admin-contact-channel-link">
+                                <span className="admin-channel-icon">✉</span>
+                                {contact.email}
+                              </a>
+                            ) : null}
+                            {contact.phoneNumber ? (
+                              <a href={`tel:${contact.phoneNumber.replace(/\s/g, '')}`} className="admin-contact-channel-link">
+                                <span className="admin-channel-icon">📞</span>
+                                {contact.phoneNumber}
+                              </a>
+                            ) : null}
+                          </div>
+
+                          <div className="admin-contact-fields">
+                            {contact.productInterest ? (
+                              <div className="admin-field-item">
+                                <span className="admin-field-label">Sản phẩm quan tâm</span>
+                                <span className="admin-field-value admin-field-highlight">{contact.productInterest}</span>
+                              </div>
+                            ) : null}
+                            {contact.requestedQuantity ? (
+                              <div className="admin-field-item">
+                                <span className="admin-field-label">Số lượng dự kiến</span>
+                                <span className="admin-field-value">{contact.requestedQuantity}</span>
+                              </div>
+                            ) : null}
+                            {contact.targetMarket ? (
+                              <div className="admin-field-item">
+                                <span className="admin-field-label">Thị trường mục tiêu</span>
+                                <span className="admin-field-value">{contact.targetMarket}</span>
+                              </div>
+                            ) : null}
+                          </div>
+
+                          {contact.specificationDetails ? (
+                            <div className="admin-contact-note">
+                              <p className="admin-field-label">Quy cách chi tiết</p>
+                              <p>{contact.specificationDetails}</p>
+                            </div>
+                          ) : null}
+
+                          {contact.message ? (
+                            <div className="admin-contact-note">
+                              <p className="admin-field-label">Nội dung</p>
+                              <p>{contact.message}</p>
+                            </div>
+                          ) : null}
+
+                          {contact.attachmentUrl ? (
+                            <div className="admin-contact-note">
+                              <p className="admin-field-label">Tệp đính kèm</p>
+                              <a href={contact.attachmentUrl} target="_blank" rel="noreferrer" className="admin-attachment-link">
+                                {contact.attachmentUrl}
+                              </a>
+                            </div>
+                          ) : null}
+                        </div>
+
+                        <div className="admin-contact-footer">
+                          <span className="admin-field-label">Cập nhật trạng thái:</span>
+                          <select
+                            value={contact.status}
+                            className="admin-status-select"
+                            onChange={(event) =>
+                              handleContactStatusChange(contact.id, event.target.value)
+                            }
+                          >
+                            <option value="NEW">Mới (NEW)</option>
+                            <option value="IN_PROGRESS">Đang xử lý (IN_PROGRESS)</option>
+                            <option value="QUOTED">Đã báo giá (QUOTED)</option>
+                            <option value="CLOSED">Đã đóng (CLOSED)</option>
+                          </select>
+                        </div>
+                      </article>
+                    )
+                  })}
+                </div>
+              )}
             </section>
           ) : null}
 

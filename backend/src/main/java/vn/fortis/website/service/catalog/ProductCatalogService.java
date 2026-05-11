@@ -146,7 +146,7 @@ public class ProductCatalogService {
 		return new ProductCatalogResponse.PageHeader(
 				"Danh mục sản phẩm",
 				"Catalog nông sản cho khách hàng nhập khẩu và đối tác B2B.",
-				"Duyệt nhanh các dòng trái cây, dừa và sản phẩm chế biến với quy cách đóng gói, tiêu chuẩn chất lượng và biểu mẫu RFQ."
+				""
 		);
 	}
 

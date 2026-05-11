@@ -7,7 +7,6 @@ const homeContentFallback = {
       shortName: 'FORTIS VN',
       tagline: 'Giải pháp nông sản xuất khẩu ổn định, minh bạch và đúng chuẩn.',
       primaryActionLabel: 'Xem sản phẩm chủ lực',
-      secondaryActionLabel: 'Khám phá chứng chỉ',
     },
     heroSlides: [
       {

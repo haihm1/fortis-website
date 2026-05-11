@@ -1,6 +1,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import { SectionHeading } from '../components/SectionHeading'
+import { useJsonLd } from '../hooks/useJsonLd'
+import { useSeoMeta } from '../hooks/useSeoMeta'
+import { SEO, buildProductSeo, buildProductSchema, buildBreadcrumbSchema } from '../data/seoConfig'
 import { loadProductCatalog } from '../services/productCatalogApi'
 
 const DETAIL_COPY = {
@@ -84,6 +87,26 @@ export function ProductDetailPage({ locale }) {
       .filter((item) => item.categoryId === product.categoryId && item.slug !== product.slug)
       .slice(0, 3)
   }, [catalogData, product])
+
+  const productSeo = buildProductSeo(product, locale)
+  const catalogSeo = SEO.products[locale] ?? SEO.products.vi
+
+  useSeoMeta(
+    productSeo
+      ? { ...productSeo, locale }
+      : { title: catalogSeo.title, description: catalogSeo.description, path: catalogSeo.path, locale },
+  )
+  useJsonLd('product', buildProductSchema(product))
+  useJsonLd(
+    'breadcrumb',
+    product
+      ? buildBreadcrumbSchema([
+          { name: locale === 'vi' ? 'Trang chủ' : 'Home', path: '/' },
+          { name: locale === 'vi' ? 'Sản phẩm' : 'Products', path: '/products' },
+          { name: product.name, path: `/products/${product.slug}` },
+        ])
+      : null,
+  )
 
   const selectedImageUrl =
     product?.gallery?.includes(selectedImage) ? selectedImage : product?.gallery?.[0] ?? product?.image ?? ''

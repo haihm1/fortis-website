@@ -7,7 +7,7 @@ const PRODUCT_CATALOG_FALLBACK = {
       eyebrow: 'Danh mục sản phẩm',
       title: 'Catalog nông sản cho khách hàng nhập khẩu và đối tác B2B.',
       description:
-        'Duyệt nhanh các dòng trái cây, dừa và sản phẩm chế biến với quy cách đóng gói, tiêu chuẩn chất lượng và biểu mẫu RFQ.',
+        '',
     },
     categories: [
       {

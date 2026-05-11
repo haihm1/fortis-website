@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { PhoneInput } from '../components/PhoneInput'
 import { SectionHeading } from '../components/SectionHeading'
+import { SuccessModal } from '../components/SuccessModal'
+import { useJsonLd } from '../hooks/useJsonLd'
+import { useSeoMeta } from '../hooks/useSeoMeta'
 import { getFallbackProductCatalog } from '../data/productCatalogFallback'
+import { SEO, buildOrganizationSchema } from '../data/seoConfig'
 import { submitContactRequest } from '../services/publicContactApi'
 import { loadProductCatalog } from '../services/productCatalogApi'
 import { filterProducts, getUniqueOptions } from '../utils/productCatalog'
@@ -61,18 +66,20 @@ const FILTER_COPY = {
 
 const QUOTE_STATUS_COPY = {
   vi: {
-    success: 'Yêu cầu báo giá đã được gửi thành công.',
+    successTitle: 'Gửi thành công!',
+    success: 'Yêu cầu báo giá của bạn đã được tiếp nhận. Đội ngũ Fortis VN sẽ phản hồi sớm nhất có thể.',
     error: 'Không thể gửi yêu cầu lúc này. Vui lòng thử lại.',
     sending: 'Đang gửi...',
     productInterestLabel: 'Sản phẩm đang quan tâm',
-    attachmentLabel: 'Tệp đính kèm',
+    closeModal: 'Đóng',
   },
   en: {
-    success: 'Your quote request has been submitted successfully.',
+    successTitle: 'Request submitted!',
+    success: 'Your quote request has been received. The Fortis VN team will get back to you as soon as possible.',
     error: 'Unable to submit the request right now. Please try again.',
     sending: 'Sending...',
     productInterestLabel: 'Product interest',
-    attachmentLabel: 'Attachment',
+    closeModal: 'Close',
   },
 }
 
@@ -89,16 +96,16 @@ export function ProductCatalogPage({ locale }) {
     fullName: '',
     companyName: '',
     email: '',
-    phoneNumber: '',
+    phoneDialCode: '+84',
+    phoneLocalNumber: '',
     requestedQuantity: '',
     targetMarket: '',
     specificationDetails: '',
     message: '',
   })
-  const [quoteAttachment, setQuoteAttachment] = useState(null)
-  const [quoteAttachmentInputKey, setQuoteAttachmentInputKey] = useState(0)
   const [quoteSubmitting, setQuoteSubmitting] = useState(false)
   const [quoteFeedback, setQuoteFeedback] = useState('')
+  const [quoteSuccess, setQuoteSuccess] = useState(false)
   const productDetailPanelRef = useRef(null)
 
   useEffect(() => {
@@ -126,6 +133,10 @@ export function ProductCatalogPage({ locale }) {
 
     return () => controller.abort()
   }, [locale])
+
+  const seo = SEO.products[locale] ?? SEO.products.vi
+  useSeoMeta({ title: seo.title, description: seo.description, path: seo.path, locale })
+  useJsonLd('organization', buildOrganizationSchema())
 
   const labels = catalogData.labels
   const statusCopy = STATUS_COPY[locale] ?? STATUS_COPY.vi
@@ -239,27 +250,26 @@ export function ProductCatalogPage({ locale }) {
         fullName: quoteForm.fullName,
         companyName: quoteForm.companyName,
         email: quoteForm.email,
-        phoneNumber: quoteForm.phoneNumber,
+        phoneNumber: `${quoteForm.phoneDialCode} ${quoteForm.phoneLocalNumber}`.trim(),
         productInterest: selectedProduct?.name ?? '',
         requestedQuantity: quoteForm.requestedQuantity,
         targetMarket: quoteForm.targetMarket,
         specificationDetails: quoteForm.specificationDetails,
         message: quoteForm.message,
-      }, quoteAttachment)
+      })
 
       setQuoteForm({
         fullName: '',
         companyName: '',
         email: '',
-        phoneNumber: '',
+        phoneDialCode: '+84',
+        phoneLocalNumber: '',
         requestedQuantity: '',
         targetMarket: '',
         specificationDetails: '',
         message: '',
       })
-      setQuoteAttachment(null)
-      setQuoteAttachmentInputKey((current) => current + 1)
-      setQuoteFeedback(quoteStatusCopy.success)
+      setQuoteSuccess(true)
     } catch {
       setQuoteFeedback(quoteStatusCopy.error)
     } finally {
@@ -274,12 +284,12 @@ export function ProductCatalogPage({ locale }) {
           <SectionHeading
             eyebrow={catalogData.pageHeader.eyebrow}
             title={catalogData.pageHeader.title}
-            description={catalogData.pageHeader.description}
+            description=""
           />
-          <div className={`catalog-status ${usingFallback ? 'is-warning' : ''}`}>
+          {/* <div className={`catalog-status ${usingFallback ? 'is-warning' : ''}`}>
             <span className="status-dot" aria-hidden="true"></span>
             <span>{usingFallback ? statusCopy.fallback : statusCopy.live}</span>
-          </div>
+          </div> */}
         </div>
       </section>
 
@@ -510,6 +520,7 @@ export function ProductCatalogPage({ locale }) {
         <form className="quote-form" onSubmit={handleQuoteSubmit}>
           <input
             type="text"
+            required
             value={quoteForm.fullName}
             placeholder={catalogData.quoteSection.fields.name}
             aria-label={catalogData.quoteSection.fields.name}
@@ -523,14 +534,12 @@ export function ProductCatalogPage({ locale }) {
             placeholder={catalogData.quoteSection.fields.company}
             aria-label={catalogData.quoteSection.fields.company}
             onChange={(event) =>
-              setQuoteForm((current) => ({
-                ...current,
-                companyName: event.target.value,
-              }))
+              setQuoteForm((current) => ({ ...current, companyName: event.target.value }))
             }
           />
           <input
             type="email"
+            required
             value={quoteForm.email}
             placeholder={catalogData.quoteSection.fields.email}
             aria-label={catalogData.quoteSection.fields.email}
@@ -538,13 +547,16 @@ export function ProductCatalogPage({ locale }) {
               setQuoteForm((current) => ({ ...current, email: event.target.value }))
             }
           />
-          <input
-            type="text"
-            value={quoteForm.phoneNumber}
-            placeholder={catalogData.quoteSection.fields.phone}
-            aria-label={catalogData.quoteSection.fields.phone}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, phoneNumber: event.target.value }))
+          <PhoneInput
+            required
+            dialCode={quoteForm.phoneDialCode}
+            localNumber={quoteForm.phoneLocalNumber}
+            ariaLabel={catalogData.quoteSection.fields.phone}
+            onDialCodeChange={(code) =>
+              setQuoteForm((current) => ({ ...current, phoneDialCode: code }))
+            }
+            onLocalNumberChange={(num) =>
+              setQuoteForm((current) => ({ ...current, phoneLocalNumber: num }))
             }
           />
           <input
@@ -553,10 +565,7 @@ export function ProductCatalogPage({ locale }) {
             placeholder={catalogData.quoteSection.fields.quantity}
             aria-label={catalogData.quoteSection.fields.quantity}
             onChange={(event) =>
-              setQuoteForm((current) => ({
-                ...current,
-                requestedQuantity: event.target.value,
-              }))
+              setQuoteForm((current) => ({ ...current, requestedQuantity: event.target.value }))
             }
           />
           <input
@@ -565,32 +574,25 @@ export function ProductCatalogPage({ locale }) {
             placeholder={catalogData.quoteSection.fields.targetMarket}
             aria-label={catalogData.quoteSection.fields.targetMarket}
             onChange={(event) =>
-              setQuoteForm((current) => ({
-                ...current,
-                targetMarket: event.target.value,
-              }))
+              setQuoteForm((current) => ({ ...current, targetMarket: event.target.value }))
             }
           />
+          <label className="quote-file-field">
+          {selectedProduct ? (
+            <p className="form-message quote-selected-product">
+              {quoteStatusCopy.productInterestLabel}: <strong>{selectedProduct.name}</strong>
+            </p>
+          ) : null}
+          </label>
           <textarea
             rows="4"
             value={quoteForm.specificationDetails}
             placeholder={catalogData.quoteSection.fields.specificationDetails}
             aria-label={catalogData.quoteSection.fields.specificationDetails}
             onChange={(event) =>
-              setQuoteForm((current) => ({
-                ...current,
-                specificationDetails: event.target.value,
-              }))
+              setQuoteForm((current) => ({ ...current, specificationDetails: event.target.value }))
             }
           />
-          <label className="quote-file-field">
-            <span>{catalogData.quoteSection.fields.attachment}</span>
-            <input
-              key={quoteAttachmentInputKey}
-              type="file"
-              onChange={(event) => setQuoteAttachment(event.target.files?.[0] ?? null)}
-            />
-          </label>
           <textarea
             rows="5"
             value={quoteForm.message}
@@ -600,24 +602,20 @@ export function ProductCatalogPage({ locale }) {
               setQuoteForm((current) => ({ ...current, message: event.target.value }))
             }
           />
-          {selectedProduct ? (
-            <p className="form-message">
-              {quoteStatusCopy.productInterestLabel}: <strong>{selectedProduct.name}</strong>
-            </p>
-          ) : null}
-          {quoteAttachment ? (
-            <p className="form-message">
-              {quoteStatusCopy.attachmentLabel}: <strong>{quoteAttachment.name}</strong>
-            </p>
-          ) : null}
-          {quoteFeedback ? <p className="form-message">{quoteFeedback}</p> : null}
+          {quoteFeedback ? <p className="form-message error">{quoteFeedback}</p> : null}
           <button type="submit" className="primary-button" disabled={quoteSubmitting}>
-            {quoteSubmitting
-              ? quoteStatusCopy.sending
-              : catalogData.quoteSection.fields.submit}
+            {quoteSubmitting ? quoteStatusCopy.sending : catalogData.quoteSection.fields.submit}
           </button>
         </form>
       </section>
+
+      <SuccessModal
+        open={quoteSuccess}
+        title={quoteStatusCopy.successTitle}
+        message={quoteStatusCopy.success}
+        closeLabel={quoteStatusCopy.closeModal}
+        onClose={() => setQuoteSuccess(false)}
+      />
     </main>
   )
 }

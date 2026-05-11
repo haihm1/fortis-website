@@ -58,8 +58,8 @@ Tai lieu nay la backlog chinh cho cac giai doan phat trien tiep theo cua website
 
 | ID | Ten hang muc | Mo ta ngan | Priority | Status |
 | --- | --- | --- | --- | --- |
-| 5.1 | SEO co ban cho tung trang | Meta title, meta description, Open Graph, canonical cho cac trang quan trong | P2 | pending |
-| 5.2 | Structured data | Them schema cho Organization, Product, Contact | P2 | pending |
+| 5.1 | SEO co ban cho tung trang | Meta title, meta description, Open Graph, canonical cho cac trang quan trong | P2 | done |
+| 5.2 | Structured data | Them schema cho Organization, Product, Contact | P2 | done |
 | 5.3 | Blog / tin tuc | Xay dung khu vuc bai viet ve xuat khau nong san, vung trong, chung nhan va logistics lanh | P3 | pending |
 
 ### 6. Toi uu trai nghiem va hieu nang
