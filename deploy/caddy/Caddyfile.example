@@ -1,0 +1,7 @@
+# Ví dụ: Caddy 2 — đổi api.example.com, cài Caddy trên VPS, mở 80/443
+# Reverse proxy tới API Docker (compose bind 127.0.0.1:9090)
+
+api.example.com {
+	encode zstd gzip
+	reverse_proxy 127.0.0.1:9090
+}

@@ -1,0 +1,19 @@
+# Production API trên VPS: sao chép thành docker-compose.yml và dùng kèm .env.production
+# docker compose build && docker compose up -d
+#
+# Chỉ bind localhost — đặt Caddy/Nginx phía trước để TLS và HTTPS công khai.
+services:
+  fortis-api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:9090:9090"
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      PORT: "9090"
+      # VPS 1 GB: giới hạn heap để tránh OOM
+      JAVA_TOOL_OPTIONS: "-Xms256m -Xmx512m"
+    env_file:
+      - .env.production
