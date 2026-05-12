@@ -311,7 +311,6 @@ export function ContactPage({ locale }) {
             title={copy.formTitle}
             description={copy.formDescription}
           />
-          <p className="contact-required-hint">{copy.requiredHint}</p>
         </div>
 
         <form className="quote-form" onSubmit={handleSubmit}>
@@ -374,6 +373,7 @@ export function ContactPage({ locale }) {
               {feedback.message}
             </p>
           ) : null}
+          <p style={{ marginTop: '12px' , textAlign: 'right'}} className="contact-required-hint">{copy.requiredHint}</p>
           <button type="submit" className="primary-button" disabled={submitting}>
             {submitting ? copy.sending : copy.fields.submit}
           </button>
