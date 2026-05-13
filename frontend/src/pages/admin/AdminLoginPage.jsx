@@ -32,44 +32,66 @@ export function AdminLoginPage({ onLoginSuccess }) {
   }
 
   return (
-    <main className="admin-login-page">
-      <section className="admin-login-card">
-        <p className="section-eyebrow">Admin Login</p>
-        <h1 className="admin-page-title">Đăng nhập quản trị Fortis VN</h1>
-        <p className="admin-login-description">
-          Sử dụng tài khoản admin để quản lý liên hệ, nội dung và tài khoản cập nhật.
-        </p>
+    <div className="admin-app">
+      <main className="admin-login-shell">
+        <section className="admin-login-panel">
+          <div className="admin-login-brand">
+            <div className="admin-brand-mark" aria-hidden="true">F</div>
+            <div className="admin-brand-text">
+              <strong>Fortis VN</strong>
+              <span>Admin Portal</span>
+            </div>
+          </div>
 
-        <form className="admin-login-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={formData.username}
-            placeholder="Username"
-            onChange={(event) =>
-              setFormData((current) => ({ ...current, username: event.target.value }))
-            }
-          />
-          <input
-            type="password"
-            value={formData.password}
-            placeholder="Password"
-            onChange={(event) =>
-              setFormData((current) => ({ ...current, password: event.target.value }))
-            }
-          />
+          <h1>Đăng nhập quản trị</h1>
+          <p className="admin-login-sub">
+            Truy cập portal để quản lý RFQ, catalog, nội dung và tài khoản admin.
+          </p>
 
-          {error ? <p className="form-message error">{error}</p> : null}
+          <form onSubmit={handleSubmit} style={{ display: 'grid', gap: 12 }}>
+            <label className="field">
+              <span className="field-label">Username</span>
+              <input
+                type="text"
+                className="field-input"
+                value={formData.username}
+                placeholder="username"
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, username: event.target.value }))
+                }
+                autoComplete="username"
+                required
+              />
+            </label>
 
-          <button type="submit" className="primary-button" disabled={submitting}>
-            {submitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
-          </button>
-        </form>
+            <label className="field">
+              <span className="field-label">Mật khẩu</span>
+              <input
+                type="password"
+                className="field-input"
+                value={formData.password}
+                placeholder="••••••••"
+                onChange={(event) =>
+                  setFormData((current) => ({ ...current, password: event.target.value }))
+                }
+                autoComplete="current-password"
+                required
+              />
+            </label>
 
-        <div className="admin-login-hint">
-          <span>admin / Admin@123</span>
-          <span>editor / Editor@123</span>
-        </div>
-      </section>
-    </main>
+            {error ? <div className="alert alert-error">{error}</div> : null}
+
+            <button type="submit" className="btn btn-primary" disabled={submitting} style={{ marginTop: 4 }}>
+              {submitting ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            </button>
+          </form>
+
+          <div className="admin-login-hint-list">
+            <span>admin / Admin@123</span>
+            <span>editor / Editor@123</span>
+          </div>
+        </section>
+      </main>
+    </div>
   )
 }

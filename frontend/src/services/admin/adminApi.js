@@ -100,3 +100,68 @@ export function changeAdminPassword(token, accountId, payload) {
     body: JSON.stringify(payload),
   })
 }
+
+export function getAdminCatalog(token) {
+  return request('/api/admin/catalog', token)
+}
+
+export function createAdminCategory(token, payload) {
+  return request('/api/admin/catalog/categories', token, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function updateAdminCategory(token, categoryId, payload) {
+  return request(`/api/admin/catalog/categories/${categoryId}`, token, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function deleteAdminCategory(token, categoryId) {
+  return request(`/api/admin/catalog/categories/${categoryId}`, token, {
+    method: 'DELETE',
+  })
+}
+
+function buildProductFormData(payload, imageFile, specificationFile) {
+  const formData = new FormData()
+  formData.append(
+    'payload',
+    new Blob([JSON.stringify(payload)], { type: 'application/json' }),
+  )
+  if (imageFile) {
+    formData.append('image', imageFile)
+  }
+  if (specificationFile) {
+    formData.append('specificationFile', specificationFile)
+  }
+  return formData
+}
+
+export function createAdminProduct(token, payload, imageFile, specificationFile) {
+  return request('/api/admin/catalog/products', token, {
+    method: 'POST',
+    body: buildProductFormData(payload, imageFile, specificationFile),
+  })
+}
+
+export function updateAdminProduct(token, productId, payload, imageFile, specificationFile) {
+  return request(`/api/admin/catalog/products/${productId}`, token, {
+    method: 'PUT',
+    body: buildProductFormData(payload, imageFile, specificationFile),
+  })
+}
+
+export function deleteAdminProduct(token, productId) {
+  return request(`/api/admin/catalog/products/${productId}`, token, {
+    method: 'DELETE',
+  })
+}

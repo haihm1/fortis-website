@@ -1,11 +1,17 @@
 import { useEffect, useState } from 'react'
-import { BrowserRouter, Route, Routes } from 'react-router-dom'
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
+import { AdminLayout } from './admin/AdminLayout'
 import { AdminRoute } from './components/admin/AdminRoute'
 import { SiteLayout } from './layouts/SiteLayout'
 import { ContactPage } from './pages/ContactPage'
 import { HomePage } from './pages/HomePage'
-import { AdminDashboardPage } from './pages/admin/AdminDashboardPage'
 import { AdminLoginPage } from './pages/admin/AdminLoginPage'
+import { CompanyProfilePage } from './pages/admin/CompanyProfilePage'
+import { DashboardPage } from './pages/admin/DashboardPage'
+import { ProductCatalogEditPage } from './pages/admin/ProductCatalogEditPage'
+import { ProductCatalogListPage } from './pages/admin/ProductCatalogListPage'
+import { RfqManagementPage } from './pages/admin/RfqManagementPage'
+import { UserManagementPage } from './pages/admin/UserManagementPage'
 import { ProductCatalogPage } from './pages/ProductCatalogPage'
 import { ProductDetailPage } from './pages/ProductDetailPage'
 import { fetchCurrentAdminUser } from './services/admin/adminAuthApi'
@@ -70,13 +76,20 @@ function App() {
           path="/admin"
           element={
             <AdminRoute adminAuth={adminAuth}>
-              <AdminDashboardPage
-                adminAuth={adminAuth}
-                onLogout={handleAdminLogout}
-              />
+              <AdminLayout adminAuth={adminAuth} onLogout={handleAdminLogout} />
             </AdminRoute>
           }
-        />
+        >
+          <Route index element={<Navigate to="dashboard" replace />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="rfq" element={<RfqManagementPage />} />
+          <Route path="products" element={<ProductCatalogListPage />} />
+          <Route path="products/new" element={<ProductCatalogEditPage />} />
+          <Route path="products/:productId" element={<ProductCatalogEditPage />} />
+          <Route path="company" element={<CompanyProfilePage />} />
+          <Route path="users" element={<UserManagementPage />} />
+        </Route>
+
         <Route
           element={<SiteLayout locale={locale} onChangeLocale={setLocale} />}
         >
