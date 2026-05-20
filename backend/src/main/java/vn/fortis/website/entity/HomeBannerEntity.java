@@ -18,11 +18,17 @@ public class HomeBannerEntity extends BaseAuditEntity {
 	@Column(name = "title_en", nullable = false, length = 255)
 	private String titleEn;
 
+	@Column(name = "title_zh", length = 255)
+	private String titleZh;
+
 	@Column(name = "description_vi", nullable = false, columnDefinition = "TEXT")
 	private String descriptionVi;
 
 	@Column(name = "description_en", nullable = false, columnDefinition = "TEXT")
 	private String descriptionEn;
+
+	@Column(name = "description_zh", columnDefinition = "TEXT")
+	private String descriptionZh;
 
 	@Column(name = "overlay_label", nullable = false, length = 150)
 	private String overlayLabel;
@@ -54,6 +60,14 @@ public class HomeBannerEntity extends BaseAuditEntity {
 		this.titleEn = titleEn;
 	}
 
+	public String getTitleZh() {
+		return titleZh;
+	}
+
+	public void setTitleZh(String titleZh) {
+		this.titleZh = titleZh;
+	}
+
 	public String getDescriptionVi() {
 		return descriptionVi;
 	}
@@ -68,6 +82,14 @@ public class HomeBannerEntity extends BaseAuditEntity {
 
 	public void setDescriptionEn(String descriptionEn) {
 		this.descriptionEn = descriptionEn;
+	}
+
+	public String getDescriptionZh() {
+		return descriptionZh;
+	}
+
+	public void setDescriptionZh(String descriptionZh) {
+		this.descriptionZh = descriptionZh;
 	}
 
 	public String getOverlayLabel() {

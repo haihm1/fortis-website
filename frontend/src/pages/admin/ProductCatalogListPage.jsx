@@ -19,8 +19,6 @@ export function ProductCatalogListPage() {
 
   useEffect(() => {
     let mounted = true
-    setLoading(true)
-    setError('')
     getAdminCatalog(adminAuth.token)
       .then((data) => {
         if (!mounted) return
@@ -149,6 +147,7 @@ export function ProductCatalogListPage() {
                   </div>
                   <div className="catalog-card-footer">
                     <span className="badge badge-success">Visible</span>
+                    {product.featured ? <span className="badge badge-warn">Featured</span> : null}
                   </div>
                 </div>
               </Link>

@@ -7,7 +7,12 @@ const homeContentFallback = {
       shortName: 'FORTIS VN',
       tagline: 'Giải pháp nông sản xuất khẩu ổn định, minh bạch và đúng chuẩn.',
       primaryActionLabel: 'Xem sản phẩm chủ lực',
+      address: '6/40/165 Dương Quảng Hàm, phường Nghĩa Đô, Hà Nội',
+      hotline: '+84 378 414 824',
+      email: 'fortisvn.coltd@gmail.com',
     },
+    introductionArticle:
+      'Fortis VN tập trung vào thương mại và kết nối chuỗi cung ứng cho các mặt hàng nông sản phục vụ xuất khẩu, trong đó ưu tiên vùng trồng ổn định, kiểm soát chất lượng và hỗ trợ tài liệu thương mại cho khách hàng B2B.',
     heroSlides: [
       {
         eyebrow: 'Vùng trồng tuyển chọn',
@@ -88,10 +93,11 @@ const homeContentFallback = {
       eyebrow: 'Sản phẩm tiêu biểu',
       title: 'Nhóm sản phẩm chủ lực để khách truy cập thấy ngay năng lực thương mại.',
       description:
-        'Danh sách hiện là seed data nhưng đã đi qua lớp API backend để về sau chỉ cần thay nguồn dữ liệu, không cần sửa lại giao diện.',
+        'Các sản phẩm được đội ngũ Fortis VN chọn hiển thị nổi bật trên trang chủ.',
     },
     featuredProducts: [
       {
+        slug: 'buoi-da-xanh',
         name: 'Bưởi da xanh',
         category: 'Fresh Pomelo',
         summary: 'Trái tuyển chọn theo size, phù hợp đơn hàng siêu thị và nhà nhập khẩu trái cây tươi.',
@@ -99,6 +105,7 @@ const homeContentFallback = {
         commonUse: 'Fresh fruit retail',
       },
       {
+        slug: 'chuoi-cavendish',
         name: 'Chuối Cavendish',
         category: 'Fresh Banana',
         summary: 'Nguồn cung theo mùa vụ, đóng thùng carton và kiểm soát độ chín trước khi xuất.',
@@ -106,6 +113,7 @@ const homeContentFallback = {
         commonUse: 'Retail distribution',
       },
       {
+        slug: 'dua-tuoi-got-kim-cuong',
         name: 'Dừa tươi gọt kim cương',
         category: 'Fresh Coconut',
         summary: 'Dừa tươi đóng thùng, phù hợp kênh bán lẻ, nhà hàng và nhà phân phối đồ uống.',
@@ -113,6 +121,7 @@ const homeContentFallback = {
         commonUse: 'Beverage channel',
       },
       {
+        slug: 'com-dua-say',
         name: 'Cơm dừa sấy',
         category: 'Processed Coconut',
         summary: 'Sản phẩm chế biến từ dừa cho ngành bánh kẹo, thực phẩm và đóng gói lại.',
@@ -120,6 +129,7 @@ const homeContentFallback = {
         commonUse: 'Food manufacturing',
       },
       {
+        slug: 'nuoc-cot-dua',
         name: 'Nước cốt dừa',
         category: 'Processed Coconut',
         summary: 'Sản phẩm đóng lon hoặc túi theo quy cách buyer, phục vụ kênh food service.',
@@ -127,6 +137,7 @@ const homeContentFallback = {
         commonUse: 'F&B supply',
       },
       {
+        slug: 'dong-goi-nong-san-theo-yeu-cau',
         name: 'Đóng gói nông sản theo yêu cầu',
         category: 'OEM Packing',
         summary: 'Nhận phát triển quy cách thùng, nhãn và tổ hợp sản phẩm theo yêu cầu nhập khẩu.',
@@ -174,7 +185,12 @@ const homeContentFallback = {
       tagline: 'Reliable, transparent and export-ready agricultural product solutions.',
       primaryActionLabel: 'View featured products',
       secondaryActionLabel: 'See certificates',
+      address: '6/40/165 Duong Quang Ham, Nghia Do Ward, Hanoi, Vietnam',
+      hotline: '+84 378 414 824',
+      email: 'fortisvn.coltd@gmail.com',
     },
+    introductionArticle:
+      'Fortis VN focuses on export-oriented agricultural trading and supply-chain coordination, prioritizing stable growing regions, quality control and commercial documentation support for B2B buyers.',
     heroSlides: [
       {
         eyebrow: 'Selected growing regions',
@@ -255,10 +271,11 @@ const homeContentFallback = {
       eyebrow: 'Featured products',
       title: 'A focused product lineup that immediately shows trading capability.',
       description:
-        'This list is currently seed data, but it already flows through the backend API so future content changes will not require UI rewrites.',
+        'Selected products curated by the Fortis VN admin team for buyers visiting the homepage.',
     },
     featuredProducts: [
       {
+        slug: 'green-skin-pomelo',
         name: 'Green skin pomelo',
         category: 'Fresh Pomelo',
         summary: 'Selected fruit by size for supermarket programs and fresh fruit importers.',
@@ -266,6 +283,7 @@ const homeContentFallback = {
         commonUse: 'Fresh fruit retail',
       },
       {
+        slug: 'cavendish-banana',
         name: 'Cavendish banana',
         category: 'Fresh Banana',
         summary: 'Seasonal supply with carton packing and ripeness control before export.',
@@ -273,6 +291,7 @@ const homeContentFallback = {
         commonUse: 'Retail distribution',
       },
       {
+        slug: 'diamond-cut-fresh-coconut',
         name: 'Diamond-cut fresh coconut',
         category: 'Fresh Coconut',
         summary: 'Fresh coconuts in export cartons for retail, restaurant and beverage channels.',
@@ -280,6 +299,7 @@ const homeContentFallback = {
         commonUse: 'Beverage channel',
       },
       {
+        slug: 'desiccated-coconut',
         name: 'Desiccated coconut',
         category: 'Processed Coconut',
         summary: 'Processed coconut ingredient for bakery, confectionery and repacking customers.',
@@ -287,6 +307,7 @@ const homeContentFallback = {
         commonUse: 'Food manufacturing',
       },
       {
+        slug: 'coconut-milk',
         name: 'Coconut milk',
         category: 'Processed Coconut',
         summary: 'Canned or pouch formats for food-service and private-label requirements.',
@@ -294,6 +315,7 @@ const homeContentFallback = {
         commonUse: 'F&B supply',
       },
       {
+        slug: 'custom-produce-packing',
         name: 'Custom produce packing',
         category: 'OEM Packing',
         summary: 'Packing, labelling and product combinations developed around importer requirements.',
@@ -335,5 +357,5 @@ const homeContentFallback = {
 }
 
 export function getFallbackHomeContent(locale) {
-  return homeContentFallback[locale] ?? homeContentFallback.vi
+  return homeContentFallback[locale] ?? homeContentFallback.en
 }

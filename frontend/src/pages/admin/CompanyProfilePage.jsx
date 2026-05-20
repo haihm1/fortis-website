@@ -22,8 +22,6 @@ export function CompanyProfilePage() {
 
   useEffect(() => {
     let mounted = true
-    setLoading(true)
-    setError('')
     getAdminContent(adminAuth.token)
       .then((data) => {
         if (mounted) setContent(data)
@@ -42,11 +40,13 @@ export function CompanyProfilePage() {
   function openBannerEdit(banner) {
     setEditingBanner(banner)
     setBannerForm({
-      titleVi: banner.titleVi,
-      titleEn: banner.titleEn,
-      descriptionVi: banner.descriptionVi,
-      descriptionEn: banner.descriptionEn,
-      overlayLabel: banner.overlayLabel,
+      titleVi: banner.titleVi ?? '',
+      titleEn: banner.titleEn ?? '',
+      titleZh: banner.titleZh ?? '',
+      descriptionVi: banner.descriptionVi ?? '',
+      descriptionEn: banner.descriptionEn ?? '',
+      descriptionZh: banner.descriptionZh ?? '',
+      overlayLabel: banner.overlayLabel ?? '',
     })
     setBannerImage(null)
   }
@@ -81,6 +81,7 @@ export function CompanyProfilePage() {
       const payload = {
         aboutArticleVi: content.aboutArticleVi,
         aboutArticleEn: content.aboutArticleEn,
+        aboutArticleZh: content.aboutArticleZh,
         address: content.address,
         hotline: content.hotline,
         email: content.email,
@@ -143,7 +144,7 @@ export function CompanyProfilePage() {
             <thead>
               <tr>
                 <th>Preview</th>
-                <th>Caption (Vi/En)</th>
+                <th>Caption (Vi/En/Zh)</th>
                 <th>Overlay</th>
                 <th style={{ textAlign: 'right' }}>Thao tác</th>
               </tr>
@@ -170,6 +171,7 @@ export function CompanyProfilePage() {
                     <div className="cell-stack">
                       <strong>{banner.titleVi}</strong>
                       <small>{banner.titleEn}</small>
+                      <small>{banner.titleZh || 'Chưa nhập tiếng Trung'}</small>
                     </div>
                   </td>
                   <td className="cell-muted">{banner.overlayLabel}</td>
@@ -192,7 +194,7 @@ export function CompanyProfilePage() {
         </div>
 
         <p style={{ color: 'var(--admin-text-muted)', fontSize: '0.82rem', marginTop: 14 }}>
-          Lưu ý: backend hiện hỗ trợ banner theo slot cố định (1–3). Tính năng bật/tắt hiển thị từng slot và thêm slot mới sẽ cần mở rộng API (xem mục backend gaps trong kế hoạch).
+          Trang chủ đang hiển thị trực tiếp 3 banner theo slot này. Cập nhật ảnh, tiêu đề, mô tả hoặc overlay ở đây sẽ được public Home API trả về cho client.
         </p>
       </section>
 
@@ -234,6 +236,13 @@ export function CompanyProfilePage() {
               >
                 En
               </button>
+              <button
+                type="button"
+                className={profileLang === 'zh' ? 'is-active' : ''}
+                onClick={() => setProfileLang('zh')}
+              >
+                中文
+              </button>
             </div>
           </header>
 
@@ -252,7 +261,7 @@ export function CompanyProfilePage() {
                   }
                 />
               </label>
-            ) : (
+            ) : profileLang === 'en' ? (
               <label className="field">
                 <span className="field-label">English introduction</span>
                 <textarea
@@ -261,6 +270,18 @@ export function CompanyProfilePage() {
                   value={content.aboutArticleEn}
                   onChange={(event) =>
                     setContent((current) => ({ ...current, aboutArticleEn: event.target.value }))
+                  }
+                />
+              </label>
+            ) : (
+              <label className="field">
+                <span className="field-label">中文公司介绍</span>
+                <textarea
+                  className="field-textarea"
+                  rows={8}
+                  value={content.aboutArticleZh ?? ''}
+                  onChange={(event) =>
+                    setContent((current) => ({ ...current, aboutArticleZh: event.target.value }))
                   }
                 />
               </label>
@@ -334,7 +355,7 @@ export function CompanyProfilePage() {
               <div>
                 <h3>Hero banner slot #{editingBanner.slot}</h3>
                 <p style={{ color: 'var(--admin-text-soft)', margin: '4px 0 0', fontSize: '0.85rem' }}>
-                  Cập nhật ảnh, caption song ngữ và overlay label.
+                  Cập nhật ảnh, caption đa ngôn ngữ và overlay label.
                 </p>
               </div>
               <div className="lang-tabs">
@@ -351,6 +372,13 @@ export function CompanyProfilePage() {
                   onClick={() => setBannerLang('en')}
                 >
                   En
+                </button>
+                <button
+                  type="button"
+                  className={bannerLang === 'zh' ? 'is-active' : ''}
+                  onClick={() => setBannerLang('zh')}
+                >
+                  中文
                 </button>
               </div>
             </header>
@@ -415,7 +443,7 @@ export function CompanyProfilePage() {
                     />
                   </label>
                 </>
-              ) : (
+              ) : bannerLang === 'en' ? (
                 <>
                   <label className="field">
                     <span className="field-label">Title (EN)</span>
@@ -438,6 +466,30 @@ export function CompanyProfilePage() {
                         setBannerForm((c) => ({ ...c, descriptionEn: event.target.value }))
                       }
                       required
+                    />
+                  </label>
+                </>
+              ) : (
+                <>
+                  <label className="field">
+                    <span className="field-label">标题 (中文)</span>
+                    <input
+                      className="field-input"
+                      value={bannerForm.titleZh ?? ''}
+                      onChange={(event) =>
+                        setBannerForm((c) => ({ ...c, titleZh: event.target.value }))
+                      }
+                    />
+                  </label>
+                  <label className="field">
+                    <span className="field-label">描述 (中文)</span>
+                    <textarea
+                      className="field-textarea"
+                      rows={4}
+                      value={bannerForm.descriptionZh ?? ''}
+                      onChange={(event) =>
+                        setBannerForm((c) => ({ ...c, descriptionZh: event.target.value }))
+                      }
                     />
                   </label>
                 </>

@@ -22,6 +22,32 @@ async function request(path, token, options = {}) {
   return response.json()
 }
 
+function resolveMediaUrl(url) {
+  if (!url || url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url
+  }
+  return `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`
+}
+
+function normalizeAdminContent(data) {
+  return {
+    ...data,
+    aboutArticleVi: data.aboutArticleVi ?? '',
+    aboutArticleEn: data.aboutArticleEn ?? '',
+    aboutArticleZh: data.aboutArticleZh ?? '',
+    banners: (data.banners ?? []).map((banner) => ({
+      ...banner,
+      titleVi: banner.titleVi ?? '',
+      titleEn: banner.titleEn ?? '',
+      titleZh: banner.titleZh ?? '',
+      descriptionVi: banner.descriptionVi ?? '',
+      descriptionEn: banner.descriptionEn ?? '',
+      descriptionZh: banner.descriptionZh ?? '',
+      imageUrl: resolveMediaUrl(banner.imageUrl),
+    })),
+  }
+}
+
 export function getAdminContacts(token) {
   return request('/api/admin/contacts', token)
 }
@@ -37,7 +63,21 @@ export function updateAdminContactStatus(token, contactId, status) {
 }
 
 export function getAdminContent(token) {
-  return request('/api/admin/content', token)
+  return request('/api/admin/content', token).then(normalizeAdminContent)
+}
+
+export function getAdminNavigation(token) {
+  return request('/api/admin/navigation', token)
+}
+
+export function updateAdminNavigation(token, items) {
+  return request('/api/admin/navigation', token, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ items }),
+  })
 }
 
 export function updateAdminContentProfile(token, payload) {
@@ -47,7 +87,7 @@ export function updateAdminContentProfile(token, payload) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify(payload),
-  })
+  }).then(normalizeAdminContent)
 }
 
 export async function updateAdminBanner(token, slot, payload, imageFile) {
@@ -64,7 +104,7 @@ export async function updateAdminBanner(token, slot, payload, imageFile) {
   return request(`/api/admin/content/banners/${slot}`, token, {
     method: 'PUT',
     body: formData,
-  })
+  }).then((banner) => ({ ...banner, imageUrl: resolveMediaUrl(banner.imageUrl) }))
 }
 
 export function getAdminAccounts(token) {
@@ -162,6 +202,45 @@ export function updateAdminProduct(token, productId, payload, imageFile, specifi
 
 export function deleteAdminProduct(token, productId) {
   return request(`/api/admin/catalog/products/${productId}`, token, {
+    method: 'DELETE',
+  })
+}
+
+export function uploadAdminCatalogImage(token, imageFile) {
+  const formData = new FormData()
+  formData.append('image', imageFile)
+  return request('/api/admin/catalog/upload-file', token, {
+    method: 'POST',
+    body: formData,
+  })
+}
+
+export function getAdminExportMarket(token) {
+  return request('/api/admin/export-market', token)
+}
+
+export function createAdminExportMarketArticle(token, payload) {
+  return request('/api/admin/export-market', token, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function updateAdminExportMarketArticle(token, articleId, payload) {
+  return request(`/api/admin/export-market/${articleId}`, token, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function deleteAdminExportMarketArticle(token, articleId) {
+  return request(`/api/admin/export-market/${articleId}`, token, {
     method: 'DELETE',
   })
 }

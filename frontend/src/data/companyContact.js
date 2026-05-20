@@ -10,24 +10,25 @@ export const COMPANY_CONTACT = {
   workingHours: {
     vi: 'Thứ 2 - Thứ 6, 08:00 - 17:30 (GMT+7)',
     en: 'Monday - Friday, 08:00 - 17:30 (GMT+7)',
+    zh: '周一至周五，08:00 - 17:30 (GMT+7)',
   },
   channels: {
     wechat: {
-      label: { vi: 'WeChat', en: 'WeChat' },
+      label: { vi: 'WeChat', en: 'WeChat', zh: 'WeChat' },
       display: '+84 378 414 824',
     },
     zalo: {
-      label: { vi: 'Zalo', en: 'Zalo' },
+      label: { vi: 'Zalo', en: 'Zalo', zh: 'Zalo' },
       display: '+84 378 414 824',
       href: 'https://zalo.me/84378414824',
     },
     whatsapp: {
-      label: { vi: 'WhatsApp', en: 'WhatsApp' },
+      label: { vi: 'WhatsApp', en: 'WhatsApp', zh: 'WhatsApp' },
       display: '+84 378 414 824',
       href: 'https://wa.me/84378414824',
     },
     email: {
-      label: { vi: 'Email', en: 'Email' },
+      label: { vi: 'Email', en: 'Email', zh: '邮箱' },
       display: 'fortisvn.coltd@gmail.com',
       href: 'mailto:fortisvn.coltd@gmail.com',
     },

@@ -8,6 +8,7 @@ public record AdminContentProfileUpdateRequest(
 		String aboutArticleVi,
 		@NotBlank(message = "English article is required")
 		String aboutArticleEn,
+		String aboutArticleZh,
 		@NotBlank(message = "Address is required")
 		String address,
 		@NotBlank(message = "Hotline is required")

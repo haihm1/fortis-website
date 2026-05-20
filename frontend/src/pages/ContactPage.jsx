@@ -86,6 +86,40 @@ const COPY = {
     closeModal: 'Close',
     requiredHint: 'Fields marked with * are required.',
   },
+  zh: {
+    eyebrow: '联系我们',
+    title: '联系 Fortis VN 团队',
+    description:
+      '请告诉我们您的产品、包装规格或出货计划需求。我们的团队会尽快回复。',
+    infoTitle: '公司信息',
+    addressLabel: '地址',
+    hoursLabel: '工作时间',
+    hotlineLabel: '热线',
+    emailLabel: '邮箱',
+    channelsTitle: '快速联系渠道',
+    channelsDescription: '选择您偏好的渠道，直接与销售团队沟通。',
+    mapTitle: '地图位置',
+    mapDirections: '打开路线',
+    formEyebrow: '发送请求',
+    formTitle: '留下信息，我们会尽快回复',
+    formDescription: '请提供完整联系方式并描述您的需求，以便我们更准确地提供建议。',
+    fields: {
+      fullName: '姓名 *',
+      companyName: '公司名称',
+      email: '邮箱 *',
+      phone: '电话号码',
+      productInterest: '感兴趣的产品',
+      targetMarket: '目标出口市场',
+      message: '留言 *',
+      submit: '发送请求',
+    },
+    successTitle: '提交成功！',
+    success: '您的请求已提交。感谢联系 Fortis VN！我们的团队会尽快回复。',
+    error: '暂时无法提交请求。请稍后再试或使用快速联系渠道。',
+    sending: '提交中...',
+    closeModal: '关闭',
+    requiredHint: '带 * 的字段为必填项。',
+  },
 }
 
 const INITIAL_FORM = {
@@ -100,8 +134,8 @@ const INITIAL_FORM = {
 }
 
 export function ContactPage({ locale }) {
-  const copy = useMemo(() => COPY[locale] ?? COPY.vi, [locale])
-  const seo = SEO.contact[locale] ?? SEO.contact.vi
+  const copy = useMemo(() => COPY[locale] ?? COPY.en, [locale])
+  const seo = SEO.contact[locale] ?? SEO.contact.en
   useSeoMeta({ title: seo.title, description: seo.description, path: seo.path, locale })
   useJsonLd('contact-page', buildContactPageSchema())
 
@@ -110,8 +144,8 @@ export function ContactPage({ locale }) {
   const [feedback, setFeedback] = useState({ type: '', message: '' })
   const [showSuccess, setShowSuccess] = useState(false)
 
-  const address = locale === 'en' ? COMPANY_CONTACT.addressEn : COMPANY_CONTACT.address
-  const workingHours = COMPANY_CONTACT.workingHours[locale] ?? COMPANY_CONTACT.workingHours.vi
+  const address = locale === 'vi' ? COMPANY_CONTACT.address : COMPANY_CONTACT.addressEn
+  const workingHours = COMPANY_CONTACT.workingHours[locale] ?? COMPANY_CONTACT.workingHours.en
 
   const quickChannels = [
     {

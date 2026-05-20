@@ -43,11 +43,12 @@ export function RfqManagementPage() {
 
   useEffect(() => {
     let mounted = true
-    setLoading(true)
-    setError('')
     getAdminContacts(adminAuth.token)
       .then((data) => {
-        if (mounted) setContacts(data.contacts ?? [])
+        if (mounted) {
+          setContacts(data.contacts ?? [])
+          setError('')
+        }
       })
       .catch((err) => {
         if (mounted) setError(err.message)

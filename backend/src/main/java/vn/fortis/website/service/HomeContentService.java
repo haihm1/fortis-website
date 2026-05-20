@@ -28,8 +28,10 @@ public class HomeContentService {
 	}
 
 	public HomePageResponse getHomePage(String lang) {
-		String locale = "en".equalsIgnoreCase(lang) ? "en" : "vi";
+		String locale = normalizeLocale(lang);
 		boolean english = "en".equals(locale);
+		boolean chinese = "zh".equals(locale);
+		boolean useEnglishContent = english || chinese;
 		ContentSnapshot contentSnapshot = contentManagementService.getSnapshot();
 
 		return new HomePageResponse(
@@ -38,75 +40,101 @@ public class HomeContentService {
 						"Công ty TNHH Fortis VN",
 						"Fortis VN Co., Ltd.",
 						"FORTIS VN",
-						english
+						chinese
+								? "可靠、透明、符合出口需求的农产品解决方案。"
+								: english
 								? "Reliable, transparent and export-ready agricultural product solutions."
 								: "Giải pháp nông sản xuất khẩu ổn định, minh bạch và đúng chuẩn.",
-						english ? "View featured products" : "Xem sản phẩm chủ lực",
-						english ? "See certificates" : "Khám phá chứng chỉ",
+						chinese ? "查看精选产品" : english ? "View featured products" : "Xem sản phẩm chủ lực",
+						chinese ? "查看认证" : english ? "See certificates" : "Khám phá chứng chỉ",
 						contentSnapshot.address(),
 						contentSnapshot.hotline(),
 						contentSnapshot.email()
 				),
-				english ? contentSnapshot.aboutArticleEn() : contentSnapshot.aboutArticleVi(),
-				buildHeroSlides(contentSnapshot.banners(), english),
-				buildCoreValuesSection(english),
-				buildCoreValues(english),
-				buildFeaturedProductsSection(english),
-				buildFeaturedProducts(english),
-				buildCredentialsSection(english),
-				buildCertificates(english),
+				chinese
+						? textWithFallback(contentSnapshot.aboutArticleZh(), contentSnapshot.aboutArticleEn(), contentSnapshot.aboutArticleVi())
+						: useEnglishContent ? contentSnapshot.aboutArticleEn() : contentSnapshot.aboutArticleVi(),
+				buildHeroSlides(contentSnapshot.banners(), locale),
+				buildCoreValuesSection(locale),
+				buildCoreValues(locale),
+				buildFeaturedProductsSection(locale),
+				buildFeaturedProducts(locale),
+				buildCredentialsSection(locale),
+				buildCertificates(locale),
 				buildPartners()
 		);
 	}
 
-	private List<HomePageResponse.HeroSlide> buildHeroSlides(List<BannerRecord> banners, boolean english) {
+	private String normalizeLocale(String lang) {
+		if ("zh".equalsIgnoreCase(lang) || "cn".equalsIgnoreCase(lang) || "zh-cn".equalsIgnoreCase(lang)) {
+			return "zh";
+		}
+		return "en".equalsIgnoreCase(lang) ? "en" : "vi";
+	}
+
+	private List<HomePageResponse.HeroSlide> buildHeroSlides(List<BannerRecord> banners, String locale) {
+		boolean english = "en".equals(locale);
+		boolean chinese = "zh".equals(locale);
 		return List.of(
 				mapBanner(
 						banners.get(0),
-						english,
-						english ? "Selected growing regions" : "Vùng trồng tuyển chọn",
+						locale,
+						chinese ? "精选产区" : english ? "Selected growing regions" : "Vùng trồng tuyển chọn",
 						List.of(
-								new HomePageResponse.FactItem("Traceability", "Farm lots"),
-								new HomePageResponse.FactItem("Supply", "Seasonal planning"),
-								new HomePageResponse.FactItem("Export", "Multi-market")
+								new HomePageResponse.FactItem(chinese ? "可追溯" : "Traceability", chinese ? "产地批次" : "Farm lots"),
+								new HomePageResponse.FactItem(chinese ? "供应" : "Supply", chinese ? "季节计划" : "Seasonal planning"),
+								new HomePageResponse.FactItem(chinese ? "出口" : "Export", chinese ? "多市场" : "Multi-market")
 						)
 				),
 				mapBanner(
 						banners.get(1),
-						english,
-						english ? "Export coordination" : "Điều phối xuất khẩu",
+						locale,
+						chinese ? "出口协调" : english ? "Export coordination" : "Điều phối xuất khẩu",
 						List.of(
 								new HomePageResponse.FactItem("Incoterms", "FOB / CIF"),
-								new HomePageResponse.FactItem("Cold chain", "Planned flow"),
-								new HomePageResponse.FactItem("Documents", "B2B support")
+								new HomePageResponse.FactItem(chinese ? "冷链" : "Cold chain", chinese ? "计划流程" : "Planned flow"),
+								new HomePageResponse.FactItem(chinese ? "文件" : "Documents", chinese ? "B2B 支持" : "B2B support")
 						)
 				),
 				mapBanner(
 						banners.get(2),
-						english,
-						english ? "Packing capability" : "Sơ chế và đóng gói",
+						locale,
+						chinese ? "包装能力" : english ? "Packing capability" : "Sơ chế và đóng gói",
 						List.of(
-								new HomePageResponse.FactItem("Quality", "Grading control"),
-								new HomePageResponse.FactItem("Freshness", "Handled quickly"),
-								new HomePageResponse.FactItem("Packing", "Buyer specs")
+								new HomePageResponse.FactItem(chinese ? "质量" : "Quality", chinese ? "分级控制" : "Grading control"),
+								new HomePageResponse.FactItem(chinese ? "新鲜度" : "Freshness", chinese ? "快速处理" : "Handled quickly"),
+								new HomePageResponse.FactItem(chinese ? "包装" : "Packing", chinese ? "买家规格" : "Buyer specs")
 						)
 				)
 		);
 	}
 
-	private HomePageResponse.HeroSlide mapBanner(BannerRecord banner, boolean english, String eyebrow, List<HomePageResponse.FactItem> facts) {
+	private HomePageResponse.HeroSlide mapBanner(BannerRecord banner, String locale, String eyebrow, List<HomePageResponse.FactItem> facts) {
+		boolean english = "en".equals(locale);
+		boolean chinese = "zh".equals(locale);
 		return new HomePageResponse.HeroSlide(
 				eyebrow,
-				english ? banner.titleEn() : banner.titleVi(),
-				english ? banner.descriptionEn() : banner.descriptionVi(),
+				chinese
+						? textWithFallback(banner.titleZh(), banner.titleEn(), banner.titleVi())
+						: english ? banner.titleEn() : banner.titleVi(),
+				chinese
+						? textWithFallback(banner.descriptionZh(), banner.descriptionEn(), banner.descriptionVi())
+						: english ? banner.descriptionEn() : banner.descriptionVi(),
 				banner.imageUrl(),
 				banner.overlayLabel(),
 				facts
 		);
 	}
 
-	private HomePageResponse.SectionHeader buildCoreValuesSection(boolean english) {
-		return english
+	private HomePageResponse.SectionHeader buildCoreValuesSection(String locale) {
+		if ("zh".equals(locale)) {
+			return new HomePageResponse.SectionHeader(
+					"核心价值",
+					"Fortis VN 与国际客户建立长期出口合作的基础。",
+					"首页采用组件化 UI 与 API-ready 结构，便于后续扩展 CMS、农产品目录、公司资料和询价流程。"
+			);
+		}
+		return "en".equals(locale)
 				? new HomePageResponse.SectionHeader(
 						"Core values",
 						"The principles behind a long-term export partnership with Fortis VN.",
@@ -119,8 +147,16 @@ public class HomeContentService {
 				);
 	}
 
-	private List<HomePageResponse.CoreValue> buildCoreValues(boolean english) {
-		return english
+	private List<HomePageResponse.CoreValue> buildCoreValues(String locale) {
+		if ("zh".equals(locale)) {
+			return List.of(
+					new HomePageResponse.CoreValue("国际质量标准", "根据目标市场要求控制包装规格、新鲜度、分级和出口文件。", "01"),
+					new HomePageResponse.CoreValue("稳定供应能力", "聚焦柚子、香蕉、椰子及椰子加工品等具备重复需求的农产品。", "02"),
+					new HomePageResponse.CoreValue("有竞争力的价格", "优化采购与物流，在成本、可靠性和交付时间之间取得平衡。", "03"),
+					new HomePageResponse.CoreValue("快速响应 B2B 订单", "系统结构可扩展为报价流程、产品目录和内容管理。", "04")
+			);
+		}
+		return "en".equals(locale)
 				? List.of(
 						new HomePageResponse.CoreValue("International quality standards", "Control over packing format, freshness, grading and export documentation for each target market.", "01"),
 						new HomePageResponse.CoreValue("Stable supply capacity", "Focused on repeat-demand agricultural products such as pomelo, banana, coconut and coconut-based processed goods.", "02"),
@@ -135,42 +171,90 @@ public class HomeContentService {
 				);
 	}
 
-	private HomePageResponse.SectionHeader buildFeaturedProductsSection(boolean english) {
-		return english
+	private HomePageResponse.SectionHeader buildFeaturedProductsSection(String locale) {
+		if ("zh".equals(locale)) {
+			return new HomePageResponse.SectionHeader(
+					"精选产品",
+					"重点产品阵容让买家快速了解贸易能力。",
+					"由 Fortis VN 管理团队选择并展示给首页访客的产品。"
+			);
+		}
+		return "en".equals(locale)
 				? new HomePageResponse.SectionHeader(
 						"Featured products",
 						"A focused product lineup that immediately shows trading capability.",
-						"This list is currently seed data, but it already flows through the backend API so future content changes will not require UI rewrites."
+						"Selected products curated by the Fortis VN admin team for buyers visiting the homepage."
 				)
 				: new HomePageResponse.SectionHeader(
 						"Sản phẩm tiêu biểu",
 						"Nhóm sản phẩm chủ lực để khách truy cập thấy ngay năng lực thương mại.",
-						"Danh sách hiện là seed data nhưng đã đi qua lớp API backend để về sau chỉ cần thay nguồn dữ liệu, không cần sửa lại giao diện."
+						"Các sản phẩm được đội ngũ Fortis VN chọn hiển thị nổi bật trên trang chủ."
 				);
 	}
 
-	private List<HomePageResponse.ProductHighlight> buildFeaturedProducts(boolean english) {
-		return productRepository.findByActiveTrueOrderByCreatedAtAsc().stream()
-				.limit(6)
-				.map(product -> mapFeaturedProduct(product, english))
+	private List<HomePageResponse.ProductHighlight> buildFeaturedProducts(String locale) {
+		return productRepository.findByActiveTrueAndFeaturedTrueOrderByCreatedAtAsc().stream()
+				.limit(4)
+				.map(product -> mapFeaturedProduct(product, locale))
 				.toList();
 	}
 
-	private HomePageResponse.ProductHighlight mapFeaturedProduct(ProductEntity product, boolean english) {
-		String primaryUse = english
-				? product.getApplicationsEn().stream().findFirst().orElse("General use")
-				: product.getApplicationsVi().stream().findFirst().orElse("Ung dung chung");
+	private HomePageResponse.ProductHighlight mapFeaturedProduct(ProductEntity product, String locale) {
+		boolean english = "en".equals(locale);
+		boolean chinese = "zh".equals(locale);
+		String primaryUse = chinese
+				? firstWithFallback(product.getApplicationsZh(), product.getApplicationsEn(), product.getApplicationsVi(), "General use")
+				: english
+				? firstWithFallback(product.getApplicationsEn(), product.getApplicationsVi(), product.getApplicationsZh(), "General use")
+				: firstWithFallback(product.getApplicationsVi(), product.getApplicationsEn(), product.getApplicationsZh(), "Ung dung chung");
 		return new HomePageResponse.ProductHighlight(
-				english ? product.getNameEn() : product.getNameVi(),
-				english ? product.getCategory().getNameEn() : product.getCategory().getNameVi(),
-				english ? product.getSummaryEn() : product.getSummaryVi(),
+				product.getSlug(),
+				chinese
+						? textWithFallback(product.getNameZh(), product.getNameEn(), product.getNameVi())
+						: english ? textWithFallback(product.getNameEn(), product.getNameVi(), product.getNameZh()) : textWithFallback(product.getNameVi(), product.getNameEn(), product.getNameZh()),
+				english || chinese ? product.getCategory().getNameEn() : product.getCategory().getNameVi(),
+				chinese
+						? textWithFallback(product.getSummaryZh(), product.getSummaryEn(), product.getSummaryVi())
+						: english ? textWithFallback(product.getSummaryEn(), product.getSummaryVi(), product.getSummaryZh()) : textWithFallback(product.getSummaryVi(), product.getSummaryEn(), product.getSummaryZh()),
+				product.getImageUrl(),
 				product.getThickness(),
 				primaryUse
 		);
 	}
 
-	private HomePageResponse.SectionHeader buildCredentialsSection(boolean english) {
-		return english
+	private String textWithFallback(String primary, String secondary, String tertiary) {
+		if (primary != null && !primary.isBlank()) {
+			return primary;
+		}
+		if (secondary != null && !secondary.isBlank()) {
+			return secondary;
+		}
+		return tertiary == null ? "" : tertiary;
+	}
+
+	private String firstWithFallback(List<String> primary, List<String> secondary, List<String> tertiary, String fallback) {
+		return streamFirst(primary)
+				.or(() -> streamFirst(secondary))
+				.or(() -> streamFirst(tertiary))
+				.orElse(fallback);
+	}
+
+	private java.util.Optional<String> streamFirst(List<String> values) {
+		if (values == null) {
+			return java.util.Optional.empty();
+		}
+		return values.stream().filter(value -> value != null && !value.isBlank()).findFirst();
+	}
+
+	private HomePageResponse.SectionHeader buildCredentialsSection(String locale) {
+		if ("zh".equals(locale)) {
+			return new HomePageResponse.SectionHeader(
+					"认证与合作伙伴",
+					"以合规展示和市场连接提升买家信任。",
+					"该区域以徽章/标识形式设计，后续可接入真实品牌资产和证书详情页。"
+			);
+		}
+		return "en".equals(locale)
 				? new HomePageResponse.SectionHeader(
 						"Certificates and partners",
 						"Build trust early with compliance visibility and market connectivity.",
@@ -183,8 +267,16 @@ public class HomeContentService {
 				);
 	}
 
-	private List<HomePageResponse.CredentialBadge> buildCertificates(boolean english) {
-		return english
+	private List<HomePageResponse.CredentialBadge> buildCertificates(String locale) {
+		if ("zh".equals(locale)) {
+			return List.of(
+					new HomePageResponse.CredentialBadge("GlobalG.A.P.", "支持良好农业实践和面向出口的种植项目。"),
+					new HomePageResponse.CredentialBadge("VietGAP", "支持国内农场追溯和种植控制。"),
+					new HomePageResponse.CredentialBadge("HACCP", "用于包装和加工农产品的食品安全控制。"),
+					new HomePageResponse.CredentialBadge("CO/CQ", "根据进口商要求准备商业与质量文件。")
+			);
+		}
+		return "en".equals(locale)
 				? List.of(
 						new HomePageResponse.CredentialBadge("GlobalG.A.P.", "Supports good agricultural practices and export-oriented farm programs."),
 						new HomePageResponse.CredentialBadge("VietGAP", "Supports domestic farm traceability and cultivation control."),

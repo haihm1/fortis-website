@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 
 /**
  * Inject or update a JSON-LD <script> block.
@@ -6,8 +6,10 @@ import { useEffect } from 'react'
  * @param {object} data Plain JS object that will be serialised as JSON-LD.
  */
 export function useJsonLd(id, data) {
+  const serializedData = useMemo(() => (data ? JSON.stringify(data) : ''), [data])
+
   useEffect(() => {
-    if (!data) return
+    if (!serializedData) return
 
     const scriptId = `jsonld-${id}`
     let el = document.getElementById(scriptId)
@@ -17,11 +19,11 @@ export function useJsonLd(id, data) {
       el.type = 'application/ld+json'
       document.head.appendChild(el)
     }
-    el.textContent = JSON.stringify(data)
+    el.textContent = serializedData
 
     return () => {
       const existing = document.getElementById(scriptId)
       if (existing) existing.remove()
     }
-  }, [id, JSON.stringify(data)])
+  }, [id, serializedData])
 }

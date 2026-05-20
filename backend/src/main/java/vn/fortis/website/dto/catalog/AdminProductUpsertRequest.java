@@ -14,14 +14,24 @@ public record AdminProductUpsertRequest(
 		String categoryId,
 		@NotBlank(message = "Product name is required")
 		String name,
+		String nameEn,
+		String nameZh,
 		@NotBlank(message = "Product summary is required")
 		String summary,
+		String summaryEn,
+		String summaryZh,
 		@NotEmpty(message = "At least one application is required")
 		List<String> applications,
+		List<String> applicationsEn,
+		List<String> applicationsZh,
 		@NotNull(message = "Technical specifications are required")
 		@Valid
 		TechnicalSpecifications specifications,
-		String quoteLabel
+		TechnicalSpecifications specificationsEn,
+		TechnicalSpecifications specificationsZh,
+		String quoteLabel,
+		List<String> galleryImages,
+		Boolean featured
 ) {
 
 	public record TechnicalSpecifications(

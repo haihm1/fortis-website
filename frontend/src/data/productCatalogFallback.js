@@ -410,5 +410,5 @@ function enrichCatalog(catalog) {
 }
 
 export function getFallbackProductCatalog(locale) {
-  return enrichCatalog(PRODUCT_CATALOG_FALLBACK[locale] ?? PRODUCT_CATALOG_FALLBACK.vi)
+  return enrichCatalog(PRODUCT_CATALOG_FALLBACK[locale] ?? PRODUCT_CATALOG_FALLBACK.en)
 }

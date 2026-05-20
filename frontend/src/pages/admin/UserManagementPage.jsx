@@ -56,11 +56,12 @@ export function UserManagementPage() {
 
   useEffect(() => {
     let mounted = true
-    setLoading(true)
-    setError('')
     getAdminAccounts(adminAuth.token)
       .then((data) => {
-        if (mounted) setAccounts(data.accounts ?? [])
+        if (mounted) {
+          setAccounts(data.accounts ?? [])
+          setError('')
+        }
       })
       .catch((err) => {
         if (mounted) setError(err.message)

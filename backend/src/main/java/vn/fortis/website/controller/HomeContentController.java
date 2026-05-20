@@ -19,7 +19,7 @@ public class HomeContentController {
 	}
 
 	@GetMapping
-	public HomePageResponse getHomePage(@RequestParam(defaultValue = "vi") String lang) {
+	public HomePageResponse getHomePage(@RequestParam(defaultValue = "en") String lang) {
 		return homeContentService.getHomePage(lang);
 	}
 }

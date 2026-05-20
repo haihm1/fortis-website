@@ -49,9 +49,11 @@ public record HomePageResponse(
 	}
 
 	public record ProductHighlight(
+			String slug,
 			String name,
 			String category,
 			String summary,
+			String image,
 			String grade,
 			String commonUse
 	) {

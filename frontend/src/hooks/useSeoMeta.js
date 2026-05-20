@@ -43,7 +43,7 @@ export function useSeoMeta({ title, description, path = '', type = 'website', im
     const fullTitle = title ? `${title} | ${siteTitle}` : siteTitle
     const canonicalUrl = `${SITE_URL}${path}`
     const ogImage = image ?? 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1200&q=80'
-    const ogLocale = locale === 'vi' ? 'vi_VN' : 'en_US'
+    const ogLocale = locale === 'vi' ? 'vi_VN' : locale === 'zh' ? 'zh_CN' : 'en_US'
 
     document.title = fullTitle
 

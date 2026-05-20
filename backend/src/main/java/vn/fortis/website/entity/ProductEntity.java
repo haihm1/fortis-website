@@ -33,11 +33,17 @@ public class ProductEntity extends BaseAuditEntity {
 	@Column(name = "name_en", nullable = false, length = 150)
 	private String nameEn;
 
+	@Column(name = "name_zh", length = 150)
+	private String nameZh;
+
 	@Column(name = "summary_vi", nullable = false, columnDefinition = "TEXT")
 	private String summaryVi;
 
 	@Column(name = "summary_en", nullable = false, columnDefinition = "TEXT")
 	private String summaryEn;
+
+	@Column(name = "summary_zh", columnDefinition = "TEXT")
+	private String summaryZh;
 
 	@Column(name = "image_url", nullable = false, length = 500)
 	private String imageUrl;
@@ -45,20 +51,52 @@ public class ProductEntity extends BaseAuditEntity {
 	@Column(name = "specification_file_url", length = 500)
 	private String specificationFileUrl;
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "product_gallery_images", joinColumns = @JoinColumn(name = "product_id"))
+	@Column(name = "image_url", nullable = false, length = 500)
+	private List<String> galleryImageUrls = new ArrayList<>();
+
 	@Column(nullable = false, length = 100)
 	private String thickness;
+
+	@Column(name = "thickness_en", length = 100)
+	private String thicknessEn;
+
+	@Column(name = "thickness_zh", length = 100)
+	private String thicknessZh;
 
 	@Column(nullable = false, length = 100)
 	private String moisture;
 
+	@Column(name = "moisture_en", length = 100)
+	private String moistureEn;
+
+	@Column(name = "moisture_zh", length = 100)
+	private String moistureZh;
+
 	@Column(name = "glue_type", nullable = false, length = 120)
 	private String glueType;
+
+	@Column(name = "glue_type_en", length = 120)
+	private String glueTypeEn;
+
+	@Column(name = "glue_type_zh", length = 120)
+	private String glueTypeZh;
 
 	@Column(nullable = false, length = 150)
 	private String size;
 
+	@Column(name = "size_en", length = 150)
+	private String sizeEn;
+
+	@Column(name = "size_zh", length = 150)
+	private String sizeZh;
+
 	@Column(nullable = false)
 	private boolean active = true;
+
+	@Column(name = "featured")
+	private Boolean featured = false;
 
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "product_applications_vi", joinColumns = @JoinColumn(name = "product_id"))
@@ -69,6 +107,11 @@ public class ProductEntity extends BaseAuditEntity {
 	@CollectionTable(name = "product_applications_en", joinColumns = @JoinColumn(name = "product_id"))
 	@Column(name = "application_value", nullable = false, length = 255)
 	private List<String> applicationsEn = new ArrayList<>();
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "product_applications_zh", joinColumns = @JoinColumn(name = "product_id"))
+	@Column(name = "application_value", nullable = false, length = 255)
+	private List<String> applicationsZh = new ArrayList<>();
 
 	public String getId() {
 		return id;
@@ -110,6 +153,14 @@ public class ProductEntity extends BaseAuditEntity {
 		this.nameEn = nameEn;
 	}
 
+	public String getNameZh() {
+		return nameZh;
+	}
+
+	public void setNameZh(String nameZh) {
+		this.nameZh = nameZh;
+	}
+
 	public String getSummaryVi() {
 		return summaryVi;
 	}
@@ -124,6 +175,14 @@ public class ProductEntity extends BaseAuditEntity {
 
 	public void setSummaryEn(String summaryEn) {
 		this.summaryEn = summaryEn;
+	}
+
+	public String getSummaryZh() {
+		return summaryZh;
+	}
+
+	public void setSummaryZh(String summaryZh) {
+		this.summaryZh = summaryZh;
 	}
 
 	public String getImageUrl() {
@@ -142,12 +201,36 @@ public class ProductEntity extends BaseAuditEntity {
 		this.specificationFileUrl = specificationFileUrl;
 	}
 
+	public List<String> getGalleryImageUrls() {
+		return galleryImageUrls;
+	}
+
+	public void setGalleryImageUrls(List<String> galleryImageUrls) {
+		this.galleryImageUrls = new ArrayList<>(galleryImageUrls);
+	}
+
 	public String getThickness() {
 		return thickness;
 	}
 
 	public void setThickness(String thickness) {
 		this.thickness = thickness;
+	}
+
+	public String getThicknessEn() {
+		return thicknessEn;
+	}
+
+	public void setThicknessEn(String thicknessEn) {
+		this.thicknessEn = thicknessEn;
+	}
+
+	public String getThicknessZh() {
+		return thicknessZh;
+	}
+
+	public void setThicknessZh(String thicknessZh) {
+		this.thicknessZh = thicknessZh;
 	}
 
 	public String getMoisture() {
@@ -158,12 +241,44 @@ public class ProductEntity extends BaseAuditEntity {
 		this.moisture = moisture;
 	}
 
+	public String getMoistureEn() {
+		return moistureEn;
+	}
+
+	public void setMoistureEn(String moistureEn) {
+		this.moistureEn = moistureEn;
+	}
+
+	public String getMoistureZh() {
+		return moistureZh;
+	}
+
+	public void setMoistureZh(String moistureZh) {
+		this.moistureZh = moistureZh;
+	}
+
 	public String getGlueType() {
 		return glueType;
 	}
 
 	public void setGlueType(String glueType) {
 		this.glueType = glueType;
+	}
+
+	public String getGlueTypeEn() {
+		return glueTypeEn;
+	}
+
+	public void setGlueTypeEn(String glueTypeEn) {
+		this.glueTypeEn = glueTypeEn;
+	}
+
+	public String getGlueTypeZh() {
+		return glueTypeZh;
+	}
+
+	public void setGlueTypeZh(String glueTypeZh) {
+		this.glueTypeZh = glueTypeZh;
 	}
 
 	public String getSize() {
@@ -174,6 +289,22 @@ public class ProductEntity extends BaseAuditEntity {
 		this.size = size;
 	}
 
+	public String getSizeEn() {
+		return sizeEn;
+	}
+
+	public void setSizeEn(String sizeEn) {
+		this.sizeEn = sizeEn;
+	}
+
+	public String getSizeZh() {
+		return sizeZh;
+	}
+
+	public void setSizeZh(String sizeZh) {
+		this.sizeZh = sizeZh;
+	}
+
 	public boolean isActive() {
 		return active;
 	}
@@ -182,12 +313,20 @@ public class ProductEntity extends BaseAuditEntity {
 		this.active = active;
 	}
 
+	public boolean isFeatured() {
+		return Boolean.TRUE.equals(featured);
+	}
+
+	public void setFeatured(boolean featured) {
+		this.featured = featured;
+	}
+
 	public List<String> getApplicationsVi() {
 		return applicationsVi;
 	}
 
 	public void setApplicationsVi(List<String> applicationsVi) {
-		this.applicationsVi = applicationsVi;
+		this.applicationsVi = new ArrayList<>(applicationsVi);
 	}
 
 	public List<String> getApplicationsEn() {
@@ -195,6 +334,14 @@ public class ProductEntity extends BaseAuditEntity {
 	}
 
 	public void setApplicationsEn(List<String> applicationsEn) {
-		this.applicationsEn = applicationsEn;
+		this.applicationsEn = new ArrayList<>(applicationsEn);
+	}
+
+	public List<String> getApplicationsZh() {
+		return applicationsZh;
+	}
+
+	public void setApplicationsZh(List<String> applicationsZh) {
+		this.applicationsZh = new ArrayList<>(applicationsZh);
 	}
 }

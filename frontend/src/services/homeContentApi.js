@@ -1,6 +1,23 @@
 import { getFallbackHomeContent } from '../locales/homeContentFallback'
 import { API_BASE_URL } from './apiConfig'
 
+function resolveMediaUrl(url) {
+  if (!url || url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url
+  }
+  return `${API_BASE_URL}${url.startsWith('/') ? url : `/${url}`}`
+}
+
+function normalizeHomeContent(data) {
+  return {
+    ...data,
+    heroSlides: (data.heroSlides ?? []).map((slide) => ({
+      ...slide,
+      image: resolveMediaUrl(slide.image),
+    })),
+  }
+}
+
 export async function loadHomeContent(locale, signal) {
   try {
     const response = await fetch(
@@ -18,7 +35,7 @@ export async function loadHomeContent(locale, signal) {
       throw new Error(`Home content request failed with status ${response.status}`)
     }
 
-    const data = await response.json()
+    const data = normalizeHomeContent(await response.json())
     return { data, source: 'api' }
   } catch (error) {
     if (error.name === 'AbortError') {
@@ -26,7 +43,7 @@ export async function loadHomeContent(locale, signal) {
     }
 
     return {
-      data: getFallbackHomeContent(locale),
+      data: normalizeHomeContent(getFallbackHomeContent(locale)),
       source: 'fallback',
     }
   }

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { NavLink, Outlet, useLocation } from 'react-router-dom'
+import { NavLink, Outlet } from 'react-router-dom'
 import {
   IconBell,
   IconCatalog,
@@ -8,9 +8,11 @@ import {
   IconHelp,
   IconLogout,
   IconMenu,
+  IconNavigation,
   IconRfq,
   IconUsers,
   IconClose,
+  IconChart,
 } from './AdminIcons'
 
 const NAV_ITEMS = [
@@ -33,9 +35,21 @@ const NAV_ITEMS = [
     roles: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
   },
   {
+    path: '/admin/export-market',
+    label: 'Export Market',
+    icon: IconChart,
+    roles: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  },
+  {
     path: '/admin/company',
     label: 'Company Profile',
     icon: IconCompany,
+    roles: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  },
+  {
+    path: '/admin/navigation',
+    label: 'Navigation Menu',
+    icon: IconNavigation,
     roles: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
   },
   {
@@ -56,13 +70,7 @@ function getInitials(name) {
 export function AdminLayout({ adminAuth, onLogout }) {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
-  const location = useLocation()
   const menuRef = useRef(null)
-
-  useEffect(() => {
-    setSidebarOpen(false)
-    setMenuOpen(false)
-  }, [location.pathname])
 
   useEffect(() => {
     if (!menuOpen) return undefined
@@ -108,6 +116,10 @@ export function AdminLayout({ adminAuth, onLogout }) {
                 <NavLink
                   key={item.path}
                   to={item.path}
+                  onClick={() => {
+                    setSidebarOpen(false)
+                    setMenuOpen(false)
+                  }}
                   className={({ isActive }) =>
                     `admin-nav-item${isActive ? ' is-active' : ''}`
                   }

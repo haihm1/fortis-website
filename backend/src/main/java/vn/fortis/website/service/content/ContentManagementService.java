@@ -14,23 +14,23 @@ import vn.fortis.website.entity.ContentProfileEntity;
 import vn.fortis.website.entity.HomeBannerEntity;
 import vn.fortis.website.repository.ContentProfileRepository;
 import vn.fortis.website.repository.HomeBannerRepository;
-import vn.fortis.website.service.catalog.FileStorageService;
+import vn.fortis.website.service.cloudinary.CloudinaryService;
 
 @Service
 public class ContentManagementService {
 
 	private static final String MAIN_PROFILE_ID = "main";
 
-	private final FileStorageService fileStorageService;
+	private final CloudinaryService cloudinaryService;
 	private final ContentProfileRepository contentProfileRepository;
 	private final HomeBannerRepository homeBannerRepository;
 
 	public ContentManagementService(
-			FileStorageService fileStorageService,
+			CloudinaryService cloudinaryService,
 			ContentProfileRepository contentProfileRepository,
 			HomeBannerRepository homeBannerRepository
 	) {
-		this.fileStorageService = fileStorageService;
+		this.cloudinaryService = cloudinaryService;
 		this.contentProfileRepository = contentProfileRepository;
 		this.homeBannerRepository = homeBannerRepository;
 	}
@@ -40,6 +40,7 @@ public class ContentManagementService {
 		return new AdminContentResponse(
 				profile.getAboutArticleVi(),
 				profile.getAboutArticleEn(),
+				profile.getAboutArticleZh(),
 				profile.getAddress(),
 				profile.getHotline(),
 				profile.getEmail(),
@@ -51,6 +52,7 @@ public class ContentManagementService {
 		ContentProfileEntity profile = requireMainProfile();
 		profile.setAboutArticleVi(request.aboutArticleVi());
 		profile.setAboutArticleEn(request.aboutArticleEn());
+		profile.setAboutArticleZh(nullableTrim(request.aboutArticleZh()));
 		profile.setAddress(request.address());
 		profile.setHotline(request.hotline());
 		profile.setEmail(request.email());
@@ -66,15 +68,25 @@ public class ContentManagementService {
 		HomeBannerEntity existingBanner = requireBanner(slot);
 		String imageUrl = image == null || image.isEmpty()
 				? existingBanner.getImageUrl()
-				: fileStorageService.store(image, "content/banners");
+				: uploadImageToCloudinary(image);
 
 		existingBanner.setTitleVi(request.titleVi());
 		existingBanner.setTitleEn(request.titleEn());
+		existingBanner.setTitleZh(nullableTrim(request.titleZh()));
 		existingBanner.setDescriptionVi(request.descriptionVi());
 		existingBanner.setDescriptionEn(request.descriptionEn());
+		existingBanner.setDescriptionZh(nullableTrim(request.descriptionZh()));
 		existingBanner.setOverlayLabel(request.overlayLabel());
 		existingBanner.setImageUrl(imageUrl);
 		return mapBanner(homeBannerRepository.save(existingBanner));
+	}
+
+	private String uploadImageToCloudinary(MultipartFile image) {
+		Object secureUrl = cloudinaryService.upload(image).get("secure_url");
+		if (secureUrl == null) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cloudinary upload did not return a secure URL");
+		}
+		return secureUrl.toString();
 	}
 
 	public synchronized ContentSnapshot getSnapshot() {
@@ -82,6 +94,7 @@ public class ContentManagementService {
 		return new ContentSnapshot(
 				profile.getAboutArticleVi(),
 				profile.getAboutArticleEn(),
+				profile.getAboutArticleZh(),
 				profile.getAddress(),
 				profile.getHotline(),
 				profile.getEmail(),
@@ -106,8 +119,10 @@ public class ContentManagementService {
 				banner.getSlot(),
 				banner.getTitleVi(),
 				banner.getTitleEn(),
+				banner.getTitleZh(),
 				banner.getDescriptionVi(),
 				banner.getDescriptionEn(),
+				banner.getDescriptionZh(),
 				banner.getOverlayLabel(),
 				banner.getImageUrl()
 		);
@@ -118,8 +133,10 @@ public class ContentManagementService {
 				banner.getSlot(),
 				banner.getTitleVi(),
 				banner.getTitleEn(),
+				banner.getTitleZh(),
 				banner.getDescriptionVi(),
 				banner.getDescriptionEn(),
+				banner.getDescriptionZh(),
 				banner.getOverlayLabel(),
 				banner.getImageUrl()
 		);
@@ -128,6 +145,7 @@ public class ContentManagementService {
 	public record ContentSnapshot(
 			String aboutArticleVi,
 			String aboutArticleEn,
+			String aboutArticleZh,
 			String address,
 			String hotline,
 			String email,
@@ -139,10 +157,19 @@ public class ContentManagementService {
 			int slot,
 			String titleVi,
 			String titleEn,
+			String titleZh,
 			String descriptionVi,
 			String descriptionEn,
+			String descriptionZh,
 			String overlayLabel,
 			String imageUrl
 	) {
+	}
+
+	private String nullableTrim(String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+		return value.trim();
 	}
 }

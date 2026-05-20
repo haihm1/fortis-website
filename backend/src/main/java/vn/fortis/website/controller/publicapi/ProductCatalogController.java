@@ -19,7 +19,7 @@ public class ProductCatalogController {
 	}
 
 	@GetMapping
-	public ProductCatalogResponse getCatalog(@RequestParam(defaultValue = "vi") String lang) {
+	public ProductCatalogResponse getCatalog(@RequestParam(defaultValue = "en") String lang) {
 		return productCatalogService.getPublicCatalog(lang);
 	}
 }

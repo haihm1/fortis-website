@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
 import { PhoneInput } from '../components/PhoneInput'
+import { ProductCard } from '../components/ProductCard'
 import { SectionHeading } from '../components/SectionHeading'
 import { SuccessModal } from '../components/SuccessModal'
 import { useJsonLd } from '../hooks/useJsonLd'
@@ -11,16 +11,7 @@ import { submitContactRequest } from '../services/publicContactApi'
 import { loadProductCatalog } from '../services/productCatalogApi'
 import { filterProducts, getUniqueOptions } from '../utils/productCatalog'
 
-const STATUS_COPY = {
-  vi: {
-    fallback: 'Backend chưa sẵn sàng, catalog đang hiển thị dữ liệu mẫu.',
-    live: 'Catalog đang dùng dữ liệu từ backend API.',
-  },
-  en: {
-    fallback: 'Backend is unavailable, so the catalog is showing fallback content.',
-    live: 'Catalog content is loading from the backend API.',
-  },
-}
+const PRODUCTS_PER_PAGE = 8
 
 const SPEC_LABELS = {
   vi: {
@@ -34,6 +25,12 @@ const SPEC_LABELS = {
     moisture: 'Quality standard',
     glueType: 'Origin / certification',
     size: 'Net weight / carton',
+  },
+  zh: {
+    thickness: '包装规格',
+    moisture: '质量标准',
+    glueType: '产地 / 认证',
+    size: '净重 / 箱规',
   },
 }
 
@@ -49,6 +46,14 @@ const FILTER_COPY = {
     noFilters: 'Không có bộ lọc nào khác cho nhóm sản phẩm này.',
     viewDetail: 'Xem chi tiết',
     downloadSpec: 'Tải file kỹ thuật',
+    breadcrumbHome: 'Trang chủ',
+    breadcrumbCurrent: 'Sản phẩm',
+    resultCount: 'sản phẩm phù hợp',
+    categoryLabel: 'Danh mục',
+    selectProduct: 'Chọn sản phẩm',
+    previous: 'Trước',
+    next: 'Sau',
+    page: 'Trang',
   },
   en: {
     title: 'Catalog filters',
@@ -61,6 +66,34 @@ const FILTER_COPY = {
     noFilters: 'No additional filters are available for this product group.',
     viewDetail: 'View detail',
     downloadSpec: 'Download spec sheet',
+    breadcrumbHome: 'Home',
+    breadcrumbCurrent: 'Products',
+    resultCount: 'matching products',
+    categoryLabel: 'Category',
+    selectProduct: 'Select product',
+    previous: 'Previous',
+    next: 'Next',
+    page: 'Page',
+  },
+  zh: {
+    title: '目录筛选',
+    search: '按产品名称、简介或分类搜索',
+    thickness: '按包装筛选',
+    glueType: '按产地 / 认证筛选',
+    moisture: '按质量标准筛选',
+    reset: '重置筛选',
+    all: '全部',
+    noFilters: '该产品组暂无其他筛选条件。',
+    viewDetail: '查看详情',
+    downloadSpec: '下载技术文件',
+    breadcrumbHome: '首页',
+    breadcrumbCurrent: '产品',
+    resultCount: '个匹配产品',
+    categoryLabel: '分类',
+    selectProduct: '选择产品',
+    previous: '上一页',
+    next: '下一页',
+    page: '第',
   },
 }
 
@@ -81,13 +114,21 @@ const QUOTE_STATUS_COPY = {
     productInterestLabel: 'Product interest',
     closeModal: 'Close',
   },
+  zh: {
+    successTitle: '提交成功！',
+    success: '您的报价请求已收到。Fortis VN 团队会尽快回复。',
+    error: '暂时无法提交请求。请稍后再试。',
+    sending: '提交中...',
+    productInterestLabel: '感兴趣的产品',
+    closeModal: '关闭',
+  },
 }
 
 export function ProductCatalogPage({ locale }) {
-  const [catalogData, setCatalogData] = useState(() => getFallbackProductCatalog('vi'))
-  const [usingFallback, setUsingFallback] = useState(true)
+  const [catalogData, setCatalogData] = useState(() => getFallbackProductCatalog(locale))
   const [selectedCategoryId, setSelectedCategoryId] = useState('all')
   const [selectedProductId, setSelectedProductId] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState('')
   const [selectedThickness, setSelectedThickness] = useState('')
   const [selectedGlueType, setSelectedGlueType] = useState('')
@@ -106,7 +147,6 @@ export function ProductCatalogPage({ locale }) {
   const [quoteSubmitting, setQuoteSubmitting] = useState(false)
   const [quoteFeedback, setQuoteFeedback] = useState('')
   const [quoteSuccess, setQuoteSuccess] = useState(false)
-  const productDetailPanelRef = useRef(null)
 
   useEffect(() => {
     const controller = new AbortController()
@@ -115,16 +155,18 @@ export function ProductCatalogPage({ locale }) {
       try {
         const result = await loadProductCatalog(locale, controller.signal)
         setCatalogData(result.data)
-        setUsingFallback(result.source === 'fallback')
         setSelectedCategoryId('all')
         setSelectedProductId(result.data.products[0]?.id ?? null)
+        setCurrentPage(1)
         setSearch('')
         setSelectedThickness('')
         setSelectedGlueType('')
         setSelectedMoisture('')
       } catch (error) {
         if (error.name !== 'AbortError') {
-          setUsingFallback(true)
+          const fallback = getFallbackProductCatalog(locale)
+          setCatalogData(fallback)
+          setSelectedProductId(fallback.products[0]?.id ?? null)
         }
       }
     }
@@ -134,15 +176,14 @@ export function ProductCatalogPage({ locale }) {
     return () => controller.abort()
   }, [locale])
 
-  const seo = SEO.products[locale] ?? SEO.products.vi
+  const seo = SEO.products[locale] ?? SEO.products.en
   useSeoMeta({ title: seo.title, description: seo.description, path: seo.path, locale })
   useJsonLd('organization', buildOrganizationSchema())
 
   const labels = catalogData.labels
-  const statusCopy = STATUS_COPY[locale] ?? STATUS_COPY.vi
-  const specLabels = SPEC_LABELS[locale] ?? SPEC_LABELS.vi
-  const filterCopy = FILTER_COPY[locale] ?? FILTER_COPY.vi
-  const quoteStatusCopy = QUOTE_STATUS_COPY[locale] ?? QUOTE_STATUS_COPY.vi
+  const specLabels = SPEC_LABELS[locale] ?? SPEC_LABELS.en
+  const filterCopy = FILTER_COPY[locale] ?? FILTER_COPY.en
+  const quoteStatusCopy = QUOTE_STATUS_COPY[locale] ?? QUOTE_STATUS_COPY.en
 
   const filteredProducts = useMemo(() => {
     return filterProducts(catalogData.products, {
@@ -175,6 +216,13 @@ export function ProductCatalogPage({ locale }) {
     )
   }, [filteredProducts, selectedProductId])
 
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / PRODUCTS_PER_PAGE))
+  const safeCurrentPage = Math.min(currentPage, totalPages)
+  const paginatedProducts = useMemo(() => {
+    const firstIndex = (safeCurrentPage - 1) * PRODUCTS_PER_PAGE
+    return filteredProducts.slice(firstIndex, firstIndex + PRODUCTS_PER_PAGE)
+  }, [filteredProducts, safeCurrentPage])
+
   const availableFilterOptions = useMemo(() => {
     const categoryScopedProducts =
       selectedCategoryId === 'all'
@@ -199,6 +247,7 @@ export function ProductCatalogPage({ locale }) {
 
   function handleSelectCategory(categoryId) {
     setSelectedCategoryId(categoryId)
+    setCurrentPage(1)
     setSelectedThickness('')
     setSelectedGlueType('')
     setSelectedMoisture('')
@@ -206,38 +255,22 @@ export function ProductCatalogPage({ locale }) {
 
   function handleResetFilters() {
     setSearch('')
+    setCurrentPage(1)
     setSelectedThickness('')
     setSelectedGlueType('')
     setSelectedMoisture('')
   }
 
-  function handleSelectProduct(productId) {
-    setSelectedProductId(productId)
-    window.requestAnimationFrame(() => {
-      const panel = productDetailPanelRef.current
-      if (!panel) {
-        return
-      }
+  function handleSelectProduct(product) {
+    setSelectedProductId(product.id)
+    setQuoteForm((current) => ({
+      ...current,
+      productInterest: product.name,
+    }))
+  }
 
-      const stickyHeader = document.querySelector('.topbar')
-      const headerOffset = stickyHeader ? stickyHeader.getBoundingClientRect().height : 0
-      const viewportHeight = window.innerHeight
-      const panelRect = panel.getBoundingClientRect()
-      const panelTop = panelRect.top + window.scrollY
-      const availableHeight = viewportHeight - headerOffset
-
-      let targetScroll
-      if (panelRect.height <= availableHeight) {
-        targetScroll = panelTop - headerOffset - (availableHeight - panelRect.height) / 2
-      } else {
-        targetScroll = panelTop - headerOffset - 24
-      }
-
-      window.scrollTo({
-        top: Math.max(targetScroll, 0),
-        behavior: 'smooth',
-      })
-    })
+  function handleChangePage(nextPage) {
+    setCurrentPage(Math.min(Math.max(nextPage, 1), totalPages))
   }
 
   async function handleQuoteSubmit(event) {
@@ -278,25 +311,32 @@ export function ProductCatalogPage({ locale }) {
   }
 
   return (
-    <main>
-      <section className="catalog-hero">
+    <main className="b2b-catalog-page">
+      <section className="catalog-hero b2b-catalog-hero">
         <div className="catalog-hero-copy">
+          <nav className="catalog-breadcrumb" aria-label="Breadcrumb">
+            <a href="/">{filterCopy.breadcrumbHome}</a>
+            <span aria-hidden="true">/</span>
+            <span>{filterCopy.breadcrumbCurrent}</span>
+          </nav>
           <SectionHeading
             eyebrow={catalogData.pageHeader.eyebrow}
             title={catalogData.pageHeader.title}
-            description=""
+            description={catalogData.pageHeader.description}
           />
-          {/* <div className={`catalog-status ${usingFallback ? 'is-warning' : ''}`}>
-            <span className="status-dot" aria-hidden="true"></span>
-            <span>{usingFallback ? statusCopy.fallback : statusCopy.live}</span>
-          </div> */}
+        </div>
+        <div className="b2b-catalog-hero-image">
+          <img
+            src="https://picsum.photos/seed/fortis-agriculture-banner/1200/760"
+            alt="Agricultural export product catalog banner"
+          />
         </div>
       </section>
 
-      <section className="catalog-section">
+      <section className="catalog-section b2b-catalog-layout">
         <aside className="catalog-sidebar">
           <div className="catalog-sidebar-card">
-            <p className="subsection-title">{catalogData.pageHeader.eyebrow}</p>
+            <p className="subsection-title">{filterCopy.categoryLabel}</p>
             <div className="category-list">
               <button
                 type="button"
@@ -327,10 +367,8 @@ export function ProductCatalogPage({ locale }) {
               })}
             </div>
           </div>
-        </aside>
 
-        <div className="catalog-content">
-          <div className="catalog-block">
+          <div className="catalog-sidebar-card">
             <div className="catalog-block-header">
               <p className="subsection-title">{filterCopy.title}</p>
               <button type="button" className="secondary-button" onClick={handleResetFilters}>
@@ -344,12 +382,18 @@ export function ProductCatalogPage({ locale }) {
                 value={search}
                 placeholder={filterCopy.search}
                 aria-label={filterCopy.search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={(event) => {
+                  setSearch(event.target.value)
+                  setCurrentPage(1)
+                }}
               />
               <select
                 value={selectedThickness}
                 aria-label={filterCopy.thickness}
-                onChange={(event) => setSelectedThickness(event.target.value)}
+                onChange={(event) => {
+                  setSelectedThickness(event.target.value)
+                  setCurrentPage(1)
+                }}
               >
                 <option value="">{filterCopy.thickness}</option>
                 {availableFilterOptions.thicknesses.map((option) => (
@@ -361,7 +405,10 @@ export function ProductCatalogPage({ locale }) {
               <select
                 value={selectedGlueType}
                 aria-label={filterCopy.glueType}
-                onChange={(event) => setSelectedGlueType(event.target.value)}
+                onChange={(event) => {
+                  setSelectedGlueType(event.target.value)
+                  setCurrentPage(1)
+                }}
               >
                 <option value="">{filterCopy.glueType}</option>
                 {availableFilterOptions.glueTypes.map((option) => (
@@ -373,7 +420,10 @@ export function ProductCatalogPage({ locale }) {
               <select
                 value={selectedMoisture}
                 aria-label={filterCopy.moisture}
-                onChange={(event) => setSelectedMoisture(event.target.value)}
+                onChange={(event) => {
+                  setSelectedMoisture(event.target.value)
+                  setCurrentPage(1)
+                }}
               >
                 <option value="">{filterCopy.moisture}</option>
                 {availableFilterOptions.moistures.map((option) => (
@@ -384,127 +434,71 @@ export function ProductCatalogPage({ locale }) {
               </select>
             </div>
           </div>
+        </aside>
 
-          <div className="catalog-block">
-            <div className="catalog-block-header">
+        <div className="catalog-content">
+          <div className="catalog-block b2b-product-toolbar">
+            <div>
               <p className="subsection-title">{labels.productList}</p>
+              <strong>
+                {filteredProducts.length} {filterCopy.resultCount}
+              </strong>
             </div>
+            <p>
+              {filterCopy.page} {safeCurrentPage} / {totalPages}
+            </p>
+          </div>
 
+          <div className="catalog-block b2b-grid-block">
             {filteredProducts.length === 0 ? (
               <div className="catalog-empty">{labels.empty}</div>
             ) : (
-              <div className="product-catalog-grid">
-                {filteredProducts.map((product) => (
-                  <article
-                    key={product.id}
-                    className={`catalog-product-card ${
-                      selectedProduct?.id === product.id ? 'is-active' : ''
-                    }`}
-                    onClick={() => handleSelectProduct(product.id)}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter' || event.key === ' ') {
-                        event.preventDefault()
-                        handleSelectProduct(product.id)
-                      }
-                    }}
-                    role="button"
-                    tabIndex={0}
-                  >
-                    <div
-                      className="catalog-product-image"
-                      style={{ backgroundImage: `url(${product.image})` }}
+              <>
+                <div className="product-catalog-grid b2b-product-grid">
+                  {paginatedProducts.map((product, index) => (
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      index={index}
+                      image={getProductThumbnail(product, index)}
+                      isActive={selectedProduct?.id === product.id}
+                      labels={filterCopy}
+                      specLabels={specLabels}
+                      onSelect={handleSelectProduct}
                     />
-                    <div className="catalog-product-body">
-                      <p className="product-chip">{product.categoryName}</p>
-                      <h3>{product.name}</h3>
-                      <p>{product.summary}</p>
-                      <div className="catalog-product-specs-preview">
-                        <span>{product.specifications.thickness}</span>
-                        <span>{product.specifications.size}</span>
-                      </div>
-                      <div className="catalog-product-actions">
-                        <Link className="secondary-button" to={`/products/${product.slug}`}>
-                          {filterCopy.viewDetail}
-                        </Link>
-                        {product.specificationFileUrl ? (
-                          <a
-                            className="secondary-button"
-                            href={product.specificationFileUrl}
-                            target="_blank"
-                            rel="noreferrer"
-                            onClick={(event) => event.stopPropagation()}
-                          >
-                            {filterCopy.downloadSpec}
-                          </a>
-                        ) : null}
-                      </div>
-                    </div>
-                  </article>
-                ))}
-              </div>
+                  ))}
+                </div>
+
+                <div className="catalog-pagination" aria-label="Product pagination">
+                  <button
+                    type="button"
+                    onClick={() => handleChangePage(safeCurrentPage - 1)}
+                    disabled={safeCurrentPage === 1}
+                  >
+                    {filterCopy.previous}
+                  </button>
+                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
+                    <button
+                      key={page}
+                      type="button"
+                      className={page === safeCurrentPage ? 'is-active' : ''}
+                      onClick={() => handleChangePage(page)}
+                      aria-current={page === safeCurrentPage ? 'page' : undefined}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => handleChangePage(safeCurrentPage + 1)}
+                    disabled={safeCurrentPage === totalPages}
+                  >
+                    {filterCopy.next}
+                  </button>
+                </div>
+              </>
             )}
           </div>
-
-          {selectedProduct ? (
-            <div className="catalog-detail-panel" ref={productDetailPanelRef}>
-              <div
-                className="catalog-detail-image"
-                style={{ backgroundImage: `url(${selectedProduct.image})` }}
-              />
-
-              <div className="catalog-detail-content">
-                <div className="catalog-block-header">
-                  <div>
-                    <p className="subsection-title">{labels.productDetail}</p>
-                    <h2 className="catalog-detail-title">{selectedProduct.name}</h2>
-                  </div>
-                  <div className="catalog-detail-actions">
-                    <Link className="secondary-button" to={`/products/${selectedProduct.slug}`}>
-                      {filterCopy.viewDetail}
-                    </Link>
-                    <a className="primary-button" href="#quote-request">
-                      {selectedProduct.quoteLabel}
-                    </a>
-                  </div>
-                </div>
-
-                <p className="catalog-detail-summary">{selectedProduct.summary}</p>
-
-                <div className="catalog-spec-grid">
-                  <div className="catalog-spec-card">
-                    <p className="subsection-title">{labels.technicalSpecs}</p>
-                    <dl className="catalog-spec-list">
-                      <div>
-                        <dt>{specLabels.thickness}</dt>
-                        <dd>{selectedProduct.specifications.thickness}</dd>
-                      </div>
-                      <div>
-                        <dt>{specLabels.moisture}</dt>
-                        <dd>{selectedProduct.specifications.moisture}</dd>
-                      </div>
-                      <div>
-                        <dt>{specLabels.glueType}</dt>
-                        <dd>{selectedProduct.specifications.glueType}</dd>
-                      </div>
-                      <div>
-                        <dt>{specLabels.size}</dt>
-                        <dd>{selectedProduct.specifications.size}</dd>
-                      </div>
-                    </dl>
-                  </div>
-
-                  <div className="catalog-spec-card">
-                    <p className="subsection-title">{labels.applications}</p>
-                    <ul className="catalog-application-list">
-                      {selectedProduct.applications.map((application) => (
-                        <li key={application}>{application}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : null}
         </div>
       </section>
 
@@ -618,4 +612,9 @@ export function ProductCatalogPage({ locale }) {
       />
     </main>
   )
+}
+
+function getProductThumbnail(product, index) {
+  const seed = encodeURIComponent(`${product.slug || product.id || product.name}-${index}`)
+  return `https://picsum.photos/seed/fortis-${seed}/900/720`
 }

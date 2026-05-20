@@ -9,8 +9,7 @@ import { loadProductCatalog } from '../services/productCatalogApi'
 const DETAIL_COPY = {
   vi: {
     fallback: 'Đang hiển thị dữ liệu mẫu vì backend chưa sẵn sàng.',
-    live: 'Thông tin sản phẩm đang được tải từ backend API.',
-    backToCatalog: 'Quay lại catalog',
+    backToCatalog: 'Quay lại',
     downloadSpec: 'Tải file kỹ thuật',
     quote: 'Nhận báo giá',
     gallery: 'Gallery sản phẩm',
@@ -28,8 +27,7 @@ const DETAIL_COPY = {
   },
   en: {
     fallback: 'Showing fallback content because the backend is not available.',
-    live: 'Product information is loading from the backend API.',
-    backToCatalog: 'Back to catalog',
+    backToCatalog: 'Back',
     downloadSpec: 'Download spec sheet',
     quote: 'Get a quote',
     gallery: 'Product gallery',
@@ -46,14 +44,31 @@ const DETAIL_COPY = {
     size: 'Net weight / carton',
     viewDetail: 'View detail',
   },
+  zh: {
+    fallback: '由于后端暂不可用，正在显示备用内容。',
+    backToCatalog: '返回',
+    downloadSpec: '下载技术文件',
+    quote: '获取报价',
+    gallery: '产品图库',
+    applications: '市场 / 渠道',
+    technicalSpecs: '技术规格',
+    relatedProducts: '相关产品',
+    relatedDescription: '同类产品便于买家在发送 RFQ 前快速比较。',
+    notFound: '未找到该产品。',
+    breadcrumbProducts: '产品',
+    thickness: '包装规格',
+    moisture: '质量标准',
+    glueType: '产地 / 认证',
+    size: '净重 / 箱规',
+    viewDetail: '查看详情',
+  },
 }
 
 export function ProductDetailPage({ locale }) {
   const { slug } = useParams()
   const [catalogData, setCatalogData] = useState(null)
-  const [usingFallback, setUsingFallback] = useState(true)
   const [selectedImage, setSelectedImage] = useState('')
-  const copy = DETAIL_COPY[locale] ?? DETAIL_COPY.vi
+  const copy = DETAIL_COPY[locale] ?? DETAIL_COPY.en
 
   useEffect(() => {
     const controller = new AbortController()
@@ -62,7 +77,6 @@ export function ProductDetailPage({ locale }) {
       try {
         const result = await loadProductCatalog(locale, controller.signal)
         setCatalogData(result.data)
-        setUsingFallback(result.source === 'fallback')
       } catch (error) {
         if (error.name !== 'AbortError') {
           setCatalogData(null)
@@ -89,7 +103,7 @@ export function ProductDetailPage({ locale }) {
   }, [catalogData, product])
 
   const productSeo = buildProductSeo(product, locale)
-  const catalogSeo = SEO.products[locale] ?? SEO.products.vi
+  const catalogSeo = SEO.products[locale] ?? SEO.products.en
 
   useSeoMeta(
     productSeo
@@ -101,8 +115,8 @@ export function ProductDetailPage({ locale }) {
     'breadcrumb',
     product
       ? buildBreadcrumbSchema([
-          { name: locale === 'vi' ? 'Trang chủ' : 'Home', path: '/' },
-          { name: locale === 'vi' ? 'Sản phẩm' : 'Products', path: '/products' },
+          { name: locale === 'vi' ? 'Trang chủ' : locale === 'zh' ? '首页' : 'Home', path: '/' },
+          { name: locale === 'vi' ? 'Sản phẩm' : locale === 'zh' ? '产品' : 'Products', path: '/products' },
           { name: product.name, path: `/products/${product.slug}` },
         ])
       : null,
@@ -146,10 +160,6 @@ export function ProductDetailPage({ locale }) {
             title={product.name}
             description={product.summary}
           />
-          <div className={`catalog-status ${usingFallback ? 'is-warning' : ''}`}>
-            <span className="status-dot" aria-hidden="true"></span>
-            <span>{usingFallback ? copy.fallback : copy.live}</span>
-          </div>
         </div>
       </section>
 

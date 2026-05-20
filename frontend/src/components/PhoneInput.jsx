@@ -67,9 +67,9 @@ export function PhoneInput({
         value={localNumber}
         placeholder={placeholder}
         aria-label={ariaLabel}
-        pattern="[0-9\s\-]+"
+        pattern="[0-9\s-]+"
         title="Chỉ nhập số, dấu cách hoặc dấu gạch ngang"
-        onChange={(e) => onLocalNumberChange(e.target.value.replace(/[^0-9\s\-]/g, ''))}
+        onChange={(e) => onLocalNumberChange(e.target.value.replace(/[^0-9\s-]/g, ''))}
       />
     </div>
   )

@@ -14,6 +14,12 @@ export const SEO = {
         'Fortis VN is a Vietnamese agricultural product supply partner for global buyers. Specialising in pomelo, banana, fresh coconut and desiccated coconut. Transparent sourcing, stable delivery, flexible B2B support.',
       path: '/',
     },
+    zh: {
+      title: '可靠透明的越南农产品出口解决方案',
+      description:
+        'Fortis VN 是面向全球买家的越南农产品供应伙伴，专注于水果、椰子及农产品出口，提供透明采购、稳定交付和灵活的 B2B 支持。',
+      path: '/',
+    },
   },
   products: {
     vi: {
@@ -26,6 +32,12 @@ export const SEO = {
       title: 'Export Agricultural Product Catalog',
       description:
         "Browse Fortis VN's export catalogue: green-skin pomelo, Cavendish banana, diamond-cut coconut, desiccated coconut, coconut milk. Filter by packing, certification and target market.",
+      path: '/products',
+    },
+    zh: {
+      title: '出口农产品目录',
+      description:
+        '浏览 Fortis VN 出口产品目录，按包装、认证和目标市场筛选重点农产品。',
       path: '/products',
     },
   },
@@ -42,6 +54,12 @@ export const SEO = {
         'Contact Fortis VN for a quote, packing specifications or shipment scheduling. Address: 6/40/165 Duong Quang Ham, Nghia Do Ward, Hanoi, Vietnam. Email: fortisvn.coltd@gmail.com.',
       path: '/contact',
     },
+    zh: {
+      title: '联系我们',
+      description:
+        '联系 Fortis VN 获取报价、包装规格或出货计划。邮箱：fortisvn.coltd@gmail.com。',
+      path: '/contact',
+    },
   },
 }
 
@@ -49,11 +67,14 @@ export function buildProductSeo(product, locale) {
   if (!product) return null
 
   const isVi = locale === 'vi'
+  const isZh = locale === 'zh'
   return {
     title: product.name,
     description: isVi
       ? `${product.name} – ${product.summary}. Quy cách: ${product.specifications?.thickness ?? ''}. Tiêu chuẩn: ${product.specifications?.moisture ?? ''}. Liên hệ Fortis VN để nhận báo giá xuất khẩu.`
-      : `${product.name} – ${product.summary}. Packing: ${product.specifications?.thickness ?? ''}. Standard: ${product.specifications?.moisture ?? ''}. Contact Fortis VN for an export quote.`,
+      : isZh
+        ? `${product.name} - ${product.summary}. 包装：${product.specifications?.thickness ?? ''}. 标准：${product.specifications?.moisture ?? ''}. 联系 Fortis VN 获取出口报价。`
+        : `${product.name} – ${product.summary}. Packing: ${product.specifications?.thickness ?? ''}. Standard: ${product.specifications?.moisture ?? ''}. Contact Fortis VN for an export quote.`,
     path: `/products/${product.slug}`,
     image: product.image,
     type: 'article',

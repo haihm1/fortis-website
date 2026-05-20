@@ -1,6 +1,7 @@
 const OPTIONS = [
-  { value: 'vi', label: 'VI' },
   { value: 'en', label: 'EN' },
+  { value: 'vi', label: 'VI' },
+  { value: 'zh', label: '中文' },
 ]
 
 export function LanguageSwitcher({ locale, onChange }) {

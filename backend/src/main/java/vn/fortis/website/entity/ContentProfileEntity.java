@@ -18,6 +18,9 @@ public class ContentProfileEntity extends BaseAuditEntity {
 	@Column(name = "about_article_en", nullable = false, columnDefinition = "TEXT")
 	private String aboutArticleEn;
 
+	@Column(name = "about_article_zh", columnDefinition = "TEXT")
+	private String aboutArticleZh;
+
 	@Column(nullable = false, length = 255)
 	private String address;
 
@@ -49,6 +52,14 @@ public class ContentProfileEntity extends BaseAuditEntity {
 
 	public void setAboutArticleEn(String aboutArticleEn) {
 		this.aboutArticleEn = aboutArticleEn;
+	}
+
+	public String getAboutArticleZh() {
+		return aboutArticleZh;
+	}
+
+	public void setAboutArticleZh(String aboutArticleZh) {
+		this.aboutArticleZh = aboutArticleZh;
 	}
 
 	public String getAddress() {

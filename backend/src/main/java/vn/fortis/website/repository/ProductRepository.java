@@ -26,5 +26,8 @@ public interface ProductRepository extends JpaRepository<ProductEntity, String> 
 	@EntityGraph(attributePaths = "category")
 	List<ProductEntity> findByActiveTrueOrderByCreatedAtAsc();
 
+	@EntityGraph(attributePaths = "category")
+	List<ProductEntity> findByActiveTrueAndFeaturedTrueOrderByCreatedAtAsc();
+
 	boolean existsByCategory_Id(String categoryId);
 }

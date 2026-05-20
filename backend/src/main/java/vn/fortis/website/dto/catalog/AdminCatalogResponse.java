@@ -20,12 +20,22 @@ public record AdminCatalogResponse(
 			String slug,
 			String categoryId,
 			String name,
+			String nameEn,
+			String nameZh,
 			String summary,
+			String summaryEn,
+			String summaryZh,
 			String imageUrl,
 			String specificationFileUrl,
+			List<String> galleryImages,
 			List<String> applications,
+			List<String> applicationsEn,
+			List<String> applicationsZh,
 			TechnicalSpecifications specifications,
-			String quoteLabel
+			TechnicalSpecifications specificationsEn,
+			TechnicalSpecifications specificationsZh,
+			String quoteLabel,
+			boolean featured
 	) {
 	}
 

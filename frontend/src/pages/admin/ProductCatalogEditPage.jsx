@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import {
   IconArrowLeft,
-  IconImage,
   IconPlus,
   IconTrash,
   IconUpload,
@@ -11,22 +10,48 @@ import {
   createAdminProduct,
   getAdminCatalog,
   updateAdminProduct,
+  uploadAdminCatalogImage,
 } from '../../services/admin/adminApi'
 
 const EMPTY_PRODUCT = {
   slug: '',
   categoryId: '',
   name: '',
+  nameEn: '',
+  nameZh: '',
   summary: '',
+  summaryEn: '',
+  summaryZh: '',
   quoteLabel: '',
+  featured: false,
   applications: [''],
+  applicationsEn: [''],
+  applicationsZh: [''],
   specifications: {
     thickness: '',
     moisture: '',
     glueType: '',
     size: '',
   },
+  specificationsEn: {
+    thickness: '',
+    moisture: '',
+    glueType: '',
+    size: '',
+  },
+  specificationsZh: {
+    thickness: '',
+    moisture: '',
+    glueType: '',
+    size: '',
+  },
 }
+
+const LANGUAGE_TABS = [
+  { value: 'vi', label: 'Vi', nameKey: 'name', summaryKey: 'summary', appsKey: 'applications', specsKey: 'specifications' },
+  { value: 'en', label: 'En', nameKey: 'nameEn', summaryKey: 'summaryEn', appsKey: 'applicationsEn', specsKey: 'specificationsEn' },
+  { value: 'zh', label: '中文', nameKey: 'nameZh', summaryKey: 'summaryZh', appsKey: 'applicationsZh', specsKey: 'specificationsZh' },
+]
 
 const SPEC_LABELS = {
   thickness: 'Quy cách đóng gói',
@@ -43,19 +68,19 @@ export function ProductCatalogEditPage() {
 
   const [categories, setCategories] = useState([])
   const [form, setForm] = useState(EMPTY_PRODUCT)
-  const [imageFile, setImageFile] = useState(null)
   const [specFile, setSpecFile] = useState(null)
-  const [existingImage, setExistingImage] = useState(null)
+  const [galleryImages, setGalleryImages] = useState([])
   const [existingSpecUrl, setExistingSpecUrl] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
+  const [galleryUploading, setGalleryUploading] = useState(false)
   const [error, setError] = useState('')
   const [message, setMessage] = useState('')
   const [lang, setLang] = useState('vi')
+  const activeLanguage = LANGUAGE_TABS.find((item) => item.value === lang) ?? LANGUAGE_TABS[0]
 
   useEffect(() => {
     let mounted = true
-    setLoading(true)
     getAdminCatalog(adminAuth.token)
       .then((data) => {
         if (!mounted) return
@@ -69,17 +94,36 @@ export function ProductCatalogEditPage() {
               slug: product.slug,
               categoryId: product.categoryId,
               name: product.name,
+              nameEn: product.nameEn ?? '',
+              nameZh: product.nameZh ?? '',
               summary: product.summary,
+              summaryEn: product.summaryEn ?? '',
+              summaryZh: product.summaryZh ?? '',
               quoteLabel: product.quoteLabel ?? '',
+              featured: Boolean(product.featured),
               applications: product.applications?.length ? product.applications : [''],
+              applicationsEn: product.applicationsEn?.length ? product.applicationsEn : [''],
+              applicationsZh: product.applicationsZh?.length ? product.applicationsZh : [''],
               specifications: {
                 thickness: product.specifications?.thickness ?? '',
                 moisture: product.specifications?.moisture ?? '',
                 glueType: product.specifications?.glueType ?? '',
                 size: product.specifications?.size ?? '',
               },
+              specificationsEn: {
+                thickness: product.specificationsEn?.thickness ?? '',
+                moisture: product.specificationsEn?.moisture ?? '',
+                glueType: product.specificationsEn?.glueType ?? '',
+                size: product.specificationsEn?.size ?? '',
+              },
+              specificationsZh: {
+                thickness: product.specificationsZh?.thickness ?? '',
+                moisture: product.specificationsZh?.moisture ?? '',
+                glueType: product.specificationsZh?.glueType ?? '',
+                size: product.specificationsZh?.size ?? '',
+              },
             })
-            setExistingImage(product.imageUrl)
+            setGalleryImages(product.galleryImages?.length ? product.galleryImages : [product.imageUrl].filter(Boolean))
             setExistingSpecUrl(product.specificationFileUrl)
           }
         } else if (data.categories?.length) {
@@ -97,62 +141,115 @@ export function ProductCatalogEditPage() {
     }
   }, [adminAuth.token, productId])
 
+  function updateLocalizedField(key, value) {
+    setForm((current) => ({ ...current, [key]: value }))
+  }
+
   function updateSpec(key, value) {
     setForm((current) => ({
       ...current,
-      specifications: { ...current.specifications, [key]: value },
+      [activeLanguage.specsKey]: { ...current[activeLanguage.specsKey], [key]: value },
     }))
   }
 
   function updateApplication(index, value) {
     setForm((current) => {
-      const next = [...current.applications]
+      const next = [...current[activeLanguage.appsKey]]
       next[index] = value
-      return { ...current, applications: next }
+      return { ...current, [activeLanguage.appsKey]: next }
     })
   }
 
   function addApplication() {
-    setForm((current) => ({ ...current, applications: [...current.applications, ''] }))
+    setForm((current) => ({
+      ...current,
+      [activeLanguage.appsKey]: [...current[activeLanguage.appsKey], ''],
+    }))
   }
 
   function removeApplication(index) {
     setForm((current) => ({
       ...current,
-      applications: current.applications.filter((_, i) => i !== index),
+      [activeLanguage.appsKey]: current[activeLanguage.appsKey].filter((_, i) => i !== index),
     }))
+  }
+
+  async function handleGalleryFilesChange(files) {
+    const selectedFiles = Array.from(files ?? [])
+    if (selectedFiles.length === 0) return
+
+    setGalleryUploading(true)
+    setMessage('')
+
+    try {
+      const uploadedUrls = []
+      for (const file of selectedFiles) {
+        const uploadResult = await uploadAdminCatalogImage(adminAuth.token, file)
+        const imageUrl = uploadResult.secure_url ?? uploadResult.url
+        if (!imageUrl) {
+          throw new Error('Cloudinary không trả về URL ảnh.')
+        }
+        uploadedUrls.push(imageUrl)
+      }
+      setGalleryImages((current) => [...current, ...uploadedUrls])
+      setMessage(`Đã upload ${uploadedUrls.length} ảnh lên Cloudinary. Bấm lưu để ghi gallery vào sản phẩm.`)
+    } catch (err) {
+      setMessage(err.message)
+    } finally {
+      setGalleryUploading(false)
+    }
+  }
+
+  function removeExistingGalleryImage(index) {
+    setGalleryImages((current) => current.filter((_, imageIndex) => imageIndex !== index))
   }
 
   async function handleSubmit(event) {
     event.preventDefault()
     const cleanedApplications = form.applications.map((a) => a.trim()).filter(Boolean)
+    const cleanedApplicationsEn = form.applicationsEn.map((a) => a.trim()).filter(Boolean)
+    const cleanedApplicationsZh = form.applicationsZh.map((a) => a.trim()).filter(Boolean)
     if (cleanedApplications.length === 0) {
       setMessage('Cần ít nhất một ứng dụng / mục đích sử dụng.')
       return
     }
-    if (isCreate && !imageFile) {
-      setMessage('Cần tải ảnh chính cho sản phẩm mới.')
+    if (galleryUploading) {
+      setMessage('Ảnh đang được upload lên Cloudinary, vui lòng đợi hoàn tất rồi lưu.')
+      return
+    }
+    if (isCreate && galleryImages.length === 0) {
+      setMessage('Cần tải ít nhất một ảnh cho sản phẩm mới.')
       return
     }
 
     setSubmitting(true)
     setMessage('')
 
-    const payload = {
-      slug: form.slug,
-      categoryId: form.categoryId,
-      name: form.name,
-      summary: form.summary,
-      quoteLabel: form.quoteLabel || null,
-      applications: cleanedApplications,
-      specifications: form.specifications,
-    }
-
     try {
+      const payload = {
+        slug: form.slug,
+        categoryId: form.categoryId,
+        name: form.name,
+        nameEn: form.nameEn,
+        nameZh: form.nameZh,
+        summary: form.summary,
+        summaryEn: form.summaryEn,
+        summaryZh: form.summaryZh,
+        quoteLabel: form.quoteLabel || null,
+        featured: form.featured,
+        applications: cleanedApplications,
+        applicationsEn: cleanedApplicationsEn,
+        applicationsZh: cleanedApplicationsZh,
+        specifications: form.specifications,
+        specificationsEn: form.specificationsEn,
+        specificationsZh: form.specificationsZh,
+        galleryImages,
+      }
+
       if (isCreate) {
-        await createAdminProduct(adminAuth.token, payload, imageFile, specFile)
+        await createAdminProduct(adminAuth.token, payload, null, specFile)
       } else {
-        await updateAdminProduct(adminAuth.token, productId, payload, imageFile, specFile)
+        await updateAdminProduct(adminAuth.token, productId, payload, null, specFile)
       }
       navigate('/admin/products', { replace: true })
     } catch (err) {
@@ -182,7 +279,7 @@ export function ProductCatalogEditPage() {
             type="button"
             className="admin-icon-button"
             onClick={() => navigate('/admin/products')}
-            aria-label="Quay lại catalog"
+            aria-label="Quay lại"
           >
             <IconArrowLeft />
           </button>
@@ -198,20 +295,16 @@ export function ProductCatalogEditPage() {
 
         <div className="product-editor-header-actions">
           <div className="lang-tabs" role="tablist">
-            <button
-              type="button"
-              className={lang === 'vi' ? 'is-active' : ''}
-              onClick={() => setLang('vi')}
-            >
-              Vi
-            </button>
-            <button
-              type="button"
-              className={lang === 'en' ? 'is-active' : ''}
-              onClick={() => setLang('en')}
-            >
-              En
-            </button>
+            {LANGUAGE_TABS.map((item) => (
+              <button
+                key={item.value}
+                type="button"
+                className={lang === item.value ? 'is-active' : ''}
+                onClick={() => setLang(item.value)}
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
         </div>
       </div>
@@ -220,7 +313,7 @@ export function ProductCatalogEditPage() {
       {message ? <div className="alert alert-error">{message}</div> : null}
 
       <p style={{ color: 'var(--admin-text-muted)', fontSize: '0.82rem', marginTop: -8, marginBottom: 16 }}>
-        Lưu ý: API hiện lưu chung một bản dịch theo `locale` hệ thống, chưa tách trường vi/en độc lập. Tab ngôn ngữ ở đây chỉ phục vụ định hướng UI; sau khi backend tách field vi/en sẽ binding riêng từng tab.
+        Nhập tiếng Việt làm bản gốc bắt buộc. Tiếng Anh và tiếng Trung có thể nhập riêng; nếu bỏ trống, backend sẽ fallback từ bản tiếng Việt.
       </p>
 
       <form onSubmit={handleSubmit}>
@@ -238,9 +331,9 @@ export function ProductCatalogEditPage() {
                 <span className="field-label">Tên sản phẩm</span>
                 <input
                   className="field-input"
-                  value={form.name}
-                  onChange={(event) => setForm((c) => ({ ...c, name: event.target.value }))}
-                  required
+                  value={form[activeLanguage.nameKey]}
+                  onChange={(event) => updateLocalizedField(activeLanguage.nameKey, event.target.value)}
+                  required={lang === 'vi'}
                   placeholder="Vd: Hạt điều rang muối"
                 />
               </label>
@@ -267,9 +360,9 @@ export function ProductCatalogEditPage() {
                 <textarea
                   className="field-textarea"
                   rows={5}
-                  value={form.summary}
-                  onChange={(event) => setForm((c) => ({ ...c, summary: event.target.value }))}
-                  required
+                  value={form[activeLanguage.summaryKey]}
+                  onChange={(event) => updateLocalizedField(activeLanguage.summaryKey, event.target.value)}
+                  required={lang === 'vi'}
                   placeholder="Mô tả ngắn về sản phẩm, tiêu chuẩn và lợi thế..."
                 />
               </label>
@@ -283,6 +376,19 @@ export function ProductCatalogEditPage() {
                   placeholder="Vd: Yêu cầu báo giá"
                 />
               </label>
+
+              <label className="featured-product-toggle">
+                <input
+                  type="checkbox"
+                  checked={form.featured}
+                  onChange={(event) => setForm((c) => ({ ...c, featured: event.target.checked }))}
+                />
+                <span className="featured-product-toggle-track" aria-hidden="true" />
+                <span>
+                  <span>Sản phẩm nổi bật</span>
+                  <small>Hiển thị ở trang chủ</small>
+                </span>
+              </label>
             </div>
           </section>
 
@@ -291,46 +397,50 @@ export function ProductCatalogEditPage() {
               <header className="surface-card-header">
                 <div>
                   <h2>Gallery ảnh</h2>
-                  <p>Ảnh chính hiển thị trên catalog và trang chi tiết.</p>
+                  <p>Upload nhiều ảnh lên Cloudinary. Ảnh đầu tiên là ảnh đại diện catalog.</p>
                 </div>
               </header>
 
-              <div className="gallery-grid">
-                <label
-                  className="gallery-cell"
-                  style={{
-                    cursor: 'pointer',
-                    display: 'grid',
-                    placeItems: 'center',
-                    color: 'var(--admin-text-soft)',
-                  }}
-                >
+              <div className="gallery-grid product-gallery-admin-grid">
+                {galleryImages.map((imageUrl, index) => (
+                  <div className="gallery-cell product-gallery-admin-cell" key={imageUrl}>
+                    <img src={imageUrl} alt={`${form.name || 'Product'} gallery ${index + 1}`} />
+                    <div className="product-gallery-admin-overlay">
+                      {index === 0 ? <span>Ảnh đại diện</span> : <span>Gallery #{index + 1}</span>}
+                      <button
+                        type="button"
+                        className="btn btn-danger btn-sm"
+                        onClick={() => removeExistingGalleryImage(index)}
+                      >
+                        <IconTrash style={{ width: 14, height: 14 }} />
+                        Xóa
+                      </button>
+                    </div>
+                  </div>
+                ))}
+
+                <label className="gallery-cell product-gallery-upload-cell">
                   <input
                     type="file"
                     accept="image/*"
+                    multiple
+                    disabled={galleryUploading}
                     style={{ display: 'none' }}
-                    onChange={(event) => setImageFile(event.target.files?.[0] ?? null)}
+                    onChange={(event) => {
+                      handleGalleryFilesChange(event.target.files)
+                      event.target.value = ''
+                    }}
                   />
-                  {imageFile ? (
-                    <img src={URL.createObjectURL(imageFile)} alt="preview" />
-                  ) : existingImage ? (
-                    <img src={existingImage} alt={form.name} />
-                  ) : (
                     <span style={{ display: 'grid', placeItems: 'center', gap: 6 }}>
                       <IconUpload />
-                      <small style={{ fontSize: '0.75rem' }}>Tải ảnh</small>
+                      <small style={{ fontSize: '0.75rem' }}>
+                        {galleryUploading ? 'Đang upload...' : 'Tải thêm ảnh'}
+                      </small>
                     </span>
-                  )}
                 </label>
-                <div className="gallery-cell">
-                  <IconImage />
-                </div>
-                <div className="gallery-cell">
-                  <IconImage />
-                </div>
               </div>
               <p style={{ color: 'var(--admin-text-muted)', fontSize: '0.8rem', marginTop: 12 }}>
-                API hiện chỉ lưu một ảnh chính. Các slot phụ chỉ là placeholder cho tới khi backend hỗ trợ gallery.
+                Ảnh được upload lên Cloudinary ngay khi chọn file. Khi lưu, hệ thống ghi các URL này vào gallery sản phẩm.
               </p>
             </section>
 
@@ -370,9 +480,9 @@ export function ProductCatalogEditPage() {
                         <input className="field-input" value={label} disabled />
                         <input
                           className="field-input"
-                          value={form.specifications[key]}
+                          value={form[activeLanguage.specsKey][key]}
                           onChange={(event) => updateSpec(key, event.target.value)}
-                          required
+                          required={lang === 'vi'}
                           placeholder="Giá trị"
                         />
                         <span />
@@ -384,7 +494,7 @@ export function ProductCatalogEditPage() {
                 <div className="field">
                   <span className="field-label">Ứng dụng / mục đích sử dụng</span>
                   <div style={{ display: 'grid', gap: 8 }}>
-                    {form.applications.map((app, index) => (
+                    {form[activeLanguage.appsKey].map((app, index) => (
                       <div key={index} style={{ display: 'grid', gridTemplateColumns: '1fr 40px', gap: 8 }}>
                         <input
                           className="field-input"
@@ -397,7 +507,7 @@ export function ProductCatalogEditPage() {
                           className="btn btn-ghost btn-icon"
                           onClick={() => removeApplication(index)}
                           aria-label="Xóa ứng dụng"
-                          disabled={form.applications.length === 1}
+                          disabled={form[activeLanguage.appsKey].length === 1}
                         >
                           <IconTrash />
                         </button>
@@ -445,7 +555,7 @@ export function ProductCatalogEditPage() {
           >
             Hủy bỏ
           </button>
-          <button type="submit" className="btn btn-primary" disabled={submitting}>
+          <button type="submit" className="btn btn-primary" disabled={submitting || galleryUploading}>
             {submitting ? 'Đang lưu...' : isCreate ? 'Tạo sản phẩm' : 'Lưu thay đổi'}
           </button>
         </div>
