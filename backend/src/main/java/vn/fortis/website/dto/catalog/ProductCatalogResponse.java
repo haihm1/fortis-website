@@ -32,17 +32,15 @@ public record ProductCatalogResponse(
 			String image,
 			String specificationFileUrl,
 			List<String> gallery,
-			TechnicalSpecifications specifications,
+			List<TechnicalSpecificationItem> specifications,
 			List<String> applications,
 			String quoteLabel
 	) {
 	}
 
-	public record TechnicalSpecifications(
-			String thickness,
-			String moisture,
-			String glueType,
-			String size
+	public record TechnicalSpecificationItem(
+			String label,
+			String value
 	) {
 	}
 

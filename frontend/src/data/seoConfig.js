@@ -68,13 +68,15 @@ export function buildProductSeo(product, locale) {
 
   const isVi = locale === 'vi'
   const isZh = locale === 'zh'
+  const primarySpec = product.specifications?.[0]
+  const secondarySpec = product.specifications?.[1]
   return {
     title: product.name,
     description: isVi
-      ? `${product.name} – ${product.summary}. Quy cách: ${product.specifications?.thickness ?? ''}. Tiêu chuẩn: ${product.specifications?.moisture ?? ''}. Liên hệ Fortis VN để nhận báo giá xuất khẩu.`
+      ? `${product.name} – ${product.summary}. ${primarySpec?.label ?? 'Thông số'}: ${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? 'Tiêu chuẩn'}: ${secondarySpec?.value ?? ''}. Liên hệ Fortis VN để nhận báo giá xuất khẩu.`
       : isZh
-        ? `${product.name} - ${product.summary}. 包装：${product.specifications?.thickness ?? ''}. 标准：${product.specifications?.moisture ?? ''}. 联系 Fortis VN 获取出口报价。`
-        : `${product.name} – ${product.summary}. Packing: ${product.specifications?.thickness ?? ''}. Standard: ${product.specifications?.moisture ?? ''}. Contact Fortis VN for an export quote.`,
+        ? `${product.name} - ${product.summary}. ${primarySpec?.label ?? '规格'}：${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? '标准'}：${secondarySpec?.value ?? ''}. 联系 Fortis VN 获取出口报价。`
+        : `${product.name} – ${product.summary}. ${primarySpec?.label ?? 'Specification'}: ${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? 'Standard'}: ${secondarySpec?.value ?? ''}. Contact Fortis VN for an export quote.`,
     path: `/products/${product.slug}`,
     image: product.image,
     type: 'article',
@@ -149,23 +151,13 @@ export function buildProductSchema(product) {
         name: 'Fortis VN Co., Ltd.',
       },
     },
-    additionalProperty: [
-      product.specifications?.thickness && {
+    additionalProperty: (product.specifications ?? [])
+      .filter((spec) => spec.label && spec.value)
+      .map((spec) => ({
         '@type': 'PropertyValue',
-        name: 'Packing',
-        value: product.specifications.thickness,
-      },
-      product.specifications?.moisture && {
-        '@type': 'PropertyValue',
-        name: 'Quality Standard',
-        value: product.specifications.moisture,
-      },
-      product.specifications?.glueType && {
-        '@type': 'PropertyValue',
-        name: 'Certification',
-        value: product.specifications.glueType,
-      },
-    ].filter(Boolean),
+        name: spec.label,
+        value: spec.value,
+      })),
   }
 }
 

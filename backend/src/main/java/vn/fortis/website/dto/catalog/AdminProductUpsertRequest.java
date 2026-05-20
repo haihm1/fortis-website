@@ -5,7 +5,6 @@ import java.util.List;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 
 public record AdminProductUpsertRequest(
 		@NotBlank(message = "Product slug is required")
@@ -24,25 +23,22 @@ public record AdminProductUpsertRequest(
 		List<String> applications,
 		List<String> applicationsEn,
 		List<String> applicationsZh,
-		@NotNull(message = "Technical specifications are required")
-		@Valid
-		TechnicalSpecifications specifications,
-		TechnicalSpecifications specificationsEn,
-		TechnicalSpecifications specificationsZh,
+		@NotEmpty(message = "At least one technical specification is required")
+		List<@Valid TechnicalSpecificationItem> specifications,
 		String quoteLabel,
 		List<String> galleryImages,
 		Boolean featured
 ) {
 
-	public record TechnicalSpecifications(
-			@NotBlank(message = "Packing format is required")
-			String thickness,
-			@NotBlank(message = "Quality standard is required")
-			String moisture,
-			@NotBlank(message = "Origin or certification is required")
-			String glueType,
-			@NotBlank(message = "Net weight or carton format is required")
-			String size
+	public record TechnicalSpecificationItem(
+			@NotBlank(message = "Vietnamese specification label is required")
+			String label,
+			String labelEn,
+			String labelZh,
+			@NotBlank(message = "Vietnamese specification value is required")
+			String value,
+			String valueEn,
+			String valueZh
 	) {
 	}
 }

@@ -31,19 +31,19 @@ public record AdminCatalogResponse(
 			List<String> applications,
 			List<String> applicationsEn,
 			List<String> applicationsZh,
-			TechnicalSpecifications specifications,
-			TechnicalSpecifications specificationsEn,
-			TechnicalSpecifications specificationsZh,
+			List<TechnicalSpecificationItem> specifications,
 			String quoteLabel,
 			boolean featured
 	) {
 	}
 
-	public record TechnicalSpecifications(
-			String thickness,
-			String moisture,
-			String glueType,
-			String size
+	public record TechnicalSpecificationItem(
+			String label,
+			String labelEn,
+			String labelZh,
+			String value,
+			String valueEn,
+			String valueZh
 	) {
 	}
 }

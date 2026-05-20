@@ -12,6 +12,7 @@ function normalizeCatalog(data) {
     return {
       ...product,
       categoryName,
+      specifications: normalizeSpecifications(product.specifications),
       specificationFileUrl: product.specificationFileUrl ?? null,
       gallery:
         product.gallery && product.gallery.length > 0
@@ -27,6 +28,26 @@ function normalizeCatalog(data) {
     categories,
     products,
   }
+}
+
+function normalizeSpecifications(specifications) {
+  if (Array.isArray(specifications)) {
+    return specifications.filter((spec) => spec?.label && spec?.value)
+  }
+
+  if (specifications && typeof specifications === 'object') {
+    const legacyLabels = {
+      thickness: 'Packing format',
+      moisture: 'Quality standard',
+      glueType: 'Origin / certification',
+      size: 'Net weight / carton',
+    }
+    return Object.entries(legacyLabels)
+      .map(([key, label]) => ({ label, value: specifications[key] }))
+      .filter((spec) => spec.value)
+  }
+
+  return []
 }
 
 export async function loadProductCatalog(locale, signal) {

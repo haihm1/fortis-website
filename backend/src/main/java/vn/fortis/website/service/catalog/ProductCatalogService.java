@@ -15,6 +15,7 @@ import vn.fortis.website.dto.catalog.AdminProductUpsertRequest;
 import vn.fortis.website.dto.catalog.ProductCatalogResponse;
 import vn.fortis.website.entity.ProductCategoryEntity;
 import vn.fortis.website.entity.ProductEntity;
+import vn.fortis.website.entity.ProductSpecificationValue;
 import vn.fortis.website.repository.ProductCategoryRepository;
 import vn.fortis.website.repository.ProductRepository;
 import vn.fortis.website.service.cloudinary.CloudinaryService;
@@ -272,12 +273,7 @@ public class ProductCatalogService {
 				product.getImageUrl(),
 				product.getSpecificationFileUrl(),
 				resolveGallery(product),
-				new ProductCatalogResponse.TechnicalSpecifications(
-						localizedText(locale, product.getThickness(), product.getThicknessEn(), product.getThicknessZh()),
-						localizedText(locale, product.getMoisture(), product.getMoistureEn(), product.getMoistureZh()),
-						localizedText(locale, product.getGlueType(), product.getGlueTypeEn(), product.getGlueTypeZh()),
-						localizedText(locale, product.getSize(), product.getSizeEn(), product.getSizeZh())
-				),
+				localizedSpecifications(product, locale),
 				localizedApplications(locale, product),
 				switch (locale) {
 					case "en" -> "Get a quick quote";
@@ -313,24 +309,7 @@ public class ProductCatalogService {
 				List.copyOf(product.getApplicationsVi()),
 				List.copyOf(product.getApplicationsEn()),
 				List.copyOf(product.getApplicationsZh()),
-				new AdminCatalogResponse.TechnicalSpecifications(
-						product.getThickness(),
-						product.getMoisture(),
-						product.getGlueType(),
-						product.getSize()
-				),
-				new AdminCatalogResponse.TechnicalSpecifications(
-						product.getThicknessEn(),
-						product.getMoistureEn(),
-						product.getGlueTypeEn(),
-						product.getSizeEn()
-				),
-				new AdminCatalogResponse.TechnicalSpecifications(
-						product.getThicknessZh(),
-						product.getMoistureZh(),
-						product.getGlueTypeZh(),
-						product.getSizeZh()
-				),
+				adminSpecifications(product),
 				"Nhận báo giá nhanh",
 				product.isFeatured()
 		);
@@ -387,18 +366,9 @@ public class ProductCatalogService {
 		product.setApplicationsVi(normalizeList(request.applications()));
 		product.setApplicationsEn(normalizeListWithFallback(request.applicationsEn(), request.applications()));
 		product.setApplicationsZh(normalizeListWithFallback(request.applicationsZh(), request.applicationsEn(), request.applications()));
-		product.setThickness(request.specifications().thickness());
-		product.setThicknessEn(localizedSpecValue(request.specificationsEn(), request.specifications(), "thickness"));
-		product.setThicknessZh(localizedSpecValue(request.specificationsZh(), request.specificationsEn(), request.specifications(), "thickness"));
-		product.setMoisture(request.specifications().moisture());
-		product.setMoistureEn(localizedSpecValue(request.specificationsEn(), request.specifications(), "moisture"));
-		product.setMoistureZh(localizedSpecValue(request.specificationsZh(), request.specificationsEn(), request.specifications(), "moisture"));
-		product.setGlueType(request.specifications().glueType());
-		product.setGlueTypeEn(localizedSpecValue(request.specificationsEn(), request.specifications(), "glueType"));
-		product.setGlueTypeZh(localizedSpecValue(request.specificationsZh(), request.specificationsEn(), request.specifications(), "glueType"));
-		product.setSize(request.specifications().size());
-		product.setSizeEn(localizedSpecValue(request.specificationsEn(), request.specifications(), "size"));
-		product.setSizeZh(localizedSpecValue(request.specificationsZh(), request.specificationsEn(), request.specifications(), "size"));
+		List<ProductSpecificationValue> specifications = normalizeSpecifications(request.specifications());
+		product.setSpecifications(specifications);
+		syncLegacySpecificationColumns(product, specifications);
 		product.setFeatured(Boolean.TRUE.equals(request.featured()));
 		product.setActive(true);
 	}
@@ -464,34 +434,107 @@ public class ProductCatalogService {
 				.toList();
 	}
 
-	private String localizedSpecValue(
-			AdminProductUpsertRequest.TechnicalSpecifications primary,
-			AdminProductUpsertRequest.TechnicalSpecifications fallback,
-			String field
-	) {
-		return withFallback(specValue(primary, field), specValue(fallback, field));
+	private List<ProductCatalogResponse.TechnicalSpecificationItem> localizedSpecifications(ProductEntity product, String locale) {
+		return specificationValues(product).stream()
+				.map(spec -> new ProductCatalogResponse.TechnicalSpecificationItem(
+						localizedText(locale, spec.getLabelVi(), spec.getLabelEn(), spec.getLabelZh()),
+						localizedText(locale, spec.getValueVi(), spec.getValueEn(), spec.getValueZh())
+				))
+				.filter(spec -> !spec.label().isBlank() && !spec.value().isBlank())
+				.toList();
 	}
 
-	private String localizedSpecValue(
-			AdminProductUpsertRequest.TechnicalSpecifications primary,
-			AdminProductUpsertRequest.TechnicalSpecifications secondary,
-			AdminProductUpsertRequest.TechnicalSpecifications fallback,
-			String field
-	) {
-		return withFallback(specValue(primary, field), specValue(secondary, field), specValue(fallback, field));
+	private List<AdminCatalogResponse.TechnicalSpecificationItem> adminSpecifications(ProductEntity product) {
+		return specificationValues(product).stream()
+				.map(spec -> new AdminCatalogResponse.TechnicalSpecificationItem(
+						spec.getLabelVi(),
+						spec.getLabelEn(),
+						spec.getLabelZh(),
+						spec.getValueVi(),
+						spec.getValueEn(),
+						spec.getValueZh()
+				))
+				.toList();
 	}
 
-	private String specValue(AdminProductUpsertRequest.TechnicalSpecifications specifications, String field) {
-		if (specifications == null) {
-			return null;
+	private List<ProductSpecificationValue> specificationValues(ProductEntity product) {
+		if (!product.getSpecifications().isEmpty()) {
+			return product.getSpecifications().stream()
+					.sorted(java.util.Comparator.comparingInt(ProductSpecificationValue::getSortOrder))
+					.toList();
 		}
-		return switch (field) {
-			case "thickness" -> specifications.thickness();
-			case "moisture" -> specifications.moisture();
-			case "glueType" -> specifications.glueType();
-			case "size" -> specifications.size();
-			default -> null;
-		};
+
+		List<ProductSpecificationValue> legacy = List.of(
+				legacySpecification(0, "Quy cách đóng gói", "Packing format", "包装规格", product.getThickness(), product.getThicknessEn(), product.getThicknessZh()),
+				legacySpecification(1, "Tiêu chuẩn chất lượng", "Quality standard", "质量标准", product.getMoisture(), product.getMoistureEn(), product.getMoistureZh()),
+				legacySpecification(2, "Xuất xứ / Chứng nhận", "Origin / certification", "产地 / 认证", product.getGlueType(), product.getGlueTypeEn(), product.getGlueTypeZh()),
+				legacySpecification(3, "Khối lượng / Quy cách carton", "Net weight / carton", "净重 / 箱规", product.getSize(), product.getSizeEn(), product.getSizeZh())
+		);
+		return legacy.stream().filter(spec -> spec.getValueVi() != null && !spec.getValueVi().isBlank()).toList();
+	}
+
+	private ProductSpecificationValue legacySpecification(
+			int sortOrder,
+			String labelVi,
+			String labelEn,
+			String labelZh,
+			String valueVi,
+			String valueEn,
+			String valueZh
+	) {
+		ProductSpecificationValue spec = new ProductSpecificationValue();
+		spec.setSortOrder(sortOrder);
+		spec.setLabelVi(labelVi);
+		spec.setLabelEn(labelEn);
+		spec.setLabelZh(labelZh);
+		spec.setValueVi(valueVi);
+		spec.setValueEn(valueEn);
+		spec.setValueZh(valueZh);
+		return spec;
+	}
+
+	private List<ProductSpecificationValue> normalizeSpecifications(List<AdminProductUpsertRequest.TechnicalSpecificationItem> requestSpecs) {
+		if (requestSpecs == null) {
+			return List.of();
+		}
+		java.util.ArrayList<ProductSpecificationValue> specs = new java.util.ArrayList<>();
+		for (int index = 0; index < requestSpecs.size(); index++) {
+			AdminProductUpsertRequest.TechnicalSpecificationItem item = requestSpecs.get(index);
+			String labelVi = withFallback(item.label());
+			String valueVi = withFallback(item.value());
+			if (labelVi.isBlank() || valueVi.isBlank()) {
+				continue;
+			}
+			ProductSpecificationValue spec = new ProductSpecificationValue();
+			spec.setSortOrder(index);
+			spec.setLabelVi(labelVi);
+			spec.setLabelEn(withFallback(item.labelEn(), item.label()));
+			spec.setLabelZh(withFallback(item.labelZh(), item.labelEn(), item.label()));
+			spec.setValueVi(valueVi);
+			spec.setValueEn(withFallback(item.valueEn(), item.value()));
+			spec.setValueZh(withFallback(item.valueZh(), item.valueEn(), item.value()));
+			specs.add(spec);
+		}
+		return specs;
+	}
+
+	private void syncLegacySpecificationColumns(ProductEntity product, List<ProductSpecificationValue> specifications) {
+		ProductSpecificationValue first = specifications.isEmpty() ? legacySpecification(0, "Quy cách đóng gói", "Packing format", "包装规格", "", "", "") : specifications.getFirst();
+		ProductSpecificationValue second = specifications.size() > 1 ? specifications.get(1) : first;
+		ProductSpecificationValue third = specifications.size() > 2 ? specifications.get(2) : first;
+		ProductSpecificationValue fourth = specifications.size() > 3 ? specifications.get(3) : first;
+		product.setThickness(first.getValueVi());
+		product.setThicknessEn(first.getValueEn());
+		product.setThicknessZh(first.getValueZh());
+		product.setMoisture(second.getValueVi());
+		product.setMoistureEn(second.getValueEn());
+		product.setMoistureZh(second.getValueZh());
+		product.setGlueType(third.getValueVi());
+		product.setGlueTypeEn(third.getValueEn());
+		product.setGlueTypeZh(third.getValueZh());
+		product.setSize(fourth.getValueVi());
+		product.setSizeEn(fourth.getValueEn());
+		product.setSizeZh(fourth.getValueZh());
 	}
 
 	private List<String> resolveGallery(ProductEntity product) {

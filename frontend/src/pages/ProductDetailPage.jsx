@@ -19,10 +19,6 @@ const DETAIL_COPY = {
     relatedDescription: 'Các sản phẩm cùng nhóm để buyer so sánh nhanh trước khi gửi RFQ.',
     notFound: 'Không tìm thấy sản phẩm theo đường dẫn này.',
     breadcrumbProducts: 'Sản phẩm',
-    thickness: 'Quy cách đóng gói',
-    moisture: 'Tiêu chuẩn chất lượng',
-    glueType: 'Xuất xứ / chứng nhận',
-    size: 'Khối lượng / thùng',
     viewDetail: 'Xem chi tiết',
   },
   en: {
@@ -38,10 +34,6 @@ const DETAIL_COPY = {
       'Products from the same category so buyers can compare before sending an RFQ.',
     notFound: 'The product could not be found for this URL.',
     breadcrumbProducts: 'Products',
-    thickness: 'Packing format',
-    moisture: 'Quality standard',
-    glueType: 'Origin / certification',
-    size: 'Net weight / carton',
     viewDetail: 'View detail',
   },
   zh: {
@@ -56,10 +48,6 @@ const DETAIL_COPY = {
     relatedDescription: '同类产品便于买家在发送 RFQ 前快速比较。',
     notFound: '未找到该产品。',
     breadcrumbProducts: '产品',
-    thickness: '包装规格',
-    moisture: '质量标准',
-    glueType: '产地 / 认证',
-    size: '净重 / 箱规',
     viewDetail: '查看详情',
   },
 }
@@ -188,22 +176,12 @@ export function ProductDetailPage({ locale }) {
             <div className="catalog-spec-card">
               <p className="subsection-title">{copy.technicalSpecs}</p>
               <dl className="catalog-spec-list">
-                <div>
-                  <dt>{copy.thickness}</dt>
-                  <dd>{product.specifications.thickness}</dd>
-                </div>
-                <div>
-                  <dt>{copy.moisture}</dt>
-                  <dd>{product.specifications.moisture}</dd>
-                </div>
-                <div>
-                  <dt>{copy.glueType}</dt>
-                  <dd>{product.specifications.glueType}</dd>
-                </div>
-                <div>
-                  <dt>{copy.size}</dt>
-                  <dd>{product.specifications.size}</dd>
-                </div>
+                {(product.specifications ?? []).map((spec) => (
+                  <div key={`${spec.label}-${spec.value}`}>
+                    <dt>{spec.label}</dt>
+                    <dd>{spec.value}</dd>
+                  </div>
+                ))}
               </dl>
             </div>
 
@@ -258,8 +236,9 @@ export function ProductDetailPage({ locale }) {
                     <h3>{item.name}</h3>
                     <p>{item.summary}</p>
                     <div className="catalog-product-specs-preview">
-                      <span>{item.specifications.thickness}</span>
-                      <span>{item.specifications.size}</span>
+                      {(item.specifications ?? []).slice(0, 2).map((spec) => (
+                        <span key={`${spec.label}-${spec.value}`}>{spec.value}</span>
+                      ))}
                     </div>
                     <Link className="secondary-button" to={`/products/${item.slug}`}>
                       {copy.viewDetail}

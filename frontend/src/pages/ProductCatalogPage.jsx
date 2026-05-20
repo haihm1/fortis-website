@@ -9,38 +9,15 @@ import { getFallbackProductCatalog } from '../data/productCatalogFallback'
 import { SEO, buildOrganizationSchema } from '../data/seoConfig'
 import { submitContactRequest } from '../services/publicContactApi'
 import { loadProductCatalog } from '../services/productCatalogApi'
-import { filterProducts, getUniqueOptions } from '../utils/productCatalog'
+import { filterProducts, getSpecificationOptions } from '../utils/productCatalog'
 
 const PRODUCTS_PER_PAGE = 8
-
-const SPEC_LABELS = {
-  vi: {
-    thickness: 'Quy cách đóng gói',
-    moisture: 'Tiêu chuẩn chất lượng',
-    glueType: 'Xuất xứ / chứng nhận',
-    size: 'Khối lượng / thùng',
-  },
-  en: {
-    thickness: 'Packing format',
-    moisture: 'Quality standard',
-    glueType: 'Origin / certification',
-    size: 'Net weight / carton',
-  },
-  zh: {
-    thickness: '包装规格',
-    moisture: '质量标准',
-    glueType: '产地 / 认证',
-    size: '净重 / 箱规',
-  },
-}
 
 const FILTER_COPY = {
   vi: {
     title: 'Bộ lọc catalog',
     search: 'Tìm theo tên, mô tả hoặc nhóm sản phẩm',
-    thickness: 'Lọc theo quy cách',
-    glueType: 'Lọc theo xuất xứ / chứng nhận',
-    moisture: 'Lọc theo tiêu chuẩn',
+    specification: 'Lọc theo thông số kỹ thuật',
     reset: 'Xóa bộ lọc',
     all: 'Tất cả',
     noFilters: 'Không có bộ lọc nào khác cho nhóm sản phẩm này.',
@@ -58,9 +35,7 @@ const FILTER_COPY = {
   en: {
     title: 'Catalog filters',
     search: 'Search by product name, summary or category',
-    thickness: 'Filter by packing',
-    glueType: 'Filter by origin / certification',
-    moisture: 'Filter by quality standard',
+    specification: 'Filter by technical specification',
     reset: 'Reset filters',
     all: 'All',
     noFilters: 'No additional filters are available for this product group.',
@@ -78,9 +53,7 @@ const FILTER_COPY = {
   zh: {
     title: '目录筛选',
     search: '按产品名称、简介或分类搜索',
-    thickness: '按包装筛选',
-    glueType: '按产地 / 认证筛选',
-    moisture: '按质量标准筛选',
+    specification: '按技术规格筛选',
     reset: '重置筛选',
     all: '全部',
     noFilters: '该产品组暂无其他筛选条件。',
@@ -130,9 +103,7 @@ export function ProductCatalogPage({ locale }) {
   const [selectedProductId, setSelectedProductId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [search, setSearch] = useState('')
-  const [selectedThickness, setSelectedThickness] = useState('')
-  const [selectedGlueType, setSelectedGlueType] = useState('')
-  const [selectedMoisture, setSelectedMoisture] = useState('')
+  const [selectedSpecification, setSelectedSpecification] = useState('')
   const [quoteForm, setQuoteForm] = useState({
     fullName: '',
     companyName: '',
@@ -159,9 +130,7 @@ export function ProductCatalogPage({ locale }) {
         setSelectedProductId(result.data.products[0]?.id ?? null)
         setCurrentPage(1)
         setSearch('')
-        setSelectedThickness('')
-        setSelectedGlueType('')
-        setSelectedMoisture('')
+        setSelectedSpecification('')
       } catch (error) {
         if (error.name !== 'AbortError') {
           const fallback = getFallbackProductCatalog(locale)
@@ -181,7 +150,6 @@ export function ProductCatalogPage({ locale }) {
   useJsonLd('organization', buildOrganizationSchema())
 
   const labels = catalogData.labels
-  const specLabels = SPEC_LABELS[locale] ?? SPEC_LABELS.en
   const filterCopy = FILTER_COPY[locale] ?? FILTER_COPY.en
   const quoteStatusCopy = QUOTE_STATUS_COPY[locale] ?? QUOTE_STATUS_COPY.en
 
@@ -189,17 +157,13 @@ export function ProductCatalogPage({ locale }) {
     return filterProducts(catalogData.products, {
       categoryId: selectedCategoryId,
       search,
-      thickness: selectedThickness,
-      glueType: selectedGlueType,
-      moisture: selectedMoisture,
+      specification: selectedSpecification,
     })
   }, [
     catalogData.products,
     search,
     selectedCategoryId,
-    selectedThickness,
-    selectedGlueType,
-    selectedMoisture,
+    selectedSpecification,
   ])
 
   useEffect(() => {
@@ -230,35 +194,20 @@ export function ProductCatalogPage({ locale }) {
         : catalogData.products.filter((product) => product.categoryId === selectedCategoryId)
 
     return {
-      thicknesses: getUniqueOptions(
-        categoryScopedProducts,
-        (product) => product.specifications.thickness,
-      ),
-      glueTypes: getUniqueOptions(
-        categoryScopedProducts,
-        (product) => product.specifications.glueType,
-      ),
-      moistures: getUniqueOptions(
-        categoryScopedProducts,
-        (product) => product.specifications.moisture,
-      ),
+      specifications: getSpecificationOptions(categoryScopedProducts),
     }
   }, [catalogData.products, selectedCategoryId])
 
   function handleSelectCategory(categoryId) {
     setSelectedCategoryId(categoryId)
     setCurrentPage(1)
-    setSelectedThickness('')
-    setSelectedGlueType('')
-    setSelectedMoisture('')
+    setSelectedSpecification('')
   }
 
   function handleResetFilters() {
     setSearch('')
     setCurrentPage(1)
-    setSelectedThickness('')
-    setSelectedGlueType('')
-    setSelectedMoisture('')
+    setSelectedSpecification('')
   }
 
   function handleSelectProduct(product) {
@@ -388,47 +337,17 @@ export function ProductCatalogPage({ locale }) {
                 }}
               />
               <select
-                value={selectedThickness}
-                aria-label={filterCopy.thickness}
+                value={selectedSpecification}
+                aria-label={filterCopy.specification}
                 onChange={(event) => {
-                  setSelectedThickness(event.target.value)
+                  setSelectedSpecification(event.target.value)
                   setCurrentPage(1)
                 }}
               >
-                <option value="">{filterCopy.thickness}</option>
-                {availableFilterOptions.thicknesses.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={selectedGlueType}
-                aria-label={filterCopy.glueType}
-                onChange={(event) => {
-                  setSelectedGlueType(event.target.value)
-                  setCurrentPage(1)
-                }}
-              >
-                <option value="">{filterCopy.glueType}</option>
-                {availableFilterOptions.glueTypes.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-              <select
-                value={selectedMoisture}
-                aria-label={filterCopy.moisture}
-                onChange={(event) => {
-                  setSelectedMoisture(event.target.value)
-                  setCurrentPage(1)
-                }}
-              >
-                <option value="">{filterCopy.moisture}</option>
-                {availableFilterOptions.moistures.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
+                <option value="">{filterCopy.specification}</option>
+                {availableFilterOptions.specifications.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>
@@ -463,7 +382,6 @@ export function ProductCatalogPage({ locale }) {
                       image={getProductThumbnail(product, index)}
                       isActive={selectedProduct?.id === product.id}
                       labels={filterCopy}
-                      specLabels={specLabels}
                       onSelect={handleSelectProduct}
                     />
                   ))}

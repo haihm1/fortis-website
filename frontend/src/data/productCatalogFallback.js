@@ -402,11 +402,40 @@ function enrichCatalog(catalog) {
       return {
         ...product,
         categoryName,
+        specifications: normalizeFallbackSpecifications(product.specifications, catalog.labels?.allProducts),
         specificationFileUrl: product.specificationFileUrl ?? SAMPLE_SPECIFICATION_URL,
         gallery: product.gallery ?? buildFallbackGallery(product, categoryProducts),
       }
     }),
   }
+}
+
+function normalizeFallbackSpecifications(specifications, localeHint) {
+  if (Array.isArray(specifications)) {
+    return specifications
+  }
+
+  const english = localeHint === 'All products'
+  const labels = english
+    ? [
+        ['thickness', 'Packing format'],
+        ['moisture', 'Quality standard'],
+        ['glueType', 'Origin / certification'],
+        ['size', 'Net weight / carton'],
+      ]
+    : [
+        ['thickness', 'Quy cách đóng gói'],
+        ['moisture', 'Tiêu chuẩn chất lượng'],
+        ['glueType', 'Xuất xứ / Chứng nhận'],
+        ['size', 'Khối lượng / Quy cách carton'],
+      ]
+
+  return labels
+    .map(([key, label]) => ({
+      label,
+      value: specifications?.[key],
+    }))
+    .filter((spec) => spec.value)
 }
 
 export function getFallbackProductCatalog(locale) {

@@ -9,9 +9,10 @@ export function ProductCard({
   image,
   isActive,
   labels,
-  specLabels,
   onSelect,
 }) {
+  const previewSpecs = (product.specifications ?? []).slice(0, 2)
+
   return (
     <MotionArticle
       className={`b2b-product-card ${isActive ? 'is-active' : ''}`}
@@ -40,14 +41,12 @@ export function ProductCard({
       </button>
 
       <dl className="b2b-product-specs">
-        <div>
-          <dt>{specLabels.thickness}</dt>
-          <dd>{product.specifications.thickness}</dd>
-        </div>
-        <div>
-          <dt>{specLabels.moisture}</dt>
-          <dd>{product.specifications.moisture}</dd>
-        </div>
+        {previewSpecs.map((spec) => (
+          <div key={`${spec.label}-${spec.value}`}>
+            <dt>{spec.label}</dt>
+            <dd>{spec.value}</dd>
+          </div>
+        ))}
       </dl>
 
       <div className="b2b-product-actions">

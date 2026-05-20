@@ -27,38 +27,23 @@ const EMPTY_PRODUCT = {
   applications: [''],
   applicationsEn: [''],
   applicationsZh: [''],
-  specifications: {
-    thickness: '',
-    moisture: '',
-    glueType: '',
-    size: '',
-  },
-  specificationsEn: {
-    thickness: '',
-    moisture: '',
-    glueType: '',
-    size: '',
-  },
-  specificationsZh: {
-    thickness: '',
-    moisture: '',
-    glueType: '',
-    size: '',
-  },
+  specifications: [
+    {
+      label: 'Quy cách đóng gói',
+      labelEn: 'Packing format',
+      labelZh: '包装规格',
+      value: '',
+      valueEn: '',
+      valueZh: '',
+    },
+  ],
 }
 
 const LANGUAGE_TABS = [
-  { value: 'vi', label: 'Vi', nameKey: 'name', summaryKey: 'summary', appsKey: 'applications', specsKey: 'specifications' },
-  { value: 'en', label: 'En', nameKey: 'nameEn', summaryKey: 'summaryEn', appsKey: 'applicationsEn', specsKey: 'specificationsEn' },
-  { value: 'zh', label: '中文', nameKey: 'nameZh', summaryKey: 'summaryZh', appsKey: 'applicationsZh', specsKey: 'specificationsZh' },
+  { value: 'vi', label: 'Vi', nameKey: 'name', summaryKey: 'summary', appsKey: 'applications', specLabelKey: 'label', specValueKey: 'value' },
+  { value: 'en', label: 'En', nameKey: 'nameEn', summaryKey: 'summaryEn', appsKey: 'applicationsEn', specLabelKey: 'labelEn', specValueKey: 'valueEn' },
+  { value: 'zh', label: '中文', nameKey: 'nameZh', summaryKey: 'summaryZh', appsKey: 'applicationsZh', specLabelKey: 'labelZh', specValueKey: 'valueZh' },
 ]
-
-const SPEC_LABELS = {
-  thickness: 'Quy cách đóng gói',
-  moisture: 'Tiêu chuẩn chất lượng',
-  glueType: 'Xuất xứ / Chứng nhận',
-  size: 'Khối lượng / Quy cách carton',
-}
 
 export function ProductCatalogEditPage() {
   const { adminAuth } = useOutletContext()
@@ -104,24 +89,7 @@ export function ProductCatalogEditPage() {
               applications: product.applications?.length ? product.applications : [''],
               applicationsEn: product.applicationsEn?.length ? product.applicationsEn : [''],
               applicationsZh: product.applicationsZh?.length ? product.applicationsZh : [''],
-              specifications: {
-                thickness: product.specifications?.thickness ?? '',
-                moisture: product.specifications?.moisture ?? '',
-                glueType: product.specifications?.glueType ?? '',
-                size: product.specifications?.size ?? '',
-              },
-              specificationsEn: {
-                thickness: product.specificationsEn?.thickness ?? '',
-                moisture: product.specificationsEn?.moisture ?? '',
-                glueType: product.specificationsEn?.glueType ?? '',
-                size: product.specificationsEn?.size ?? '',
-              },
-              specificationsZh: {
-                thickness: product.specificationsZh?.thickness ?? '',
-                moisture: product.specificationsZh?.moisture ?? '',
-                glueType: product.specificationsZh?.glueType ?? '',
-                size: product.specificationsZh?.size ?? '',
-              },
+              specifications: normalizeProductSpecifications(product.specifications),
             })
             setGalleryImages(product.galleryImages?.length ? product.galleryImages : [product.imageUrl].filter(Boolean))
             setExistingSpecUrl(product.specificationFileUrl)
@@ -145,10 +113,29 @@ export function ProductCatalogEditPage() {
     setForm((current) => ({ ...current, [key]: value }))
   }
 
-  function updateSpec(key, value) {
+  function updateSpec(index, key, value) {
     setForm((current) => ({
       ...current,
-      [activeLanguage.specsKey]: { ...current[activeLanguage.specsKey], [key]: value },
+      specifications: current.specifications.map((spec, specIndex) =>
+        specIndex === index ? { ...spec, [key]: value } : spec,
+      ),
+    }))
+  }
+
+  function addSpecification() {
+    setForm((current) => ({
+      ...current,
+      specifications: [
+        ...current.specifications,
+        { label: '', labelEn: '', labelZh: '', value: '', valueEn: '', valueZh: '' },
+      ],
+    }))
+  }
+
+  function removeSpecification(index) {
+    setForm((current) => ({
+      ...current,
+      specifications: current.specifications.filter((_, specIndex) => specIndex !== index),
     }))
   }
 
@@ -209,8 +196,22 @@ export function ProductCatalogEditPage() {
     const cleanedApplications = form.applications.map((a) => a.trim()).filter(Boolean)
     const cleanedApplicationsEn = form.applicationsEn.map((a) => a.trim()).filter(Boolean)
     const cleanedApplicationsZh = form.applicationsZh.map((a) => a.trim()).filter(Boolean)
+    const cleanedSpecifications = form.specifications
+      .map((spec) => ({
+        label: spec.label.trim(),
+        labelEn: spec.labelEn.trim(),
+        labelZh: spec.labelZh.trim(),
+        value: spec.value.trim(),
+        valueEn: spec.valueEn.trim(),
+        valueZh: spec.valueZh.trim(),
+      }))
+      .filter((spec) => spec.label && spec.value)
     if (cleanedApplications.length === 0) {
       setMessage('Cần ít nhất một ứng dụng / mục đích sử dụng.')
+      return
+    }
+    if (cleanedSpecifications.length === 0) {
+      setMessage('Cần ít nhất một thông số kỹ thuật tiếng Việt.')
       return
     }
     if (galleryUploading) {
@@ -240,9 +241,7 @@ export function ProductCatalogEditPage() {
         applications: cleanedApplications,
         applicationsEn: cleanedApplicationsEn,
         applicationsZh: cleanedApplicationsZh,
-        specifications: form.specifications,
-        specificationsEn: form.specificationsEn,
-        specificationsZh: form.specificationsZh,
+        specifications: cleanedSpecifications,
         galleryImages,
       }
 
@@ -475,19 +474,42 @@ export function ProductCatalogEditPage() {
                 <div className="field">
                   <span className="field-label">Thông số kỹ thuật</span>
                   <div style={{ display: 'grid', gap: 10 }}>
-                    {Object.entries(SPEC_LABELS).map(([key, label]) => (
-                      <div key={key} className="spec-row">
-                        <input className="field-input" value={label} disabled />
+                    {form.specifications.map((spec, index) => (
+                      <div key={index} className="spec-row">
                         <input
                           className="field-input"
-                          value={form[activeLanguage.specsKey][key]}
-                          onChange={(event) => updateSpec(key, event.target.value)}
+                          value={spec[activeLanguage.specLabelKey]}
+                          onChange={(event) => updateSpec(index, activeLanguage.specLabelKey, event.target.value)}
+                          required={lang === 'vi'}
+                          placeholder="Tên thông số"
+                        />
+                        <input
+                          className="field-input"
+                          value={spec[activeLanguage.specValueKey]}
+                          onChange={(event) => updateSpec(index, activeLanguage.specValueKey, event.target.value)}
                           required={lang === 'vi'}
                           placeholder="Giá trị"
                         />
-                        <span />
+                        <button
+                          type="button"
+                          className="btn btn-ghost btn-icon"
+                          onClick={() => removeSpecification(index)}
+                          aria-label="Xóa thông số"
+                          disabled={form.specifications.length === 1}
+                        >
+                          <IconTrash />
+                        </button>
                       </div>
                     ))}
+                    <button
+                      type="button"
+                      className="btn btn-outline btn-sm"
+                      onClick={addSpecification}
+                      style={{ justifySelf: 'start' }}
+                    >
+                      <IconPlus style={{ width: 14, height: 14 }} />
+                      Thêm thông số
+                    </button>
                   </div>
                 </div>
 
@@ -562,4 +584,19 @@ export function ProductCatalogEditPage() {
       </form>
     </>
   )
+}
+
+function normalizeProductSpecifications(specifications) {
+  if (Array.isArray(specifications) && specifications.length > 0) {
+    return specifications.map((spec) => ({
+      label: spec.label ?? '',
+      labelEn: spec.labelEn ?? '',
+      labelZh: spec.labelZh ?? '',
+      value: spec.value ?? '',
+      valueEn: spec.valueEn ?? '',
+      valueZh: spec.valueZh ?? '',
+    }))
+  }
+
+  return EMPTY_PRODUCT.specifications
 }

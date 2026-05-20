@@ -56,6 +56,10 @@ public class ProductEntity extends BaseAuditEntity {
 	@Column(name = "image_url", nullable = false, length = 500)
 	private List<String> galleryImageUrls = new ArrayList<>();
 
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "product_specifications", joinColumns = @JoinColumn(name = "product_id"))
+	private List<ProductSpecificationValue> specifications = new ArrayList<>();
+
 	@Column(nullable = false, length = 100)
 	private String thickness;
 
@@ -207,6 +211,14 @@ public class ProductEntity extends BaseAuditEntity {
 
 	public void setGalleryImageUrls(List<String> galleryImageUrls) {
 		this.galleryImageUrls = new ArrayList<>(galleryImageUrls);
+	}
+
+	public List<ProductSpecificationValue> getSpecifications() {
+		return specifications;
+	}
+
+	public void setSpecifications(List<ProductSpecificationValue> specifications) {
+		this.specifications = new ArrayList<>(specifications);
 	}
 
 	public String getThickness() {
