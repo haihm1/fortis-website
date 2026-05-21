@@ -73,11 +73,18 @@ const LAYOUT_COPY = {
   },
 }
 
+const MOBILE_LANGUAGE_OPTIONS = [
+  { value: 'en', label: 'English', flag: '🇬🇧' },
+  { value: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' },
+  { value: 'zh', label: '中文', flag: '🇨🇳' },
+]
+
 export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
   const copy = LAYOUT_COPY[locale] ?? LAYOUT_COPY.en
   const [wechatCopied, setWechatCopied] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [isMobileLanguageOpen, setIsMobileLanguageOpen] = useState(false)
   const [company, setCompany] = useState(null)
 
   useEffect(() => {
@@ -179,6 +186,9 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
         { key: 'products', label: copy.products, path: '/products' },
         { key: 'export-market', label: copy.exportMarket, path: '/export-market' },
       ]
+  const activeMobileLanguage =
+    MOBILE_LANGUAGE_OPTIONS.find((option) => option.value === locale) ?? MOBILE_LANGUAGE_OPTIONS[0]
+  const inactiveMobileLanguages = MOBILE_LANGUAGE_OPTIONS.filter((option) => option.value !== locale)
 
   return (
     <div className="site-shell">
@@ -244,6 +254,37 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
       <Outlet />
 
       <div className="quick-contact-stack" aria-label={copy.quickContactTitle}>
+        <div className={`mobile-language-buttons ${isMobileLanguageOpen ? 'is-open' : ''}`} role="group" aria-label="Language switcher">
+          <div className="mobile-language-options">
+            {inactiveMobileLanguages.map((option) => (
+              <button
+                key={option.value}
+                type="button"
+                className="quick-contact-button language-flag-button"
+                onClick={() => {
+                  onChangeLocale(option.value)
+                  setIsMobileLanguageOpen(false)
+                }}
+                aria-label={option.label}
+                data-label={option.label}
+              >
+                <span aria-hidden="true">{option.flag}</span>
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            className="quick-contact-button language-flag-button is-active"
+            onClick={() => setIsMobileLanguageOpen((current) => !current)}
+            aria-label={`Current language: ${activeMobileLanguage.label}`}
+            aria-expanded={isMobileLanguageOpen}
+            data-label={activeMobileLanguage.label}
+          >
+            <span aria-hidden="true">{activeMobileLanguage.flag}</span>
+          </button>
+        </div>
+
         {quickContacts.map((item) => (
           item.action ? (
             <button

@@ -46,8 +46,25 @@ const CONTENT = {
     secondaryAction: 'Tin thị trường',
     categories: {
       eyebrow: 'Danh mục',
-      title: 'Nông sản, lâm sản và thủy sản xuất khẩu.',
+      title: 'Nông sản, lâm sản và hải sản xuất khẩu.',
       description: 'Ba nhóm ngành chính được trình bày bằng ảnh nền lớn, overlay xanh và chuyển động hover.',
+      items: [
+        {
+          title: 'Nông sản',
+          description: 'Trái cây tươi, gia vị, gạo và các mặt hàng nông sản Việt Nam theo mùa.',
+          alt: 'Nông sản Việt Nam và trái cây nhiệt đới',
+        },
+        {
+          title: 'Lâm sản',
+          description: 'Gỗ, nguyên liệu giấy và các nhóm sản phẩm có nguồn gốc rừng được kiểm soát.',
+          alt: 'Lâm sản và gỗ xuất khẩu',
+        },
+        {
+          title: 'Hải sản',
+          description: 'Nguồn cung hải sản đông lạnh, đóng gói xuất khẩu và hỗ trợ chuỗi lạnh.',
+          alt: 'Hải sản đông lạnh đóng gói xuất khẩu',
+        },
+      ],
     },
     products: {
       eyebrow: 'Products',
@@ -78,6 +95,23 @@ const CONTENT = {
       eyebrow: 'Categories',
       title: 'Agricultural, forest and seafood exports.',
       description: 'Three core groups are presented with large background images, green overlays and tactile hover motion.',
+      items: [
+        {
+          title: 'Agricultural Products',
+          description: 'Fresh fruits, spices, rice and seasonal Vietnamese agricultural products.',
+          alt: 'Vietnamese agricultural products and tropical fruit',
+        },
+        {
+          title: 'Forest Products',
+          description: 'Wood, paper materials and controlled forest-sourced product groups.',
+          alt: 'Forest products and export wood materials',
+        },
+        {
+          title: 'Seafood',
+          description: 'Frozen seafood supply with export packing support and cold-chain coordination.',
+          alt: 'Frozen seafood packed for export',
+        },
+      ],
     },
     products: {
       eyebrow: 'Products',
@@ -108,6 +142,23 @@ const CONTENT = {
       eyebrow: '分类',
       title: '农产品、林产品和水产品出口。',
       description: '三大核心品类以大图、绿色叠层和悬停动效呈现。',
+      items: [
+        {
+          title: '农产品',
+          description: '新鲜水果、香辛料、大米及越南季节性农产品。',
+          alt: '越南农产品和热带水果',
+        },
+        {
+          title: '林产品',
+          description: '木材、造纸原料及可控来源的林产品类别。',
+          alt: '林产品和出口木材原料',
+        },
+        {
+          title: '水产品',
+          description: '冷冻水产品供应、出口包装支持及冷链协调。',
+          alt: '出口包装冷冻水产品',
+        },
+      ],
     },
     products: {
       eyebrow: 'Products',
@@ -277,26 +328,27 @@ function buildCompanyProfileSection(pageData, fallbackSection, locale) {
 }
 
 function CategorySection({ copy }) {
-  const categories = [
+  const categoryImages = [MEDIA.fruit, MEDIA.forest, MEDIA.seafood]
+  const categories = (copy.items ?? [
     {
       title: 'Nông sản',
       description: 'Fresh fruits, spices, rice and seasonal Vietnamese agricultural products.',
-      image: MEDIA.fruit,
       alt: 'Vietnamese agricultural products and passion fruit',
     },
     {
       title: 'Lâm sản',
       description: 'Wood, pulp, paper and certified forest-sourced product groups.',
-      image: MEDIA.forest,
       alt: 'Forest products and wood veneer for export',
     },
     {
-      title: 'Thủy sản',
+      title: 'Hải sản',
       description: 'Frozen seafood supply backed by cold storage and export packaging.',
-      image: MEDIA.seafood,
       alt: 'Frozen shrimp seafood export product',
     },
-  ]
+  ]).map((category, index) => ({
+    ...category,
+    image: categoryImages[index % categoryImages.length],
+  }))
 
   return (
     <section className="content-section category-section" id="categories">

@@ -663,6 +663,41 @@ main {
   transform: translateY(-50%) translateX(-2px);
 }
 
+.mobile-language-buttons {
+  display: none;
+}
+
+.mobile-language-options {
+  display: grid;
+  gap: 10px;
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.96);
+  transition:
+    max-height 0.26s ease,
+    opacity 0.2s ease,
+    transform 0.24s ease;
+}
+
+.mobile-language-buttons.is-open .mobile-language-options {
+  max-height: 116px;
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1);
+}
+
+.language-flag-button span {
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.language-flag-button.is-active {
+  border-color: rgba(27, 89, 41, 0.5);
+  box-shadow: 0 16px 36px rgba(27, 89, 41, 0.22);
+}
+
 .catalog-hero,
 .catalog-section,
 .quote-section {
@@ -1464,15 +1499,22 @@ main {
   }
 
   .quick-contact-stack {
-    left: 20px;
-    right: auto;
+    right: 14px;
+    left: auto;
     bottom: 20px;
-    grid-template-columns: repeat(4, minmax(0, auto));
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .mobile-language-buttons {
+    display: grid;
+    gap: 10px;
+    justify-items: center;
   }
 
   .quick-contact-button {
-    width: 54px;
-    height: 54px;
+    width: 48px;
+    height: 48px;
   }
 
   .quick-contact-button::before {
@@ -2174,8 +2216,7 @@ main {
   }
 
   .topbar .language-switcher {
-    background: var(--surface);
-    border-color: var(--line);
+    display: none;
   }
 
   .main-nav {
@@ -2200,10 +2241,6 @@ main {
     flex-direction: column;
     align-items: stretch;
     gap: 16px;
-  }
-
-  .topbar .language-switcher {
-    justify-content: space-between;
   }
 
   .topbar .cta-link {
