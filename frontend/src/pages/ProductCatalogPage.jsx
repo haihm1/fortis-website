@@ -379,7 +379,7 @@ export function ProductCatalogPage({ locale }) {
                       key={product.id}
                       product={product}
                       index={index}
-                      image={getProductThumbnail(product, index)}
+                      image={getProductThumbnail(product)}
                       isActive={selectedProduct?.id === product.id}
                       labels={filterCopy}
                       onSelect={handleSelectProduct}
@@ -532,7 +532,6 @@ export function ProductCatalogPage({ locale }) {
   )
 }
 
-function getProductThumbnail(product, index) {
-  const seed = encodeURIComponent(`${product.slug || product.id || product.name}-${index}`)
-  return `https://picsum.photos/seed/fortis-${seed}/900/720`
+function getProductThumbnail(product) {
+  return product.image || product.gallery?.[0] || 'https://picsum.photos/seed/fortis-product-fallback/900/720'
 }
