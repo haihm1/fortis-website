@@ -12,6 +12,7 @@ import { CompanyProfilePage } from './pages/admin/CompanyProfilePage'
 import { DashboardPage } from './pages/admin/DashboardPage'
 import { ExportMarketAdminPage } from './pages/admin/ExportMarketAdminPage'
 import { NavigationMenuAdminPage } from './pages/admin/NavigationMenuAdminPage'
+import { ProductCategoryAdminPage } from './pages/admin/ProductCategoryAdminPage'
 import { ProductCatalogEditPage } from './pages/admin/ProductCatalogEditPage'
 import { ProductCatalogListPage } from './pages/admin/ProductCatalogListPage'
 import { RfqManagementPage } from './pages/admin/RfqManagementPage'
@@ -115,6 +116,7 @@ function App() {
           <Route index element={<Navigate to="dashboard" replace />} />
           <Route path="dashboard" element={<DashboardPage />} />
           <Route path="rfq" element={<RfqManagementPage />} />
+          <Route path="product-categories" element={<ProductCategoryAdminPage />} />
           <Route path="products" element={<ProductCatalogListPage />} />
           <Route path="products/new" element={<ProductCatalogEditPage />} />
           <Route path="products/:productId" element={<ProductCatalogEditPage />} />

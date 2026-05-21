@@ -35,6 +35,12 @@ const NAV_ITEMS = [
     roles: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
   },
   {
+    path: '/admin/product-categories',
+    label: 'Product Categories',
+    icon: IconCatalog,
+    roles: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  },
+  {
     path: '/admin/export-market',
     label: 'Export Market',
     icon: IconChart,

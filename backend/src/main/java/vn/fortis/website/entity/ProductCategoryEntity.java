@@ -21,11 +21,17 @@ public class ProductCategoryEntity extends BaseAuditEntity {
 	@Column(name = "name_en", nullable = false, length = 150)
 	private String nameEn;
 
+	@Column(name = "name_zh", length = 150)
+	private String nameZh;
+
 	@Column(name = "description_vi", nullable = false, length = 500)
 	private String descriptionVi;
 
 	@Column(name = "description_en", nullable = false, length = 500)
 	private String descriptionEn;
+
+	@Column(name = "description_zh", length = 500)
+	private String descriptionZh;
 
 	@Column(nullable = false)
 	private boolean active = true;
@@ -62,6 +68,14 @@ public class ProductCategoryEntity extends BaseAuditEntity {
 		this.nameEn = nameEn;
 	}
 
+	public String getNameZh() {
+		return nameZh;
+	}
+
+	public void setNameZh(String nameZh) {
+		this.nameZh = nameZh;
+	}
+
 	public String getDescriptionVi() {
 		return descriptionVi;
 	}
@@ -76,6 +90,14 @@ public class ProductCategoryEntity extends BaseAuditEntity {
 
 	public void setDescriptionEn(String descriptionEn) {
 		this.descriptionEn = descriptionEn;
+	}
+
+	public String getDescriptionZh() {
+		return descriptionZh;
+	}
+
+	public void setDescriptionZh(String descriptionZh) {
+		this.descriptionZh = descriptionZh;
 	}
 
 	public boolean isActive() {

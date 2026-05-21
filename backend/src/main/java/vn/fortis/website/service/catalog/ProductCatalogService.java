@@ -75,10 +75,12 @@ public class ProductCatalogService {
 		category.setId(UUID.randomUUID().toString());
 		category.setSlug(request.slug());
 		category.setNameVi(request.name());
-		category.setNameEn(request.name());
+		category.setNameEn(withFallback(request.nameEn(), request.name()));
+		category.setNameZh(withFallback(request.nameZh(), request.nameEn(), request.name()));
 		category.setDescriptionVi(request.description());
-		category.setDescriptionEn(request.description());
-		category.setActive(true);
+		category.setDescriptionEn(withFallback(request.descriptionEn(), request.description()));
+		category.setDescriptionZh(withFallback(request.descriptionZh(), request.descriptionEn(), request.description()));
+		category.setActive(!Boolean.FALSE.equals(request.active()));
 		category = productCategoryRepository.save(category);
 		return mapAdminCategory(category);
 	}
@@ -88,9 +90,12 @@ public class ProductCatalogService {
 		validateUniqueCategorySlug(request.slug(), categoryId);
 		existingCategory.setSlug(request.slug());
 		existingCategory.setNameVi(request.name());
-		existingCategory.setNameEn(request.name());
+		existingCategory.setNameEn(withFallback(request.nameEn(), request.name()));
+		existingCategory.setNameZh(withFallback(request.nameZh(), request.nameEn(), request.name()));
 		existingCategory.setDescriptionVi(request.description());
-		existingCategory.setDescriptionEn(request.description());
+		existingCategory.setDescriptionEn(withFallback(request.descriptionEn(), request.description()));
+		existingCategory.setDescriptionZh(withFallback(request.descriptionZh(), request.descriptionEn(), request.description()));
+		existingCategory.setActive(!Boolean.FALSE.equals(request.active()));
 		return mapAdminCategory(productCategoryRepository.save(existingCategory));
 	}
 
@@ -257,8 +262,8 @@ public class ProductCatalogService {
 		return new ProductCatalogResponse.CategoryItem(
 				category.getId(),
 				category.getSlug(),
-				"vi".equals(locale) ? category.getNameVi() : category.getNameEn(),
-				"vi".equals(locale) ? category.getDescriptionVi() : category.getDescriptionEn()
+				localizedText(locale, category.getNameVi(), category.getNameEn(), category.getNameZh()),
+				localizedText(locale, category.getDescriptionVi(), category.getDescriptionEn(), category.getDescriptionZh())
 		);
 	}
 
@@ -267,7 +272,7 @@ public class ProductCatalogService {
 				product.getId(),
 				product.getSlug(),
 				product.getCategory().getId(),
-				"vi".equals(locale) ? product.getCategory().getNameVi() : product.getCategory().getNameEn(),
+				localizedText(locale, product.getCategory().getNameVi(), product.getCategory().getNameEn(), product.getCategory().getNameZh()),
 				localizedText(locale, product.getNameVi(), product.getNameEn(), product.getNameZh()),
 				localizedText(locale, product.getSummaryVi(), product.getSummaryEn(), product.getSummaryZh()),
 				product.getImageUrl(),
@@ -288,7 +293,12 @@ public class ProductCatalogService {
 				category.getId(),
 				category.getSlug(),
 				category.getNameVi(),
-				category.getDescriptionVi()
+				category.getNameEn(),
+				category.getNameZh(),
+				category.getDescriptionVi(),
+				category.getDescriptionEn(),
+				category.getDescriptionZh(),
+				category.isActive()
 		);
 	}
 

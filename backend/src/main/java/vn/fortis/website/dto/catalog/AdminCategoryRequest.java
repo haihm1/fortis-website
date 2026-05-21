@@ -7,7 +7,12 @@ public record AdminCategoryRequest(
 		String slug,
 		@NotBlank(message = "Category name is required")
 		String name,
+		String nameEn,
+		String nameZh,
 		@NotBlank(message = "Category description is required")
-		String description
+		String description,
+		String descriptionEn,
+		String descriptionZh,
+		Boolean active
 ) {
 }

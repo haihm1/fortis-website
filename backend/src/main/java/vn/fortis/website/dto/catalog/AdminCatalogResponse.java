@@ -11,7 +11,12 @@ public record AdminCatalogResponse(
 			String id,
 			String slug,
 			String name,
-			String description
+			String nameEn,
+			String nameZh,
+			String description,
+			String descriptionEn,
+			String descriptionZh,
+			boolean active
 	) {
 	}
 
