@@ -229,7 +229,10 @@ export function ProductDetailPage({ locale }) {
             {product.detailDescription ? (
               <article className="catalog-spec-card product-detail-copy">
                 <p className="subsection-title">{copy.detailDescription}</p>
-                <p>{product.detailDescription}</p>
+                <div
+                  className="product-rich-text"
+                  dangerouslySetInnerHTML={{ __html: sanitizeRichText(product.detailDescription) }}
+                />
               </article>
             ) : null}
 
@@ -304,4 +307,45 @@ export function ProductDetailPage({ locale }) {
       </section>
     </main>
   )
+}
+
+function sanitizeRichText(value) {
+  if (!value) {
+    return ''
+  }
+
+  const source = /<[a-z][\s\S]*>/i.test(value)
+    ? value
+    : value
+      .split(/\n{2,}/)
+      .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+      .join('')
+  const template = document.createElement('template')
+  template.innerHTML = source
+  const allowedTags = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'UL', 'OL', 'LI', 'DIV'])
+
+  function cleanNode(node) {
+    Array.from(node.childNodes).forEach((child) => {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        if (!allowedTags.has(child.tagName)) {
+          child.replaceWith(...Array.from(child.childNodes))
+          return
+        }
+        Array.from(child.attributes).forEach((attribute) => child.removeAttribute(attribute.name))
+        cleanNode(child)
+      }
+    })
+  }
+
+  cleanNode(template.content)
+  return template.innerHTML
+}
+
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 }

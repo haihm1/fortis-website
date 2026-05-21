@@ -992,10 +992,33 @@ main {
   gap: 24px;
 }
 
-.product-detail-copy p:last-child {
+.product-rich-text {
   margin-top: 14px;
   color: var(--text-soft);
   line-height: 1.78;
+}
+
+.product-rich-text p,
+.product-rich-text ul,
+.product-rich-text ol {
+  margin: 0 0 14px;
+}
+
+.product-rich-text p:last-child,
+.product-rich-text ul:last-child,
+.product-rich-text ol:last-child {
+  margin-bottom: 0;
+}
+
+.product-rich-text ul,
+.product-rich-text ol {
+  padding-left: 22px;
+}
+
+.product-rich-text strong,
+.product-rich-text b {
+  color: var(--text);
+  font-weight: 800;
 }
 
 .product-detail-page {

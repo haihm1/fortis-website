@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
 import {
   IconArrowLeft,
@@ -431,16 +431,12 @@ export function ProductCatalogEditPage() {
               </header>
 
               <div style={{ display: 'grid', gap: 16 }}>
-                <label className="field">
-                  <span className="field-label">Mô tả chi tiết</span>
-                  <textarea
-                    className="field-textarea"
-                    rows={7}
-                    value={form[activeLanguage.detailKey]}
-                    onChange={(event) => updateLocalizedField(activeLanguage.detailKey, event.target.value)}
-                    placeholder="Nhập mô tả đầy đủ để hiển thị trong màn hình View Detail..."
-                  />
-                </label>
+                <RichTextEditor
+                  label="Mô tả chi tiết"
+                  value={form[activeLanguage.detailKey]}
+                  onChange={(value) => updateLocalizedField(activeLanguage.detailKey, value)}
+                  placeholder="Nhập mô tả đầy đủ để hiển thị trong màn hình View Detail..."
+                />
 
                 <SpecListEditor
                   title="Điểm nổi bật"
@@ -705,6 +701,72 @@ function SpecListEditor({ title, items, activeLanguage, onChange, onAdd, onRemov
   )
 }
 
+function RichTextEditor({ label, value, onChange, placeholder }) {
+  const editorRef = useRef(null)
+
+  function syncValue() {
+    if (!editorRef.current) return
+    onChange(sanitizeRichText(editorRef.current.innerHTML))
+  }
+
+  function applyCommand(command) {
+    editorRef.current?.focus()
+    document.execCommand(command, false, null)
+    syncValue()
+  }
+
+  function handlePaste(event) {
+    event.preventDefault()
+    const text = event.clipboardData.getData('text/plain')
+    document.execCommand('insertText', false, text)
+    syncValue()
+  }
+
+  useEffect(() => {
+    if (!editorRef.current) return
+    if (editorRef.current.innerHTML !== value) {
+      editorRef.current.innerHTML = formatRichTextForEditor(value)
+    }
+  }, [value])
+
+  return (
+    <div className="field rich-text-field">
+      <span className="field-label">{label}</span>
+      <div className="rich-text-editor">
+        <div className="rich-text-toolbar" aria-label={`${label} toolbar`}>
+          <button type="button" onClick={() => applyCommand('bold')} aria-label="In đậm">
+            B
+          </button>
+          <button type="button" onClick={() => applyCommand('italic')} aria-label="In nghiêng">
+            I
+          </button>
+          <button type="button" onClick={() => applyCommand('underline')} aria-label="Gạch chân">
+            U
+          </button>
+          <button type="button" onClick={() => applyCommand('insertUnorderedList')} aria-label="Danh sách">
+            •
+          </button>
+          <button type="button" onClick={() => applyCommand('insertOrderedList')} aria-label="Danh sách số">
+            1.
+          </button>
+        </div>
+        <div
+          ref={editorRef}
+          className="rich-text-input"
+          contentEditable
+          role="textbox"
+          aria-label={label}
+          data-placeholder={placeholder}
+          onInput={syncValue}
+          onBlur={syncValue}
+          onPaste={handlePaste}
+          suppressContentEditableWarning
+        />
+      </div>
+    </div>
+  )
+}
+
 function normalizeProductSpecifications(specifications) {
   if (Array.isArray(specifications) && specifications.length > 0) {
     return specifications.map((spec) => ({
@@ -739,4 +801,48 @@ function cleanSpecList(specifications) {
       valueZh: spec.valueZh.trim(),
     }))
     .filter((spec) => spec.label && spec.value)
+}
+
+function formatRichTextForEditor(value) {
+  if (!value) {
+    return ''
+  }
+  if (/<[a-z][\s\S]*>/i.test(value)) {
+    return sanitizeRichText(value)
+  }
+  return value
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p>${escapeHtml(paragraph).replace(/\n/g, '<br>')}</p>`)
+    .join('')
+}
+
+function sanitizeRichText(value) {
+  const template = document.createElement('template')
+  template.innerHTML = value
+  const allowedTags = new Set(['P', 'BR', 'STRONG', 'B', 'EM', 'I', 'U', 'UL', 'OL', 'LI', 'DIV'])
+
+  function cleanNode(node) {
+    Array.from(node.childNodes).forEach((child) => {
+      if (child.nodeType === Node.ELEMENT_NODE) {
+        if (!allowedTags.has(child.tagName)) {
+          child.replaceWith(...Array.from(child.childNodes))
+          return
+        }
+        Array.from(child.attributes).forEach((attribute) => child.removeAttribute(attribute.name))
+        cleanNode(child)
+      }
+    })
+  }
+
+  cleanNode(template.content)
+  return template.innerHTML.trim()
+}
+
+function escapeHtml(value) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 }
