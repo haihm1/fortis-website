@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { Link, NavLink, Outlet } from 'react-router-dom'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { QuickContactIcon } from '../components/QuickContactIcon'
 import { COMPANY_CONTACT } from '../data/companyContact'
@@ -199,9 +199,9 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
           <nav className="main-nav" aria-label="Main navigation">
             {navItems.map((item) => (
               item.path?.includes('#') ? (
-                <a key={item.key ?? item.label} href={item.path}>
+                <Link key={item.key ?? item.label} to={item.path}>
                   {item.label}
-                </a>
+                </Link>
               ) : (
                 <NavLink key={item.key ?? item.label} to={item.path}>
                   {item.label}
@@ -211,9 +211,9 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
           </nav>
 
           <LanguageSwitcher locale={locale} onChange={onChangeLocale} />
-          <a className="cta-link" href="/products#quote-request">
+          <Link className="cta-link" to="/products#quote-request">
             {copy.cta}
-          </a>
+          </Link>
         </div>
       </header>
 

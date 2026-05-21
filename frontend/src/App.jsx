@@ -27,8 +27,20 @@ import {
   saveStoredAdminAuth,
 } from './services/admin/adminAuthStorage'
 
+const PUBLIC_LOCALES = new Set(['en', 'vi', 'zh'])
+const PUBLIC_LOCALE_STORAGE_KEY = 'fortis-public-locale'
+
+function loadStoredPublicLocale() {
+  try {
+    const value = window.localStorage.getItem(PUBLIC_LOCALE_STORAGE_KEY)
+    return PUBLIC_LOCALES.has(value) ? value : 'en'
+  } catch {
+    return 'en'
+  }
+}
+
 function App() {
-  const [locale, setLocale] = useState('en')
+  const [locale, setLocale] = useState(() => loadStoredPublicLocale())
   const [navigation, setNavigation] = useState(() => getFallbackNavigation('en'))
   const [adminAuth, setAdminAuth] = useState(() => loadStoredAdminAuth())
   const [authBootstrapped, setAuthBootstrapped] = useState(false)
@@ -86,6 +98,18 @@ function App() {
     setAdminAuth(null)
   }
 
+  function handlePublicLocaleChange(nextLocale) {
+    if (!PUBLIC_LOCALES.has(nextLocale)) {
+      return
+    }
+    setLocale(nextLocale)
+    try {
+      window.localStorage.setItem(PUBLIC_LOCALE_STORAGE_KEY, nextLocale)
+    } catch {
+      // Ignore storage failures; the in-memory state still updates for this session.
+    }
+  }
+
   if (!authBootstrapped) {
     return null
   }
@@ -127,7 +151,7 @@ function App() {
         </Route>
 
         <Route
-          element={<SiteLayout locale={locale} onChangeLocale={setLocale} navigationItems={navigation.items} />}
+          element={<SiteLayout locale={locale} onChangeLocale={handlePublicLocaleChange} navigationItems={navigation.items} />}
         >
           <Route index element={guarded('home', <HomePage locale={locale} visibleMenuKeys={visibleMenuKeys} />)} />
           <Route path="/export-market" element={guarded('export-market', <ExportMarketPage locale={locale} />)} />

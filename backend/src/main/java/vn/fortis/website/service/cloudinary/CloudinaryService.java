@@ -6,4 +6,6 @@ import java.util.Map;
 
 public interface CloudinaryService {
     Map upload(MultipartFile file);
+
+    boolean deleteByUrl(String imageUrl);
 }

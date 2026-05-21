@@ -27,6 +27,7 @@ public record AdminProductUpsertRequest(
 		List<@Valid TechnicalSpecificationItem> specifications,
 		String quoteLabel,
 		List<String> galleryImages,
+		List<String> deletedGalleryImages,
 		Boolean featured
 ) {
 

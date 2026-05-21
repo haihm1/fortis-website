@@ -6,6 +6,8 @@ import java.util.UUID;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -123,6 +125,7 @@ public class ProductCatalogService {
 		product.setId(UUID.randomUUID().toString());
 		applyProductValues(product, category, request, image, specificationFile, null);
 		product = productRepository.save(product);
+		scheduleGalleryDeletes(request.deletedGalleryImages(), resolveGallery(product));
 		return mapAdminProduct(product);
 	}
 
@@ -136,11 +139,14 @@ public class ProductCatalogService {
 		ProductCategoryEntity category = requireCategory(request.categoryId());
 		validateUniqueProductSlug(request.slug(), productId);
 		applyProductValues(existingProduct, category, request, image, specificationFile, existingProduct);
-		return mapAdminProduct(productRepository.save(existingProduct));
+		ProductEntity savedProduct = productRepository.save(existingProduct);
+		scheduleGalleryDeletes(request.deletedGalleryImages(), resolveGallery(savedProduct));
+		return mapAdminProduct(savedProduct);
 	}
 
 	public synchronized void deleteProduct(String productId) {
-		requireProduct(productId);
+		ProductEntity product = requireProduct(productId);
+		scheduleCloudinaryDeletes(resolveGallery(product));
 		productRepository.deleteById(productId);
 	}
 
@@ -584,6 +590,33 @@ public class ProductCatalogService {
 		}
 
 		return List.of(DEFAULT_PRODUCT_IMAGE);
+	}
+
+	private void scheduleGalleryDeletes(List<String> requestedDeletes, List<String> currentGallery) {
+		List<String> keepSet = normalizeList(currentGallery);
+		List<String> pendingDeletes = normalizeList(requestedDeletes).stream()
+				.filter(url -> !keepSet.contains(url))
+				.toList();
+		scheduleCloudinaryDeletes(pendingDeletes);
+	}
+
+	private void scheduleCloudinaryDeletes(List<String> imageUrls) {
+		List<String> urls = normalizeList(imageUrls);
+		if (urls.isEmpty()) {
+			return;
+		}
+
+		Runnable deleteTask = () -> urls.forEach(cloudinaryService::deleteByUrl);
+		if (TransactionSynchronizationManager.isSynchronizationActive()) {
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+				@Override
+				public void afterCommit() {
+					deleteTask.run();
+				}
+			});
+			return;
+		}
+		deleteTask.run();
 	}
 
 	private String uploadImageToCloudinary(MultipartFile image) {

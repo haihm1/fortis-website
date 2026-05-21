@@ -55,6 +55,7 @@ export function ProductCatalogEditPage() {
   const [form, setForm] = useState(EMPTY_PRODUCT)
   const [specFile, setSpecFile] = useState(null)
   const [galleryImages, setGalleryImages] = useState([])
+  const [deletedGalleryImages, setDeletedGalleryImages] = useState([])
   const [existingSpecUrl, setExistingSpecUrl] = useState(null)
   const [loading, setLoading] = useState(true)
   const [submitting, setSubmitting] = useState(false)
@@ -92,6 +93,7 @@ export function ProductCatalogEditPage() {
               specifications: normalizeProductSpecifications(product.specifications),
             })
             setGalleryImages(product.galleryImages?.length ? product.galleryImages : [product.imageUrl].filter(Boolean))
+            setDeletedGalleryImages([])
             setExistingSpecUrl(product.specificationFileUrl)
           }
         } else if (data.categories?.length) {
@@ -188,7 +190,14 @@ export function ProductCatalogEditPage() {
   }
 
   function removeExistingGalleryImage(index) {
+    const imageUrl = galleryImages[index]
+    if (!imageUrl) return
+
     setGalleryImages((current) => current.filter((_, imageIndex) => imageIndex !== index))
+    setDeletedGalleryImages((current) => (
+      current.includes(imageUrl) ? current : [...current, imageUrl]
+    ))
+    setMessage('Ảnh đã được đánh dấu xóa. Cloudinary và DB sẽ được cập nhật sau khi bấm Lưu.')
   }
 
   async function handleSubmit(event) {
@@ -243,6 +252,7 @@ export function ProductCatalogEditPage() {
         applicationsZh: cleanedApplicationsZh,
         specifications: cleanedSpecifications,
         galleryImages,
+        deletedGalleryImages,
       }
 
       if (isCreate) {
@@ -410,6 +420,7 @@ export function ProductCatalogEditPage() {
                         type="button"
                         className="btn btn-danger btn-sm"
                         onClick={() => removeExistingGalleryImage(index)}
+                        disabled={galleryUploading}
                       >
                         <IconTrash style={{ width: 14, height: 14 }} />
                         Xóa
@@ -439,7 +450,7 @@ export function ProductCatalogEditPage() {
                 </label>
               </div>
               <p style={{ color: 'var(--admin-text-muted)', fontSize: '0.8rem', marginTop: 12 }}>
-                Ảnh được upload lên Cloudinary ngay khi chọn file. Khi lưu, hệ thống ghi các URL này vào gallery sản phẩm.
+                Ảnh được upload lên Cloudinary ngay khi chọn file. Ảnh bị xóa chỉ được đánh dấu trước; khi bấm Lưu, hệ thống mới cập nhật DB và xóa ảnh khỏi Cloudinary.
               </p>
             </section>
 

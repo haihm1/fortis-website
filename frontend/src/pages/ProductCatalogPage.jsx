@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { PhoneInput } from '../components/PhoneInput'
 import { ProductCard } from '../components/ProductCard'
 import { SectionHeading } from '../components/SectionHeading'
@@ -264,7 +265,7 @@ export function ProductCatalogPage({ locale }) {
       <section className="catalog-hero b2b-catalog-hero">
         <div className="catalog-hero-copy">
           <nav className="catalog-breadcrumb" aria-label="Breadcrumb">
-            <a href="/">{filterCopy.breadcrumbHome}</a>
+            <Link to="/">{filterCopy.breadcrumbHome}</Link>
             <span aria-hidden="true">/</span>
             <span>{filterCopy.breadcrumbCurrent}</span>
           </nav>

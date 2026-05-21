@@ -198,7 +198,8 @@ export function ProductCategoryAdminPage() {
                   className="field-input"
                   required
                   value={form.slug}
-                  onChange={(event) => updateForm('slug', slugify(event.target.value))}
+                  onChange={(event) => updateForm('slug', normalizeSlugInput(event.target.value))}
+                  pattern="[a-z0-9-]+"
                   placeholder="fresh-fruits"
                 />
               </label>
@@ -334,11 +335,17 @@ function TextArea({ label, value, onChange, required = false }) {
 }
 
 function slugify(value) {
+  return normalizeSlugInput(value)
+    .replace(/-+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function normalizeSlugInput(value) {
   return value
     .toLowerCase()
     .normalize('NFD')
     .replace(/[\u0300-\u036f]/g, '')
     .replace(/đ/g, 'd')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '')
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
 }

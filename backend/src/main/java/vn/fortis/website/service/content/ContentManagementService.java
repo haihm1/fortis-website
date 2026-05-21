@@ -4,6 +4,8 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -66,6 +68,7 @@ public class ContentManagementService {
 			MultipartFile image
 	) {
 		HomeBannerEntity existingBanner = requireBanner(slot);
+		String previousImageUrl = existingBanner.getImageUrl();
 		String imageUrl = image == null || image.isEmpty()
 				? existingBanner.getImageUrl()
 				: uploadImageToCloudinary(image);
@@ -78,7 +81,11 @@ public class ContentManagementService {
 		existingBanner.setDescriptionZh(nullableTrim(request.descriptionZh()));
 		existingBanner.setOverlayLabel(request.overlayLabel());
 		existingBanner.setImageUrl(imageUrl);
-		return mapBanner(homeBannerRepository.save(existingBanner));
+		AdminContentResponse.BannerItem savedBanner = mapBanner(homeBannerRepository.save(existingBanner));
+		if (image != null && !image.isEmpty() && !imageUrl.equals(previousImageUrl)) {
+			scheduleCloudinaryDelete(previousImageUrl);
+		}
+		return savedBanner;
 	}
 
 	private String uploadImageToCloudinary(MultipartFile image) {
@@ -171,5 +178,23 @@ public class ContentManagementService {
 			return null;
 		}
 		return value.trim();
+	}
+
+	private void scheduleCloudinaryDelete(String imageUrl) {
+		if (imageUrl == null || imageUrl.isBlank()) {
+			return;
+		}
+
+		Runnable deleteTask = () -> cloudinaryService.deleteByUrl(imageUrl);
+		if (TransactionSynchronizationManager.isSynchronizationActive()) {
+			TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+				@Override
+				public void afterCommit() {
+					deleteTask.run();
+				}
+			});
+			return;
+		}
+		deleteTask.run();
 	}
 }

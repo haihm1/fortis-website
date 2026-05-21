@@ -85,4 +85,5 @@ public class ProductCatalogAdminController {
         Map data = this.cloudinaryService.upload(file);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
+
 }
