@@ -225,7 +225,7 @@ export function ProductDetailPage({ locale }) {
         </div>
 
         {product.detailDescription || product.highlights?.length || product.qualityControlSteps?.length ? (
-          <div className="product-detail-content-grid">
+          <div className="product-detail-content">
             {product.detailDescription ? (
               <article className="catalog-spec-card product-detail-copy">
                 <p className="subsection-title">{copy.detailDescription}</p>
@@ -233,32 +233,36 @@ export function ProductDetailPage({ locale }) {
               </article>
             ) : null}
 
-            {product.highlights?.length ? (
-              <article className="catalog-spec-card">
-                <p className="subsection-title">{copy.highlights}</p>
-                <dl className="catalog-spec-list">
-                  {product.highlights.map((item) => (
-                    <div key={`${item.label}-${item.value}`}>
-                      <dt>{item.label}</dt>
-                      <dd>{item.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </article>
-            ) : null}
+            {product.highlights?.length || product.qualityControlSteps?.length ? (
+              <div className="product-detail-secondary-grid">
+                {product.highlights?.length ? (
+                  <article className="catalog-spec-card">
+                    <p className="subsection-title">{copy.highlights}</p>
+                    <dl className="catalog-spec-list">
+                      {product.highlights.map((item) => (
+                        <div key={`${item.label}-${item.value}`}>
+                          <dt>{item.label}</dt>
+                          <dd>{item.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </article>
+                ) : null}
 
-            {product.qualityControlSteps?.length ? (
-              <article className="catalog-spec-card">
-                <p className="subsection-title">{copy.qualityControl}</p>
-                <dl className="catalog-spec-list">
-                  {product.qualityControlSteps.map((item) => (
-                    <div key={`${item.label}-${item.value}`}>
-                      <dt>{item.label}</dt>
-                      <dd>{item.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              </article>
+                {product.qualityControlSteps?.length ? (
+                  <article className="catalog-spec-card">
+                    <p className="subsection-title">{copy.qualityControl}</p>
+                    <dl className="catalog-spec-list">
+                      {product.qualityControlSteps.map((item) => (
+                        <div key={`${item.label}-${item.value}`}>
+                          <dt>{item.label}</dt>
+                          <dd>{item.value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  </article>
+                ) : null}
+              </div>
             ) : null}
           </div>
         ) : null}

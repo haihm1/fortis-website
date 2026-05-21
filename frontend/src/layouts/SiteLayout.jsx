@@ -77,6 +77,7 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
   const copy = LAYOUT_COPY[locale] ?? LAYOUT_COPY.en
   const [wechatCopied, setWechatCopied] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [company, setCompany] = useState(null)
 
   useEffect(() => {
@@ -181,7 +182,30 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
 
   return (
     <div className="site-shell">
-      <header className={`topbar ${isScrolled ? 'is-scrolled' : ''}`}>
+      <button
+        type="button"
+        className={`mobile-menu-button ${isMobileMenuOpen ? 'is-open' : ''}`}
+        onClick={() => setIsMobileMenuOpen((current) => !current)}
+        aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        aria-expanded={isMobileMenuOpen}
+        aria-controls="site-navigation"
+      >
+        <span />
+        <span />
+        <span />
+      </button>
+
+      <button
+        type="button"
+        className={`mobile-menu-backdrop ${isMobileMenuOpen ? 'is-open' : ''}`}
+        onClick={() => setIsMobileMenuOpen(false)}
+        aria-label="Close navigation menu"
+      />
+
+      <header
+        id="site-navigation"
+        className={`topbar ${isScrolled ? 'is-scrolled' : ''} ${isMobileMenuOpen ? 'is-mobile-open' : ''}`}
+      >
         <div className="brand-identity">
           <NavLink to="/" aria-label="Fortis VN home">
             <img className="brand-logo" src={fortisLogo} alt="Fortis VN logo" />
@@ -199,11 +223,11 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
           <nav className="main-nav" aria-label="Main navigation">
             {navItems.map((item) => (
               item.path?.includes('#') ? (
-                <Link key={item.key ?? item.label} to={item.path}>
+                <Link key={item.key ?? item.label} to={item.path} onClick={() => setIsMobileMenuOpen(false)}>
                   {item.label}
                 </Link>
               ) : (
-                <NavLink key={item.key ?? item.label} to={item.path}>
+                <NavLink key={item.key ?? item.label} to={item.path} onClick={() => setIsMobileMenuOpen(false)}>
                   {item.label}
                 </NavLink>
               )
@@ -211,7 +235,7 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
           </nav>
 
           <LanguageSwitcher locale={locale} onChange={onChangeLocale} />
-          <Link className="cta-link" to="/products#quote-request">
+          <Link className="cta-link" to="/products#quote-request" onClick={() => setIsMobileMenuOpen(false)}>
             {copy.cta}
           </Link>
         </div>

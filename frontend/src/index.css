@@ -108,6 +108,11 @@ main {
   backdrop-filter: blur(14px);
 }
 
+.mobile-menu-button,
+.mobile-menu-backdrop {
+  display: none;
+}
+
 .brand-kicker,
 .section-eyebrow,
 .product-chip,
@@ -941,9 +946,14 @@ main {
   gap: 10px;
 }
 
-.product-detail-content-grid {
+.product-detail-content {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.product-detail-secondary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 24px;
 }
 
@@ -1320,7 +1330,7 @@ main {
   .hero-facts,
   .hero-pagination,
   .catalog-filter-grid,
-  .product-detail-content-grid,
+  .product-detail-secondary-grid,
   .product-catalog-grid,
   .catalog-spec-grid,
   .catalog-filter-grid,
@@ -1426,7 +1436,7 @@ main {
   }
 
   .product-catalog-grid,
-  .product-detail-content-grid,
+  .product-detail-secondary-grid,
   .catalog-spec-grid,
   .admin-card-grid,
   .admin-account-layout,
@@ -2056,12 +2066,111 @@ main {
 }
 
 @media (max-width: 780px) {
+  .mobile-menu-button {
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 90;
+    display: inline-flex;
+    width: 46px;
+    height: 46px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 5px;
+    padding: 0;
+    border: 1px solid rgba(21, 39, 63, 0.12);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.94);
+    color: #12391c;
+    box-shadow: 0 12px 28px rgba(10, 31, 22, 0.16);
+    backdrop-filter: blur(14px);
+  }
+
+  .mobile-menu-button span {
+    width: 19px;
+    height: 2px;
+    border-radius: 999px;
+    background: currentColor;
+    transition: transform 0.22s ease, opacity 0.22s ease;
+  }
+
+  .mobile-menu-button.is-open span:first-child {
+    transform: translateY(7px) rotate(45deg);
+  }
+
+  .mobile-menu-button.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .mobile-menu-button.is-open span:last-child {
+    transform: translateY(-7px) rotate(-45deg);
+  }
+
+  .mobile-menu-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 75;
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: rgba(7, 18, 12, 0.46);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.22s ease;
+  }
+
+  .mobile-menu-backdrop.is-open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
   .topbar,
-  .topbar.is-scrolled {
-    position: sticky;
-    min-height: auto;
-    background: rgba(255, 255, 255, 0.98);
+  .topbar.is-scrolled,
+  .site-shell:has(.catalog-hero) .topbar,
+  .site-shell:has(.contact-section) .topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 80;
+    width: min(326px, calc(100vw - 48px));
+    min-height: 100dvh;
+    padding: 76px 20px 24px;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 22px;
     color: var(--text);
+    background: rgba(255, 255, 255, 0.98);
+    border-right: 1px solid var(--line);
+    border-bottom: 0;
+    box-shadow: 24px 0 54px rgba(7, 18, 12, 0.18);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-105%);
+    overflow-y: auto;
+    transition: transform 0.24s ease, opacity 0.24s ease;
+  }
+
+  .topbar.is-mobile-open,
+  .topbar.is-scrolled.is-mobile-open,
+  .site-shell:has(.catalog-hero) .topbar.is-mobile-open,
+  .site-shell:has(.contact-section) .topbar.is-mobile-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translateX(0);
+  }
+
+  .topbar .brand-identity {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .topbar .brand-logo {
+    width: 132px;
   }
 
   .topbar .language-switcher {
@@ -2071,14 +2180,39 @@ main {
 
   .main-nav {
     width: 100%;
-    flex-direction: row;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
+  .topbar .main-nav a {
+    display: flex;
+    min-height: 46px;
     align-items: center;
-    overflow-x: auto;
-    padding-bottom: 4px;
+    border-bottom: 1px solid rgba(21, 39, 63, 0.08);
+    opacity: 1;
   }
 
   .topbar-actions {
     width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .topbar .language-switcher {
+    justify-content: space-between;
+  }
+
+  .topbar .cta-link {
+    width: 100%;
+  }
+
+  .site-shell:has(.catalog-hero) main,
+  .site-shell:has(.contact-section) main {
+    padding-top: 0;
   }
 
   .hero-banner-section,
