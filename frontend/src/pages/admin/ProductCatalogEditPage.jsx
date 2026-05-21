@@ -1,5 +1,16 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate, useOutletContext, useParams } from 'react-router-dom'
+import Editor, {
+  BtnBold,
+  BtnBulletList,
+  BtnClearFormatting,
+  BtnItalic,
+  BtnNumberedList,
+  BtnRedo,
+  BtnUnderline,
+  BtnUndo,
+  Toolbar,
+} from 'react-simple-wysiwyg'
 import {
   IconArrowLeft,
   IconPlus,
@@ -702,67 +713,26 @@ function SpecListEditor({ title, items, activeLanguage, onChange, onAdd, onRemov
 }
 
 function RichTextEditor({ label, value, onChange, placeholder }) {
-  const editorRef = useRef(null)
-
-  function syncValue() {
-    if (!editorRef.current) return
-    onChange(sanitizeRichText(editorRef.current.innerHTML))
-  }
-
-  function applyCommand(command) {
-    editorRef.current?.focus()
-    document.execCommand(command, false, null)
-    syncValue()
-  }
-
-  function handlePaste(event) {
-    event.preventDefault()
-    const text = event.clipboardData.getData('text/plain')
-    document.execCommand('insertText', false, text)
-    syncValue()
-  }
-
-  useEffect(() => {
-    if (!editorRef.current) return
-    if (editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = formatRichTextForEditor(value)
-    }
-  }, [value])
-
   return (
     <div className="field rich-text-field">
       <span className="field-label">{label}</span>
-      <div className="rich-text-editor">
-        <div className="rich-text-toolbar" aria-label={`${label} toolbar`}>
-          <button type="button" onClick={() => applyCommand('bold')} aria-label="In đậm">
-            B
-          </button>
-          <button type="button" onClick={() => applyCommand('italic')} aria-label="In nghiêng">
-            I
-          </button>
-          <button type="button" onClick={() => applyCommand('underline')} aria-label="Gạch chân">
-            U
-          </button>
-          <button type="button" onClick={() => applyCommand('insertUnorderedList')} aria-label="Danh sách">
-            •
-          </button>
-          <button type="button" onClick={() => applyCommand('insertOrderedList')} aria-label="Danh sách số">
-            1.
-          </button>
-        </div>
-        <div
-          ref={editorRef}
-          className="rich-text-input"
-          contentEditable
-          role="textbox"
-          aria-label={label}
-          data-placeholder={placeholder}
-          onInput={syncValue}
-          onBlur={syncValue}
-          onPaste={handlePaste}
-          suppressContentEditableWarning
-        />
-      </div>
+      <Editor
+        value={formatRichTextForEditor(value)}
+        placeholder={placeholder}
+        containerProps={{ className: 'rich-text-editor' }}
+        onChange={(event) => onChange(sanitizeRichText(event.target.value))}
+      >
+        <Toolbar>
+          <BtnUndo />
+          <BtnRedo />
+          <BtnBold />
+          <BtnItalic />
+          <BtnUnderline />
+          <BtnBulletList />
+          <BtnNumberedList />
+          <BtnClearFormatting />
+        </Toolbar>
+      </Editor>
     </div>
   )
 }

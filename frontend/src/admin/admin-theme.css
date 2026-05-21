@@ -1397,6 +1397,74 @@
   margin-bottom: 0;
 }
 
+.rich-text-field {
+  display: grid;
+  gap: 8px;
+}
+
+.rich-text-editor {
+  min-height: 250px;
+  overflow: hidden;
+  border: 1px solid var(--admin-border) !important;
+  border-radius: 12px !important;
+  background: #ffffff;
+  color: #132238;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.04);
+}
+
+.rich-text-editor .rsw-toolbar {
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid var(--admin-border);
+  background: #f3f6fb;
+}
+
+.rich-text-editor .rsw-btn {
+  min-width: 34px;
+  height: 32px;
+  border: 1px solid #d7dde8;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #132238;
+}
+
+.rich-text-editor .rsw-btn:hover {
+  border-color: var(--admin-accent);
+  color: var(--admin-accent);
+}
+
+.rich-text-editor .rsw-ce {
+  min-height: 190px;
+  padding: 14px 16px;
+  background: #ffffff;
+  color: #132238;
+  line-height: 1.68;
+  outline: none;
+}
+
+.rich-text-editor .rsw-ce:focus {
+  box-shadow: inset 0 0 0 2px rgba(184, 137, 60, 0.18);
+}
+
+.rich-text-editor .rsw-ce p,
+.rich-text-editor .rsw-ce ul,
+.rich-text-editor .rsw-ce ol {
+  margin: 0 0 10px;
+}
+
+.rich-text-editor .rsw-ce ul,
+.rich-text-editor .rsw-ce ol {
+  padding-left: 22px;
+}
+
+.rich-text-editor .rsw-ce ul {
+  list-style: disc;
+}
+
+.rich-text-editor .rsw-ce ol {
+  list-style: decimal;
+}
+
 /* ---------- Hero / certificate tables (company profile) ---------- */
 
 .thumbnail-cell {
