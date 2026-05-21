@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import vn.fortis.website.dto.home.HomePageResponse;
 import vn.fortis.website.entity.ProductEntity;
+import vn.fortis.website.entity.ProductSpecificationValue;
 import vn.fortis.website.repository.ProductRepository;
 import vn.fortis.website.service.content.ContentManagementService;
 import vn.fortis.website.service.content.ContentManagementService.BannerRecord;
@@ -202,24 +203,104 @@ public class HomeContentService {
 	private HomePageResponse.ProductHighlight mapFeaturedProduct(ProductEntity product, String locale) {
 		boolean english = "en".equals(locale);
 		boolean chinese = "zh".equals(locale);
-		String primaryUse = chinese
-				? firstWithFallback(product.getApplicationsZh(), product.getApplicationsEn(), product.getApplicationsVi(), "General use")
-				: english
-				? firstWithFallback(product.getApplicationsEn(), product.getApplicationsVi(), product.getApplicationsZh(), "General use")
-				: firstWithFallback(product.getApplicationsVi(), product.getApplicationsEn(), product.getApplicationsZh(), "Ung dung chung");
 		return new HomePageResponse.ProductHighlight(
 				product.getSlug(),
 				chinese
 						? textWithFallback(product.getNameZh(), product.getNameEn(), product.getNameVi())
 						: english ? textWithFallback(product.getNameEn(), product.getNameVi(), product.getNameZh()) : textWithFallback(product.getNameVi(), product.getNameEn(), product.getNameZh()),
-				english || chinese ? product.getCategory().getNameEn() : product.getCategory().getNameVi(),
+				chinese
+						? textWithFallback(product.getCategory().getNameZh(), product.getCategory().getNameEn(), product.getCategory().getNameVi())
+						: english ? textWithFallback(product.getCategory().getNameEn(), product.getCategory().getNameVi(), product.getCategory().getNameZh()) : textWithFallback(product.getCategory().getNameVi(), product.getCategory().getNameEn(), product.getCategory().getNameZh()),
 				chinese
 						? textWithFallback(product.getSummaryZh(), product.getSummaryEn(), product.getSummaryVi())
 						: english ? textWithFallback(product.getSummaryEn(), product.getSummaryVi(), product.getSummaryZh()) : textWithFallback(product.getSummaryVi(), product.getSummaryEn(), product.getSummaryZh()),
 				product.getImageUrl(),
-				product.getThickness(),
-				primaryUse
+				localizedSpecifications(product, locale),
+				localizedApplications(product, locale)
 		);
+	}
+
+	private List<HomePageResponse.ProductFact> localizedSpecifications(ProductEntity product, String locale) {
+		return specificationValues(product).stream()
+				.map(spec -> new HomePageResponse.ProductFact(
+						localizedText(locale, spec.getLabelVi(), spec.getLabelEn(), spec.getLabelZh()),
+						localizedText(locale, spec.getValueVi(), spec.getValueEn(), spec.getValueZh())
+				))
+				.filter(spec -> !spec.label().isBlank() && !spec.value().isBlank())
+				.toList();
+	}
+
+	private List<ProductSpecificationValue> specificationValues(ProductEntity product) {
+		if (!product.getSpecifications().isEmpty()) {
+			return product.getSpecifications().stream()
+					.sorted(java.util.Comparator.comparingInt(ProductSpecificationValue::getSortOrder))
+					.toList();
+		}
+
+		List<ProductSpecificationValue> legacy = List.of(
+				legacySpecification(0, "Quy cách đóng gói", "Packing format", "包装规格", product.getThickness(), product.getThicknessEn(), product.getThicknessZh()),
+				legacySpecification(1, "Tiêu chuẩn chất lượng", "Quality standard", "质量标准", product.getMoisture(), product.getMoistureEn(), product.getMoistureZh()),
+				legacySpecification(2, "Xuất xứ / Chứng nhận", "Origin / certification", "产地 / 认证", product.getGlueType(), product.getGlueTypeEn(), product.getGlueTypeZh()),
+				legacySpecification(3, "Khối lượng / Quy cách carton", "Net weight / carton", "净重 / 箱规", product.getSize(), product.getSizeEn(), product.getSizeZh())
+		);
+		return legacy.stream().filter(spec -> spec.getValueVi() != null && !spec.getValueVi().isBlank()).toList();
+	}
+
+	private ProductSpecificationValue legacySpecification(
+			int sortOrder,
+			String labelVi,
+			String labelEn,
+			String labelZh,
+			String valueVi,
+			String valueEn,
+			String valueZh
+	) {
+		ProductSpecificationValue spec = new ProductSpecificationValue();
+		spec.setSortOrder(sortOrder);
+		spec.setLabelVi(labelVi);
+		spec.setLabelEn(labelEn);
+		spec.setLabelZh(labelZh);
+		spec.setValueVi(valueVi);
+		spec.setValueEn(valueEn);
+		spec.setValueZh(valueZh);
+		return spec;
+	}
+
+	private List<String> localizedApplications(ProductEntity product, String locale) {
+		return switch (locale) {
+			case "en" -> listWithFallback(product.getApplicationsEn(), product.getApplicationsVi(), product.getApplicationsZh());
+			case "zh" -> listWithFallback(product.getApplicationsZh(), product.getApplicationsEn(), product.getApplicationsVi());
+			default -> listWithFallback(product.getApplicationsVi(), product.getApplicationsEn(), product.getApplicationsZh());
+		};
+	}
+
+	@SafeVarargs
+	private final List<String> listWithFallback(List<String>... candidates) {
+		for (List<String> candidate : candidates) {
+			List<String> normalized = normalizeList(candidate);
+			if (!normalized.isEmpty()) {
+				return normalized;
+			}
+		}
+		return List.of();
+	}
+
+	private List<String> normalizeList(List<String> values) {
+		if (values == null) {
+			return List.of();
+		}
+		return values.stream()
+				.filter(value -> value != null && !value.isBlank())
+				.map(String::trim)
+				.toList();
+	}
+
+	private String localizedText(String locale, String vi, String en, String zh) {
+		return switch (locale) {
+			case "en" -> textWithFallback(en, vi, zh);
+			case "zh" -> textWithFallback(zh, en, vi);
+			default -> textWithFallback(vi, en, zh);
+		};
 	}
 
 	private String textWithFallback(String primary, String secondary, String tertiary) {
@@ -230,20 +311,6 @@ public class HomeContentService {
 			return secondary;
 		}
 		return tertiary == null ? "" : tertiary;
-	}
-
-	private String firstWithFallback(List<String> primary, List<String> secondary, List<String> tertiary, String fallback) {
-		return streamFirst(primary)
-				.or(() -> streamFirst(secondary))
-				.or(() -> streamFirst(tertiary))
-				.orElse(fallback);
-	}
-
-	private java.util.Optional<String> streamFirst(List<String> values) {
-		if (values == null) {
-			return java.util.Optional.empty();
-		}
-		return values.stream().filter(value -> value != null && !value.isBlank()).findFirst();
 	}
 
 	private HomePageResponse.SectionHeader buildCredentialsSection(String locale) {

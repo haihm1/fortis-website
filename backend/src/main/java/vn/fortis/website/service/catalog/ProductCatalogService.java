@@ -281,11 +281,14 @@ public class ProductCatalogService {
 				localizedText(locale, product.getCategory().getNameVi(), product.getCategory().getNameEn(), product.getCategory().getNameZh()),
 				localizedText(locale, product.getNameVi(), product.getNameEn(), product.getNameZh()),
 				localizedText(locale, product.getSummaryVi(), product.getSummaryEn(), product.getSummaryZh()),
+				localizedText(locale, product.getDetailDescriptionVi(), product.getDetailDescriptionEn(), product.getDetailDescriptionZh()),
 				product.getImageUrl(),
 				product.getSpecificationFileUrl(),
 				resolveGallery(product),
 				localizedSpecifications(product, locale),
 				localizedApplications(locale, product),
+				localizedSpecGroup(product.getHighlights(), locale),
+				localizedSpecGroup(product.getQualityControlSteps(), locale),
 				switch (locale) {
 					case "en" -> "Get a quick quote";
 					case "zh" -> "快速询价";
@@ -319,6 +322,9 @@ public class ProductCatalogService {
 				product.getSummaryVi(),
 				product.getSummaryEn(),
 				product.getSummaryZh(),
+				product.getDetailDescriptionVi(),
+				product.getDetailDescriptionEn(),
+				product.getDetailDescriptionZh(),
 				product.getImageUrl(),
 				product.getSpecificationFileUrl(),
 				resolveGallery(product),
@@ -326,6 +332,8 @@ public class ProductCatalogService {
 				List.copyOf(product.getApplicationsEn()),
 				List.copyOf(product.getApplicationsZh()),
 				adminSpecifications(product),
+				adminSpecGroup(product.getHighlights()),
+				adminSpecGroup(product.getQualityControlSteps()),
 				"Nhận báo giá nhanh",
 				product.isFeatured()
 		);
@@ -375,6 +383,9 @@ public class ProductCatalogService {
 		product.setSummaryVi(request.summary());
 		product.setSummaryEn(withFallback(request.summaryEn(), request.summary()));
 		product.setSummaryZh(withFallback(request.summaryZh(), request.summaryEn(), request.summary()));
+		product.setDetailDescriptionVi(nullableTrim(request.detailDescription()));
+		product.setDetailDescriptionEn(nullableTrim(withFallback(request.detailDescriptionEn(), request.detailDescription())));
+		product.setDetailDescriptionZh(nullableTrim(withFallback(request.detailDescriptionZh(), request.detailDescriptionEn(), request.detailDescription())));
 		List<String> galleryImages = resolveGalleryImages(request.galleryImages(), image, existingProduct);
 		product.setGalleryImageUrls(galleryImages);
 		product.setImageUrl(galleryImages.isEmpty() ? DEFAULT_PRODUCT_IMAGE : galleryImages.getFirst());
@@ -384,6 +395,8 @@ public class ProductCatalogService {
 		product.setApplicationsZh(normalizeListWithFallback(request.applicationsZh(), request.applicationsEn(), request.applications()));
 		List<ProductSpecificationValue> specifications = normalizeSpecifications(request.specifications());
 		product.setSpecifications(specifications);
+		product.setHighlights(normalizeOptionalSpecificationGroup(request.highlights()));
+		product.setQualityControlSteps(normalizeOptionalSpecificationGroup(request.qualityControlSteps()));
 		syncLegacySpecificationColumns(product, specifications);
 		product.setFeatured(Boolean.TRUE.equals(request.featured()));
 		product.setActive(true);
@@ -452,6 +465,51 @@ public class ProductCatalogService {
 
 	private List<ProductCatalogResponse.TechnicalSpecificationItem> localizedSpecifications(ProductEntity product, String locale) {
 		return specificationValues(product).stream()
+				.map(spec -> localizedSpecItem(spec, locale))
+				.filter(spec -> !spec.label().isBlank() && !spec.value().isBlank())
+				.toList();
+	}
+
+	private List<ProductCatalogResponse.TechnicalSpecificationItem> localizedSpecGroup(List<ProductSpecificationValue> values, String locale) {
+		return values.stream()
+				.sorted(java.util.Comparator.comparingInt(ProductSpecificationValue::getSortOrder))
+				.map(spec -> localizedSpecItem(spec, locale))
+				.filter(spec -> !spec.label().isBlank() && !spec.value().isBlank())
+				.toList();
+	}
+
+	private ProductCatalogResponse.TechnicalSpecificationItem localizedSpecItem(ProductSpecificationValue spec, String locale) {
+		return new ProductCatalogResponse.TechnicalSpecificationItem(
+				localizedText(locale, spec.getLabelVi(), spec.getLabelEn(), spec.getLabelZh()),
+				localizedText(locale, spec.getValueVi(), spec.getValueEn(), spec.getValueZh())
+		);
+	}
+
+	private List<AdminCatalogResponse.TechnicalSpecificationItem> adminSpecifications(ProductEntity product) {
+		return specificationValues(product).stream()
+				.map(this::adminSpecItem)
+				.toList();
+	}
+
+	private List<AdminCatalogResponse.TechnicalSpecificationItem> adminSpecGroup(List<ProductSpecificationValue> values) {
+		return values.stream()
+				.sorted(java.util.Comparator.comparingInt(ProductSpecificationValue::getSortOrder))
+				.map(this::adminSpecItem)
+				.toList();
+	}
+
+	private AdminCatalogResponse.TechnicalSpecificationItem adminSpecItem(ProductSpecificationValue spec) {
+		return new AdminCatalogResponse.TechnicalSpecificationItem(
+				spec.getLabelVi(),
+				spec.getLabelEn(),
+				spec.getLabelZh(),
+				spec.getValueVi(),
+				spec.getValueEn(),
+				spec.getValueZh()
+		);
+	}
+
+/* old
 				.map(spec -> new ProductCatalogResponse.TechnicalSpecificationItem(
 						localizedText(locale, spec.getLabelVi(), spec.getLabelEn(), spec.getLabelZh()),
 						localizedText(locale, spec.getValueVi(), spec.getValueEn(), spec.getValueZh())
@@ -472,6 +530,7 @@ public class ProductCatalogService {
 				))
 				.toList();
 	}
+*/
 
 	private List<ProductSpecificationValue> specificationValues(ProductEntity product) {
 		if (!product.getSpecifications().isEmpty()) {
@@ -532,6 +591,13 @@ public class ProductCatalogService {
 			specs.add(spec);
 		}
 		return specs;
+	}
+
+	private List<ProductSpecificationValue> normalizeOptionalSpecificationGroup(List<AdminProductUpsertRequest.TechnicalSpecificationItem> requestSpecs) {
+		if (requestSpecs == null) {
+			return List.of();
+		}
+		return normalizeSpecifications(requestSpecs);
 	}
 
 	private void syncLegacySpecificationColumns(ProductEntity product, List<ProductSpecificationValue> specifications) {
@@ -625,6 +691,13 @@ public class ProductCatalogService {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Cloudinary upload did not return a secure URL");
 		}
 		return secureUrl.toString();
+	}
+
+	private String nullableTrim(String value) {
+		if (value == null || value.isBlank()) {
+			return null;
+		}
+		return value.trim();
 	}
 
 	private String resolveSpecificationUrl(MultipartFile specificationFile, ProductEntity existingProduct) {

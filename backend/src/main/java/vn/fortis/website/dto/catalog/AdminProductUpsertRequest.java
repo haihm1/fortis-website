@@ -19,12 +19,17 @@ public record AdminProductUpsertRequest(
 		String summary,
 		String summaryEn,
 		String summaryZh,
+		String detailDescription,
+		String detailDescriptionEn,
+		String detailDescriptionZh,
 		@NotEmpty(message = "At least one application is required")
 		List<String> applications,
 		List<String> applicationsEn,
 		List<String> applicationsZh,
 		@NotEmpty(message = "At least one technical specification is required")
 		List<@Valid TechnicalSpecificationItem> specifications,
+		List<@Valid TechnicalSpecificationItem> highlights,
+		List<@Valid TechnicalSpecificationItem> qualityControlSteps,
 		String quoteLabel,
 		List<String> galleryImages,
 		List<String> deletedGalleryImages,

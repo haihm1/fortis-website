@@ -54,9 +54,12 @@ public record HomePageResponse(
 			String category,
 			String summary,
 			String image,
-			String grade,
-			String commonUse
+			List<ProductFact> specifications,
+			List<String> applications
 	) {
+	}
+
+	public record ProductFact(String label, String value) {
 	}
 
 	public record CredentialBadge(String name, String description) {

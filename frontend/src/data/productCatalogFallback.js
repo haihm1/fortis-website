@@ -403,6 +403,9 @@ function enrichCatalog(catalog) {
         ...product,
         categoryName,
         specifications: normalizeFallbackSpecifications(product.specifications, catalog.labels?.allProducts),
+        detailDescription: product.detailDescription ?? product.summary ?? '',
+        highlights: normalizeFallbackSpecifications(product.highlights ?? product.specifications, catalog.labels?.allProducts).slice(0, 3),
+        qualityControlSteps: normalizeFallbackSpecifications(product.qualityControlSteps ?? [], catalog.labels?.allProducts),
         specificationFileUrl: product.specificationFileUrl ?? SAMPLE_SPECIFICATION_URL,
         gallery: product.gallery ?? buildFallbackGallery(product, categoryProducts),
       }

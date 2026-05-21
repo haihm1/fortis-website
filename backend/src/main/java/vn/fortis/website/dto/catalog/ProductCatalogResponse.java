@@ -29,11 +29,14 @@ public record ProductCatalogResponse(
 			String categoryName,
 			String name,
 			String summary,
+			String detailDescription,
 			String image,
 			String specificationFileUrl,
 			List<String> gallery,
 			List<TechnicalSpecificationItem> specifications,
 			List<String> applications,
+			List<TechnicalSpecificationItem> highlights,
+			List<TechnicalSpecificationItem> qualityControlSteps,
 			String quoteLabel
 	) {
 	}

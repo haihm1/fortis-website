@@ -45,6 +45,15 @@ public class ProductEntity extends BaseAuditEntity {
 	@Column(name = "summary_zh", columnDefinition = "TEXT")
 	private String summaryZh;
 
+	@Column(name = "detail_description_vi", columnDefinition = "TEXT")
+	private String detailDescriptionVi;
+
+	@Column(name = "detail_description_en", columnDefinition = "TEXT")
+	private String detailDescriptionEn;
+
+	@Column(name = "detail_description_zh", columnDefinition = "TEXT")
+	private String detailDescriptionZh;
+
 	@Column(name = "image_url", nullable = false, length = 500)
 	private String imageUrl;
 
@@ -59,6 +68,14 @@ public class ProductEntity extends BaseAuditEntity {
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "product_specifications", joinColumns = @JoinColumn(name = "product_id"))
 	private List<ProductSpecificationValue> specifications = new ArrayList<>();
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "product_highlights", joinColumns = @JoinColumn(name = "product_id"))
+	private List<ProductSpecificationValue> highlights = new ArrayList<>();
+
+	@ElementCollection(fetch = FetchType.EAGER)
+	@CollectionTable(name = "product_quality_control_steps", joinColumns = @JoinColumn(name = "product_id"))
+	private List<ProductSpecificationValue> qualityControlSteps = new ArrayList<>();
 
 	@Column(nullable = false, length = 100)
 	private String thickness;
@@ -189,6 +206,30 @@ public class ProductEntity extends BaseAuditEntity {
 		this.summaryZh = summaryZh;
 	}
 
+	public String getDetailDescriptionVi() {
+		return detailDescriptionVi;
+	}
+
+	public void setDetailDescriptionVi(String detailDescriptionVi) {
+		this.detailDescriptionVi = detailDescriptionVi;
+	}
+
+	public String getDetailDescriptionEn() {
+		return detailDescriptionEn;
+	}
+
+	public void setDetailDescriptionEn(String detailDescriptionEn) {
+		this.detailDescriptionEn = detailDescriptionEn;
+	}
+
+	public String getDetailDescriptionZh() {
+		return detailDescriptionZh;
+	}
+
+	public void setDetailDescriptionZh(String detailDescriptionZh) {
+		this.detailDescriptionZh = detailDescriptionZh;
+	}
+
 	public String getImageUrl() {
 		return imageUrl;
 	}
@@ -219,6 +260,22 @@ public class ProductEntity extends BaseAuditEntity {
 
 	public void setSpecifications(List<ProductSpecificationValue> specifications) {
 		this.specifications = new ArrayList<>(specifications);
+	}
+
+	public List<ProductSpecificationValue> getHighlights() {
+		return highlights;
+	}
+
+	public void setHighlights(List<ProductSpecificationValue> highlights) {
+		this.highlights = new ArrayList<>(highlights);
+	}
+
+	public List<ProductSpecificationValue> getQualityControlSteps() {
+		return qualityControlSteps;
+	}
+
+	public void setQualityControlSteps(List<ProductSpecificationValue> qualityControlSteps) {
+		this.qualityControlSteps = new ArrayList<>(qualityControlSteps);
 	}
 
 	public String getThickness() {

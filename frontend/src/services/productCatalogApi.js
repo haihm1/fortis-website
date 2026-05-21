@@ -13,6 +13,10 @@ function normalizeCatalog(data) {
       ...product,
       categoryName,
       specifications: normalizeSpecifications(product.specifications),
+      detailDescription: product.detailDescription ?? '',
+      highlights: normalizeSpecifications(product.highlights),
+      qualityControlSteps: normalizeSpecifications(product.qualityControlSteps),
+      applications: Array.isArray(product.applications) ? product.applications.filter(Boolean) : [],
       specificationFileUrl: product.specificationFileUrl ?? null,
       gallery:
         product.gallery && product.gallery.length > 0

@@ -13,6 +13,9 @@ const DETAIL_COPY = {
     downloadSpec: 'Tải file kỹ thuật',
     quote: 'Nhận báo giá',
     gallery: 'Gallery sản phẩm',
+    detailDescription: 'Mô tả chi tiết',
+    highlights: 'Điểm nổi bật',
+    qualityControl: 'Quy trình kiểm soát chất lượng',
     applications: 'Thị trường / kênh tiêu thụ',
     technicalSpecs: 'Thông số kỹ thuật',
     relatedProducts: 'Sản phẩm liên quan',
@@ -27,6 +30,9 @@ const DETAIL_COPY = {
     downloadSpec: 'Download spec sheet',
     quote: 'Get a quote',
     gallery: 'Product gallery',
+    detailDescription: 'Detailed description',
+    highlights: 'Highlights',
+    qualityControl: 'Quality control process',
     applications: 'Markets / channels',
     technicalSpecs: 'Technical specifications',
     relatedProducts: 'Related products',
@@ -42,6 +48,9 @@ const DETAIL_COPY = {
     downloadSpec: '下载技术文件',
     quote: '获取报价',
     gallery: '产品图库',
+    detailDescription: '详细描述',
+    highlights: '产品亮点',
+    qualityControl: '质量控制流程',
     applications: '市场 / 渠道',
     technicalSpecs: '技术规格',
     relatedProducts: '相关产品',
@@ -214,6 +223,45 @@ export function ProductDetailPage({ locale }) {
             </div>
           </div>
         </div>
+
+        {product.detailDescription || product.highlights?.length || product.qualityControlSteps?.length ? (
+          <div className="product-detail-content-grid">
+            {product.detailDescription ? (
+              <article className="catalog-spec-card product-detail-copy">
+                <p className="subsection-title">{copy.detailDescription}</p>
+                <p>{product.detailDescription}</p>
+              </article>
+            ) : null}
+
+            {product.highlights?.length ? (
+              <article className="catalog-spec-card">
+                <p className="subsection-title">{copy.highlights}</p>
+                <dl className="catalog-spec-list">
+                  {product.highlights.map((item) => (
+                    <div key={`${item.label}-${item.value}`}>
+                      <dt>{item.label}</dt>
+                      <dd>{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+            ) : null}
+
+            {product.qualityControlSteps?.length ? (
+              <article className="catalog-spec-card">
+                <p className="subsection-title">{copy.qualityControl}</p>
+                <dl className="catalog-spec-list">
+                  {product.qualityControlSteps.map((item) => (
+                    <div key={`${item.label}-${item.value}`}>
+                      <dt>{item.label}</dt>
+                      <dd>{item.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              </article>
+            ) : null}
+          </div>
+        ) : null}
 
         {relatedProducts.length > 0 ? (
           <div className="catalog-block">

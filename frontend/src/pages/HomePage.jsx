@@ -229,15 +229,28 @@ function buildProducts(pageData, detailButton) {
     { image: MEDIA.cashew, alt: 'Vietnamese cashew nuts for export' },
   ]
 
-  return (pageData.featuredProducts ?? []).slice(0, 4).map((product, index) => ({
-    name: product.name,
-    category: product.category,
-    summary: product.summary ?? '',
-    image: product.image || fallbackImages[index % fallbackImages.length].image,
-    alt: `${product.name} featured product`,
-    href: product.slug ? `/products/${product.slug}` : '/products',
-    actionLabel: detailButton,
-  }))
+  return (pageData.featuredProducts ?? []).slice(0, 4).map((product, index) => {
+    const specifications = Array.isArray(product.specifications)
+      ? product.specifications.filter((spec) => spec?.label && spec?.value)
+      : []
+    const applications = Array.isArray(product.applications) ? product.applications.filter(Boolean) : []
+
+    return {
+      name: product.name,
+      category: product.category,
+      summary: product.summary ?? '',
+      specifications: specifications.length > 0
+        ? specifications
+        : product.grade
+          ? [{ label: 'Standard', value: product.grade }]
+          : [],
+      applications: applications.length > 0 ? applications : product.commonUse ? [product.commonUse] : [],
+      image: product.image || fallbackImages[index % fallbackImages.length].image,
+      alt: `${product.name} featured product`,
+      href: product.slug ? `/products/${product.slug}` : '/products',
+      actionLabel: detailButton,
+    }
+  })
 }
 
 function buildCompanyProfileSection(pageData, fallbackSection, locale) {
@@ -335,9 +348,25 @@ function FeaturedProductsSection({ section, products }) {
               </a>
             </div>
             <div className="featured-product-body">
-              <p className="product-chip">{product.category}</p>
               <h3>{product.name}</h3>
               <p>{product.summary}</p>
+              {product.specifications.length > 0 ? (
+                <dl className="featured-product-specs">
+                  {product.specifications.slice(0, 3).map((spec) => (
+                    <div key={`${product.name}-${spec.label}-${spec.value}`}>
+                      <dt>{spec.label}</dt>
+                      <dd>{spec.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              ) : null}
+              {product.applications.length > 0 ? (
+                <ul className="featured-product-applications">
+                  {product.applications.slice(0, 3).map((application) => (
+                    <li key={`${product.name}-${application}`}>{application}</li>
+                  ))}
+                </ul>
+              ) : null}
             </div>
           </MotionArticle>
         ))}

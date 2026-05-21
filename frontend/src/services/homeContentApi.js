@@ -15,6 +15,14 @@ function normalizeHomeContent(data) {
       ...slide,
       image: resolveMediaUrl(slide.image),
     })),
+    featuredProducts: (data.featuredProducts ?? []).map((product) => ({
+      ...product,
+      image: resolveMediaUrl(product.image),
+      specifications: Array.isArray(product.specifications)
+        ? product.specifications.filter((spec) => spec?.label && spec?.value)
+        : [],
+      applications: Array.isArray(product.applications) ? product.applications.filter(Boolean) : [],
+    })),
   }
 }
 

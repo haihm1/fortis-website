@@ -22,6 +22,9 @@ const EMPTY_PRODUCT = {
   summary: '',
   summaryEn: '',
   summaryZh: '',
+  detailDescription: '',
+  detailDescriptionEn: '',
+  detailDescriptionZh: '',
   quoteLabel: '',
   featured: false,
   applications: [''],
@@ -37,12 +40,14 @@ const EMPTY_PRODUCT = {
       valueZh: '',
     },
   ],
+  highlights: [{ label: '', labelEn: '', labelZh: '', value: '', valueEn: '', valueZh: '' }],
+  qualityControlSteps: [{ label: '', labelEn: '', labelZh: '', value: '', valueEn: '', valueZh: '' }],
 }
 
 const LANGUAGE_TABS = [
-  { value: 'vi', label: 'Vi', nameKey: 'name', summaryKey: 'summary', appsKey: 'applications', specLabelKey: 'label', specValueKey: 'value' },
-  { value: 'en', label: 'En', nameKey: 'nameEn', summaryKey: 'summaryEn', appsKey: 'applicationsEn', specLabelKey: 'labelEn', specValueKey: 'valueEn' },
-  { value: 'zh', label: '中文', nameKey: 'nameZh', summaryKey: 'summaryZh', appsKey: 'applicationsZh', specLabelKey: 'labelZh', specValueKey: 'valueZh' },
+  { value: 'vi', label: 'Vi', nameKey: 'name', summaryKey: 'summary', detailKey: 'detailDescription', appsKey: 'applications', specLabelKey: 'label', specValueKey: 'value' },
+  { value: 'en', label: 'En', nameKey: 'nameEn', summaryKey: 'summaryEn', detailKey: 'detailDescriptionEn', appsKey: 'applicationsEn', specLabelKey: 'labelEn', specValueKey: 'valueEn' },
+  { value: 'zh', label: '中文', nameKey: 'nameZh', summaryKey: 'summaryZh', detailKey: 'detailDescriptionZh', appsKey: 'applicationsZh', specLabelKey: 'labelZh', specValueKey: 'valueZh' },
 ]
 
 export function ProductCatalogEditPage() {
@@ -85,12 +90,17 @@ export function ProductCatalogEditPage() {
               summary: product.summary,
               summaryEn: product.summaryEn ?? '',
               summaryZh: product.summaryZh ?? '',
+              detailDescription: product.detailDescription ?? '',
+              detailDescriptionEn: product.detailDescriptionEn ?? '',
+              detailDescriptionZh: product.detailDescriptionZh ?? '',
               quoteLabel: product.quoteLabel ?? '',
               featured: Boolean(product.featured),
               applications: product.applications?.length ? product.applications : [''],
               applicationsEn: product.applicationsEn?.length ? product.applicationsEn : [''],
               applicationsZh: product.applicationsZh?.length ? product.applicationsZh : [''],
               specifications: normalizeProductSpecifications(product.specifications),
+              highlights: normalizeOptionalProductSpecifications(product.highlights),
+              qualityControlSteps: normalizeOptionalProductSpecifications(product.qualityControlSteps),
             })
             setGalleryImages(product.galleryImages?.length ? product.galleryImages : [product.imageUrl].filter(Boolean))
             setDeletedGalleryImages([])
@@ -116,28 +126,40 @@ export function ProductCatalogEditPage() {
   }
 
   function updateSpec(index, key, value) {
+    updateSpecList('specifications', index, key, value)
+  }
+
+  function updateSpecList(listKey, index, key, value) {
     setForm((current) => ({
       ...current,
-      specifications: current.specifications.map((spec, specIndex) =>
+      [listKey]: current[listKey].map((spec, specIndex) =>
         specIndex === index ? { ...spec, [key]: value } : spec,
       ),
     }))
   }
 
   function addSpecification() {
+    addSpecListItem('specifications')
+  }
+
+  function addSpecListItem(listKey) {
     setForm((current) => ({
       ...current,
-      specifications: [
-        ...current.specifications,
+      [listKey]: [
+        ...current[listKey],
         { label: '', labelEn: '', labelZh: '', value: '', valueEn: '', valueZh: '' },
       ],
     }))
   }
 
   function removeSpecification(index) {
+    removeSpecListItem('specifications', index)
+  }
+
+  function removeSpecListItem(listKey, index) {
     setForm((current) => ({
       ...current,
-      specifications: current.specifications.filter((_, specIndex) => specIndex !== index),
+      [listKey]: current[listKey].filter((_, specIndex) => specIndex !== index),
     }))
   }
 
@@ -205,16 +227,9 @@ export function ProductCatalogEditPage() {
     const cleanedApplications = form.applications.map((a) => a.trim()).filter(Boolean)
     const cleanedApplicationsEn = form.applicationsEn.map((a) => a.trim()).filter(Boolean)
     const cleanedApplicationsZh = form.applicationsZh.map((a) => a.trim()).filter(Boolean)
-    const cleanedSpecifications = form.specifications
-      .map((spec) => ({
-        label: spec.label.trim(),
-        labelEn: spec.labelEn.trim(),
-        labelZh: spec.labelZh.trim(),
-        value: spec.value.trim(),
-        valueEn: spec.valueEn.trim(),
-        valueZh: spec.valueZh.trim(),
-      }))
-      .filter((spec) => spec.label && spec.value)
+    const cleanedSpecifications = cleanSpecList(form.specifications)
+    const cleanedHighlights = cleanSpecList(form.highlights)
+    const cleanedQualityControlSteps = cleanSpecList(form.qualityControlSteps)
     if (cleanedApplications.length === 0) {
       setMessage('Cần ít nhất một ứng dụng / mục đích sử dụng.')
       return
@@ -245,12 +260,17 @@ export function ProductCatalogEditPage() {
         summary: form.summary,
         summaryEn: form.summaryEn,
         summaryZh: form.summaryZh,
+        detailDescription: form.detailDescription.trim(),
+        detailDescriptionEn: form.detailDescriptionEn.trim(),
+        detailDescriptionZh: form.detailDescriptionZh.trim(),
         quoteLabel: form.quoteLabel || null,
         featured: form.featured,
         applications: cleanedApplications,
         applicationsEn: cleanedApplicationsEn,
         applicationsZh: cleanedApplicationsZh,
         specifications: cleanedSpecifications,
+        highlights: cleanedHighlights,
+        qualityControlSteps: cleanedQualityControlSteps,
         galleryImages,
         deletedGalleryImages,
       }
@@ -327,25 +347,26 @@ export function ProductCatalogEditPage() {
 
       <form onSubmit={handleSubmit}>
         <div className="product-editor">
-          <section className="surface-card">
-            <header className="surface-card-header">
-              <div>
-                <h2>Thông tin cơ bản</h2>
-                <p>Tên hiển thị, slug và mô tả ngắn.</p>
-              </div>
-            </header>
+          <div style={{ display: 'grid', gap: 20 }}>
+            <section className="surface-card">
+              <header className="surface-card-header">
+                <div>
+                  <h2>Thông tin cơ bản</h2>
+                  <p>Tên hiển thị, slug và mô tả ngắn.</p>
+                </div>
+              </header>
 
-            <div style={{ display: 'grid', gap: 14 }}>
-              <label className="field">
-                <span className="field-label">Tên sản phẩm</span>
-                <input
-                  className="field-input"
-                  value={form[activeLanguage.nameKey]}
-                  onChange={(event) => updateLocalizedField(activeLanguage.nameKey, event.target.value)}
-                  required={lang === 'vi'}
-                  placeholder="Vd: Hạt điều rang muối"
-                />
-              </label>
+              <div style={{ display: 'grid', gap: 14 }}>
+                <label className="field">
+                  <span className="field-label">Tên sản phẩm</span>
+                  <input
+                    className="field-input"
+                    value={form[activeLanguage.nameKey]}
+                    onChange={(event) => updateLocalizedField(activeLanguage.nameKey, event.target.value)}
+                    required={lang === 'vi'}
+                    placeholder="Vd: Hạt điều rang muối"
+                  />
+                </label>
 
               <label className="field">
                 <span className="field-label">Slug (URL)</span>
@@ -398,8 +419,51 @@ export function ProductCatalogEditPage() {
                   <small>Hiển thị ở trang chủ</small>
                 </span>
               </label>
-            </div>
-          </section>
+              </div>
+            </section>
+
+            <section className="surface-card">
+              <header className="surface-card-header">
+                <div>
+                  <h2>Thông tin chi tiết</h2>
+                  <p>Mô tả đầy đủ, điểm nổi bật và quy trình kiểm soát chất lượng.</p>
+                </div>
+              </header>
+
+              <div style={{ display: 'grid', gap: 16 }}>
+                <label className="field">
+                  <span className="field-label">Mô tả chi tiết</span>
+                  <textarea
+                    className="field-textarea"
+                    rows={7}
+                    value={form[activeLanguage.detailKey]}
+                    onChange={(event) => updateLocalizedField(activeLanguage.detailKey, event.target.value)}
+                    placeholder="Nhập mô tả đầy đủ để hiển thị trong màn hình View Detail..."
+                  />
+                </label>
+
+                <SpecListEditor
+                  title="Điểm nổi bật"
+                  items={form.highlights}
+                  activeLanguage={activeLanguage}
+                  onChange={(index, key, value) => updateSpecList('highlights', index, key, value)}
+                  onAdd={() => addSpecListItem('highlights')}
+                  onRemove={(index) => removeSpecListItem('highlights', index)}
+                  addLabel="Thêm điểm nổi bật"
+                />
+
+                <SpecListEditor
+                  title="Quy trình kiểm soát chất lượng"
+                  items={form.qualityControlSteps}
+                  activeLanguage={activeLanguage}
+                  onChange={(index, key, value) => updateSpecList('qualityControlSteps', index, key, value)}
+                  onAdd={() => addSpecListItem('qualityControlSteps')}
+                  onRemove={(index) => removeSpecListItem('qualityControlSteps', index)}
+                  addLabel="Thêm bước kiểm soát"
+                />
+              </div>
+            </section>
+          </div>
 
           <div style={{ display: 'grid', gap: 20 }}>
             <section className="surface-card">
@@ -597,6 +661,50 @@ export function ProductCatalogEditPage() {
   )
 }
 
+function SpecListEditor({ title, items, activeLanguage, onChange, onAdd, onRemove, addLabel }) {
+  return (
+    <div className="field">
+      <span className="field-label">{title}</span>
+      <div style={{ display: 'grid', gap: 10 }}>
+        {items.map((item, index) => (
+          <div key={index} className="spec-row">
+            <input
+              className="field-input"
+              value={item[activeLanguage.specLabelKey]}
+              onChange={(event) => onChange(index, activeLanguage.specLabelKey, event.target.value)}
+              placeholder="Tên mục"
+            />
+            <input
+              className="field-input"
+              value={item[activeLanguage.specValueKey]}
+              onChange={(event) => onChange(index, activeLanguage.specValueKey, event.target.value)}
+              placeholder="Nội dung"
+            />
+            <button
+              type="button"
+              className="btn btn-ghost btn-icon"
+              onClick={() => onRemove(index)}
+              aria-label={`Xóa ${title.toLowerCase()}`}
+              disabled={items.length === 1}
+            >
+              <IconTrash />
+            </button>
+          </div>
+        ))}
+        <button
+          type="button"
+          className="btn btn-outline btn-sm"
+          onClick={onAdd}
+          style={{ justifySelf: 'start' }}
+        >
+          <IconPlus style={{ width: 14, height: 14 }} />
+          {addLabel}
+        </button>
+      </div>
+    </div>
+  )
+}
+
 function normalizeProductSpecifications(specifications) {
   if (Array.isArray(specifications) && specifications.length > 0) {
     return specifications.map((spec) => ({
@@ -610,4 +718,25 @@ function normalizeProductSpecifications(specifications) {
   }
 
   return EMPTY_PRODUCT.specifications
+}
+
+function normalizeOptionalProductSpecifications(specifications) {
+  if (Array.isArray(specifications) && specifications.length > 0) {
+    return normalizeProductSpecifications(specifications)
+  }
+
+  return [{ label: '', labelEn: '', labelZh: '', value: '', valueEn: '', valueZh: '' }]
+}
+
+function cleanSpecList(specifications) {
+  return specifications
+    .map((spec) => ({
+      label: spec.label.trim(),
+      labelEn: spec.labelEn.trim(),
+      labelZh: spec.labelZh.trim(),
+      value: spec.value.trim(),
+      valueEn: spec.valueEn.trim(),
+      valueZh: spec.valueZh.trim(),
+    }))
+    .filter((spec) => spec.label && spec.value)
 }

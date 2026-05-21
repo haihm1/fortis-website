@@ -30,6 +30,9 @@ public record AdminCatalogResponse(
 			String summary,
 			String summaryEn,
 			String summaryZh,
+			String detailDescription,
+			String detailDescriptionEn,
+			String detailDescriptionZh,
 			String imageUrl,
 			String specificationFileUrl,
 			List<String> galleryImages,
@@ -37,6 +40,8 @@ public record AdminCatalogResponse(
 			List<String> applicationsEn,
 			List<String> applicationsZh,
 			List<TechnicalSpecificationItem> specifications,
+			List<TechnicalSpecificationItem> highlights,
+			List<TechnicalSpecificationItem> qualityControlSteps,
 			String quoteLabel,
 			boolean featured
 	) {
