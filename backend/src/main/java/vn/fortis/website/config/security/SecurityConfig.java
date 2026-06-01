@@ -42,6 +42,7 @@ public class SecurityConfig {
 						.requestMatchers("/api/public/**", "/api/auth/login", "/uploads/**").permitAll()
 						.requestMatchers("/api/auth/me").authenticated()
 						.requestMatchers("/api/admin/contacts/**").hasAnyRole("SUPER_ADMIN", "CONTACT_MANAGER")
+						.requestMatchers("/api/admin/customers/**").hasAnyRole("SUPER_ADMIN", "CONTACT_MANAGER")
 						.requestMatchers("/api/admin/content/**").hasAnyRole("SUPER_ADMIN", "CONTENT_EDITOR", "CONTENT_PUBLISHER")
 						.requestMatchers("/api/admin/navigation/**").hasAnyRole("SUPER_ADMIN", "CONTENT_EDITOR", "CONTENT_PUBLISHER")
 						.requestMatchers("/api/admin/accounts/**").hasAnyRole("SUPER_ADMIN", "ACCOUNT_MANAGER")

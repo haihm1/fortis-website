@@ -9,6 +9,7 @@ import { ExportMarketPage } from './pages/ExportMarketPage'
 import { HomePage } from './pages/HomePage'
 import { AdminLoginPage } from './pages/admin/AdminLoginPage'
 import { CompanyProfilePage } from './pages/admin/CompanyProfilePage'
+import { CustomerManagementPage } from './pages/admin/CustomerManagementPage'
 import { DashboardPage } from './pages/admin/DashboardPage'
 import { ExportMarketAdminPage } from './pages/admin/ExportMarketAdminPage'
 import { NavigationMenuAdminPage } from './pages/admin/NavigationMenuAdminPage'
@@ -29,6 +30,28 @@ import {
 
 const PUBLIC_LOCALES = new Set(['en', 'vi', 'zh'])
 const PUBLIC_LOCALE_STORAGE_KEY = 'fortis-public-locale'
+const ADMIN_ROUTE_ROLES = {
+  dashboard: ['SUPER_ADMIN', 'CONTACT_MANAGER', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER', 'ACCOUNT_MANAGER'],
+  rfq: ['SUPER_ADMIN', 'CONTACT_MANAGER'],
+  customers: ['SUPER_ADMIN', 'CONTACT_MANAGER'],
+  products: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  productCategories: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  exportMarket: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  company: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  navigation: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
+  users: ['SUPER_ADMIN', 'ACCOUNT_MANAGER'],
+}
+const ADMIN_ROUTE_ORDER = [
+  ['dashboard', 'dashboard'],
+  ['rfq', 'rfq'],
+  ['customers', 'customers'],
+  ['products', 'products'],
+  ['productCategories', 'product-categories'],
+  ['exportMarket', 'export-market'],
+  ['company', 'company'],
+  ['navigation', 'navigation'],
+  ['users', 'users'],
+]
 
 function loadStoredPublicLocale() {
   try {
@@ -117,9 +140,17 @@ function App() {
   const visibleMenuKeys = new Set((navigation.items ?? []).map((item) => item.key))
   const canAccess = (key) => visibleMenuKeys.has(key)
   const firstVisiblePath = (navigation.items ?? []).find((item) => !item.path.includes('#'))?.path ?? '/'
+  const adminRoles = adminAuth?.user?.roles ?? []
+  const canAccessAdmin = (roles) => roles.some((role) => adminRoles.includes(role))
+  const firstAdminPath =
+    ADMIN_ROUTE_ORDER.find(([key]) => canAccessAdmin(ADMIN_ROUTE_ROLES[key]))?.[1] ?? 'dashboard'
 
   function guarded(key, element) {
     return canAccess(key) ? element : <Navigate to={firstVisiblePath} replace />
+  }
+
+  function guardedAdmin(roles, element) {
+    return canAccessAdmin(roles) ? element : <Navigate to={`/admin/${firstAdminPath}`} replace />
   }
 
   return (
@@ -137,17 +168,18 @@ function App() {
             </AdminRoute>
           }
         >
-          <Route index element={<Navigate to="dashboard" replace />} />
-          <Route path="dashboard" element={<DashboardPage />} />
-          <Route path="rfq" element={<RfqManagementPage />} />
-          <Route path="product-categories" element={<ProductCategoryAdminPage />} />
-          <Route path="products" element={<ProductCatalogListPage />} />
-          <Route path="products/new" element={<ProductCatalogEditPage />} />
-          <Route path="products/:productId" element={<ProductCatalogEditPage />} />
-          <Route path="export-market" element={<ExportMarketAdminPage />} />
-          <Route path="company" element={<CompanyProfilePage />} />
-          <Route path="navigation" element={<NavigationMenuAdminPage />} />
-          <Route path="users" element={<UserManagementPage />} />
+          <Route index element={<Navigate to={firstAdminPath} replace />} />
+          <Route path="dashboard" element={guardedAdmin(ADMIN_ROUTE_ROLES.dashboard, <DashboardPage />)} />
+          <Route path="rfq" element={guardedAdmin(ADMIN_ROUTE_ROLES.rfq, <RfqManagementPage />)} />
+          <Route path="customers" element={guardedAdmin(ADMIN_ROUTE_ROLES.customers, <CustomerManagementPage />)} />
+          <Route path="product-categories" element={guardedAdmin(ADMIN_ROUTE_ROLES.productCategories, <ProductCategoryAdminPage />)} />
+          <Route path="products" element={guardedAdmin(ADMIN_ROUTE_ROLES.products, <ProductCatalogListPage />)} />
+          <Route path="products/new" element={guardedAdmin(ADMIN_ROUTE_ROLES.products, <ProductCatalogEditPage />)} />
+          <Route path="products/:productId" element={guardedAdmin(ADMIN_ROUTE_ROLES.products, <ProductCatalogEditPage />)} />
+          <Route path="export-market" element={guardedAdmin(ADMIN_ROUTE_ROLES.exportMarket, <ExportMarketAdminPage />)} />
+          <Route path="company" element={guardedAdmin(ADMIN_ROUTE_ROLES.company, <CompanyProfilePage />)} />
+          <Route path="navigation" element={guardedAdmin(ADMIN_ROUTE_ROLES.navigation, <NavigationMenuAdminPage />)} />
+          <Route path="users" element={guardedAdmin(ADMIN_ROUTE_ROLES.users, <UserManagementPage />)} />
         </Route>
 
         <Route

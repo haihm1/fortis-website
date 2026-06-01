@@ -29,6 +29,12 @@ const NAV_ITEMS = [
     roles: ['SUPER_ADMIN', 'CONTACT_MANAGER'],
   },
   {
+    path: '/admin/customers',
+    label: 'Customer Leads',
+    icon: IconUsers,
+    roles: ['SUPER_ADMIN', 'CONTACT_MANAGER'],
+  },
+  {
     path: '/admin/products',
     label: 'Product Catalog',
     icon: IconCatalog,

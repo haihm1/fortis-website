@@ -62,6 +62,36 @@ export function updateAdminContactStatus(token, contactId, status) {
   })
 }
 
+export function getAdminCustomers(token) {
+  return request('/api/admin/customers', token)
+}
+
+export function createAdminCustomer(token, payload) {
+  return request('/api/admin/customers', token, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function updateAdminCustomer(token, customerId, payload) {
+  return request(`/api/admin/customers/${customerId}`, token, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function deleteAdminCustomer(token, customerId) {
+  return request(`/api/admin/customers/${customerId}`, token, {
+    method: 'DELETE',
+  })
+}
+
 export function getAdminContent(token) {
   return request('/api/admin/content', token).then(normalizeAdminContent)
 }
