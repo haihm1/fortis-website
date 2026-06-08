@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
 import { getFallbackExportMarket } from '../data/exportMarketFallback'
-import { buildBreadcrumbSchema, buildOrganizationSchema } from '../data/seoConfig'
+import { buildOrganizationSchema } from '../data/seoConfig'
 import { loadExportMarket } from '../services/exportMarketApi'
 import { formatDisplayDate } from '../utils/dateFormat'
 
@@ -45,13 +45,6 @@ export function ExportMarketPage({ locale }) {
     locale,
   })
   useJsonLd('organization', buildOrganizationSchema())
-  useJsonLd(
-    'export-market-breadcrumb',
-    buildBreadcrumbSchema([
-      { name: pageData.labels.breadcrumbHome, path: '/' },
-      { name: pageData.labels.breadcrumbCurrent, path: '/export-market' },
-    ]),
-  )
 
   return (
     <main className="export-market-page">
@@ -75,7 +68,12 @@ export function ExportMarketPage({ locale }) {
             transition={{ duration: 0.5 }}
           >
             <Link to={`/export-market/${featuredArticle.slug}`} className="export-market-featured-image">
-              <img src={featuredArticle.image} alt={`${featuredArticle.title} thumbnail`} />
+              <img
+                src={featuredArticle.image}
+                alt={`${featuredArticle.title} thumbnail`}
+                loading="lazy"
+                decoding="async"
+              />
             </Link>
             <div className="export-market-featured-body">
               <ArticleMeta article={featuredArticle} />
@@ -118,7 +116,12 @@ function ArticleCard({ article, readMoreLabel, index }) {
       transition={{ duration: 0.42, delay: index * 0.06 }}
     >
       <Link className="export-market-card-image" to={`/export-market/${article.slug}`}>
-        <img src={article.image} alt={`${article.title} thumbnail`} />
+        <img
+          src={article.image}
+          alt={`${article.title} thumbnail`}
+          loading="lazy"
+          decoding="async"
+        />
       </Link>
       <div className="export-market-card-body">
         <ArticleMeta article={article} />

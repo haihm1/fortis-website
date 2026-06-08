@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { FaqSection } from '../components/FaqSection'
 import { SectionHeading } from '../components/SectionHeading'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
@@ -236,6 +237,7 @@ export function HomePage({ locale, visibleMenuKeys }) {
       {showServices ? <CategorySection copy={copy.categories} /> : null}
       <FeaturedProductsSection section={featuredProductsSection} products={products} />
       <ExportMarketNewsSection section={copy.news} />
+      <FaqSection locale={locale} />
       {showAbout ? <CompanyProfileSection section={companyProfileSection} certificates={pageData.certificates} /> : null}
     </main>
   )
@@ -364,7 +366,13 @@ function CategorySection({ copy }) {
             viewport={{ once: true, amount: 0.25 }}
             transition={{ duration: 0.55, delay: index * 0.08 }}
           >
-            <img className="category-card-image" src={category.image} alt={category.alt} />
+            <img
+              className="category-card-image"
+              src={category.image}
+              alt={category.alt}
+              loading="lazy"
+              decoding="async"
+            />
             <div className="category-card-overlay" />
             <div className="category-card-content">
               <span>{String(index + 1).padStart(2, '0')}</span>
@@ -394,7 +402,13 @@ function FeaturedProductsSection({ section, products }) {
             transition={{ duration: 0.55, delay: index * 0.08 }}
           >
             <div className="featured-product-image-wrap">
-              <img className="featured-product-image" src={product.image} alt={product.alt} />
+              <img
+                className="featured-product-image"
+                src={product.image}
+                alt={product.alt}
+                loading="lazy"
+                decoding="async"
+              />
               <a className="featured-product-action" href={product.href}>
                 {product.actionLabel}
               </a>
@@ -464,7 +478,13 @@ function ExportMarketNewsSection({ section }) {
             transition={{ duration: 0.55, delay: index * 0.1 }}
           >
             <a href={item.href} className="export-news-image-link">
-              <img className="export-news-image" src={item.image} alt={item.alt} />
+              <img
+                className="export-news-image"
+                src={item.image}
+                alt={item.alt}
+                loading="lazy"
+                decoding="async"
+              />
             </a>
             <a href={item.href} className="export-news-body">
               <p className="section-eyebrow">Export market</p>
@@ -526,7 +546,12 @@ function CompanyProfileSection({ section, certificates }) {
         <div className="certificate-list">
           {(certificates ?? []).slice(0, 4).map((certificate) => (
             <article key={certificate.name} className="certificate-item">
-              <img src={MEDIA.certificate} alt={`${certificate.name} certificate badge`} />
+              <img
+                src={MEDIA.certificate}
+                alt={`${certificate.name} certificate badge`}
+                loading="lazy"
+                decoding="async"
+              />
               <div>
                 <strong>{certificate.name}</strong>
                 <p>{certificate.description}</p>

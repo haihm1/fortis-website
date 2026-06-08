@@ -1148,6 +1148,120 @@
   grid-template-columns: minmax(0, 1fr) minmax(160px, 0.45fr) 40px;
 }
 
+.export-order-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 380px);
+  gap: 20px;
+  align-items: start;
+}
+
+.export-order-progress-panel {
+  position: sticky;
+  top: 88px;
+  display: grid;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--admin-border);
+  border-radius: var(--admin-radius);
+  background: var(--admin-bg-elevated);
+  box-shadow: var(--admin-shadow-soft);
+}
+
+.export-order-progress-panel h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.export-order-money-grid,
+.export-order-calculation-preview {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.export-order-money-grid div,
+.export-order-calculation-preview div {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  background: var(--admin-surface-2);
+}
+
+.export-order-money-grid span,
+.export-order-calculation-preview span {
+  color: var(--admin-text-muted);
+  font-size: 0.75rem;
+}
+
+.order-progress-steps,
+.order-history-list {
+  display: grid;
+  gap: 10px;
+}
+
+.order-progress-steps button {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+  text-align: left;
+  border: 1px solid var(--admin-border);
+  border-radius: 12px;
+  padding: 10px;
+  background: #ffffff;
+  color: var(--admin-text);
+  cursor: pointer;
+}
+
+.order-progress-steps button span {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  place-items: center;
+  border-radius: 999px;
+  background: var(--admin-surface-2);
+  color: var(--admin-text-soft);
+  font-weight: 800;
+}
+
+.order-progress-steps button.is-done {
+  border-color: rgba(33, 150, 83, 0.28);
+}
+
+.order-progress-steps button.is-done span,
+.order-progress-steps button.is-current span {
+  background: var(--admin-accent);
+  color: #ffffff;
+}
+
+.order-progress-steps button.is-current {
+  border-color: var(--admin-accent);
+  box-shadow: 0 12px 24px rgba(184, 137, 60, 0.16);
+}
+
+.order-history-list div {
+  display: grid;
+  gap: 4px;
+  padding: 10px 0 10px 14px;
+  border-left: 2px solid var(--admin-border);
+}
+
+.order-history-list span,
+.order-history-list p {
+  color: var(--admin-text-muted);
+  font-size: 0.82rem;
+}
+
+.text-success {
+  color: #16824a;
+}
+
+.text-danger {
+  color: #b42318;
+}
+
 .admin-export-preview {
   display: grid;
   grid-template-columns: minmax(220px, 0.38fr) minmax(0, 1fr);
@@ -1163,6 +1277,7 @@
   width: 100%;
   height: 100%;
   min-height: 180px;
+  aspect-ratio: 16 / 10;
   object-fit: cover;
   border-radius: 10px;
   background: var(--admin-surface-2);
@@ -1200,6 +1315,12 @@
   align-items: center;
   gap: 10px;
   flex-wrap: wrap;
+}
+
+.admin-form-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .admin-export-grid {
@@ -1601,8 +1722,17 @@
   .admin-customer-form-grid,
   .admin-customer-textarea-grid,
   .admin-dynamic-row.three-cols,
+  .export-order-layout,
   .admin-export-preview {
     grid-template-columns: 1fr;
+  }
+
+  .admin-form-grid-2 {
+    grid-template-columns: 1fr;
+  }
+
+  .export-order-progress-panel {
+    position: static;
   }
 }
 

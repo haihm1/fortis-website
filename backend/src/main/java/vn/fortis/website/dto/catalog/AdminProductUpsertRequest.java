@@ -22,6 +22,8 @@ public record AdminProductUpsertRequest(
 		String detailDescription,
 		String detailDescriptionEn,
 		String detailDescriptionZh,
+		String hsCode,
+		String packagingSpec,
 		@NotEmpty(message = "At least one application is required")
 		List<String> applications,
 		List<String> applicationsEn,

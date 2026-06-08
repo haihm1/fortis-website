@@ -8,11 +8,14 @@ function normalizeCatalog(data) {
       product.categoryName ??
       categories.find((category) => category.id === product.categoryId)?.name ??
       ''
+    const specifications = normalizeSpecifications(product.specifications)
 
     return {
       ...product,
       categoryName,
-      specifications: normalizeSpecifications(product.specifications),
+      hsCode: product.hsCode ?? '',
+      packagingSpec: product.packagingSpec ?? specifications[0]?.value ?? '',
+      specifications,
       detailDescription: product.detailDescription ?? '',
       highlights: normalizeSpecifications(product.highlights),
       qualityControlSteps: normalizeSpecifications(product.qualityControlSteps),

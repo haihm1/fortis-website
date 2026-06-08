@@ -30,6 +30,8 @@ public record ProductCatalogResponse(
 			String name,
 			String summary,
 			String detailDescription,
+			String hsCode,
+			String packagingSpec,
 			String image,
 			String specificationFileUrl,
 			List<String> gallery,

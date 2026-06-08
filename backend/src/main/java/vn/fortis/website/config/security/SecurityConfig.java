@@ -43,6 +43,8 @@ public class SecurityConfig {
 						.requestMatchers("/api/auth/me").authenticated()
 						.requestMatchers("/api/admin/contacts/**").hasAnyRole("SUPER_ADMIN", "CONTACT_MANAGER")
 						.requestMatchers("/api/admin/customers/**").hasAnyRole("SUPER_ADMIN", "CONTACT_MANAGER")
+						.requestMatchers("/api/admin/export-orders/**").hasAnyRole("SUPER_ADMIN", "EXPORT_MANAGER", "CONTACT_MANAGER")
+						.requestMatchers(HttpMethod.GET, "/api/admin/catalog").hasAnyRole("SUPER_ADMIN", "CONTENT_EDITOR", "CONTENT_PUBLISHER", "EXPORT_MANAGER", "CONTACT_MANAGER")
 						.requestMatchers("/api/admin/content/**").hasAnyRole("SUPER_ADMIN", "CONTENT_EDITOR", "CONTENT_PUBLISHER")
 						.requestMatchers("/api/admin/navigation/**").hasAnyRole("SUPER_ADMIN", "CONTENT_EDITOR", "CONTENT_PUBLISHER")
 						.requestMatchers("/api/admin/accounts/**").hasAnyRole("SUPER_ADMIN", "ACCOUNT_MANAGER")

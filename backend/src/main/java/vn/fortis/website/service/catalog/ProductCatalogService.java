@@ -282,6 +282,8 @@ public class ProductCatalogService {
 				localizedText(locale, product.getNameVi(), product.getNameEn(), product.getNameZh()),
 				localizedText(locale, product.getSummaryVi(), product.getSummaryEn(), product.getSummaryZh()),
 				localizedText(locale, product.getDetailDescriptionVi(), product.getDetailDescriptionEn(), product.getDetailDescriptionZh()),
+				product.getHsCode(),
+				product.getPackagingSpec(),
 				product.getImageUrl(),
 				product.getSpecificationFileUrl(),
 				resolveGallery(product),
@@ -325,6 +327,8 @@ public class ProductCatalogService {
 				product.getDetailDescriptionVi(),
 				product.getDetailDescriptionEn(),
 				product.getDetailDescriptionZh(),
+				product.getHsCode(),
+				product.getPackagingSpec(),
 				product.getImageUrl(),
 				product.getSpecificationFileUrl(),
 				resolveGallery(product),
@@ -386,6 +390,8 @@ public class ProductCatalogService {
 		product.setDetailDescriptionVi(nullableTrim(request.detailDescription()));
 		product.setDetailDescriptionEn(nullableTrim(withFallback(request.detailDescriptionEn(), request.detailDescription())));
 		product.setDetailDescriptionZh(nullableTrim(withFallback(request.detailDescriptionZh(), request.detailDescriptionEn(), request.detailDescription())));
+		product.setHsCode(nullableTrim(request.hsCode()));
+		product.setPackagingSpec(nullableTrim(request.packagingSpec()));
 		List<String> galleryImages = resolveGalleryImages(request.galleryImages(), image, existingProduct);
 		product.setGalleryImageUrls(galleryImages);
 		product.setImageUrl(galleryImages.isEmpty() ? DEFAULT_PRODUCT_IMAGE : galleryImages.getFirst());

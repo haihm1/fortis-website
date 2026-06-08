@@ -11,6 +11,7 @@ import { AdminLoginPage } from './pages/admin/AdminLoginPage'
 import { CompanyProfilePage } from './pages/admin/CompanyProfilePage'
 import { CustomerManagementPage } from './pages/admin/CustomerManagementPage'
 import { DashboardPage } from './pages/admin/DashboardPage'
+import { ExportOrderManagementPage } from './pages/admin/ExportOrderManagementPage'
 import { ExportMarketAdminPage } from './pages/admin/ExportMarketAdminPage'
 import { NavigationMenuAdminPage } from './pages/admin/NavigationMenuAdminPage'
 import { ProductCategoryAdminPage } from './pages/admin/ProductCategoryAdminPage'
@@ -34,6 +35,7 @@ const ADMIN_ROUTE_ROLES = {
   dashboard: ['SUPER_ADMIN', 'CONTACT_MANAGER', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER', 'ACCOUNT_MANAGER'],
   rfq: ['SUPER_ADMIN', 'CONTACT_MANAGER'],
   customers: ['SUPER_ADMIN', 'CONTACT_MANAGER'],
+  exportOrders: ['SUPER_ADMIN', 'EXPORT_MANAGER', 'CONTACT_MANAGER'],
   products: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
   productCategories: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
   exportMarket: ['SUPER_ADMIN', 'CONTENT_EDITOR', 'CONTENT_PUBLISHER'],
@@ -45,6 +47,7 @@ const ADMIN_ROUTE_ORDER = [
   ['dashboard', 'dashboard'],
   ['rfq', 'rfq'],
   ['customers', 'customers'],
+  ['exportOrders', 'export-orders'],
   ['products', 'products'],
   ['productCategories', 'product-categories'],
   ['exportMarket', 'export-market'],
@@ -55,6 +58,12 @@ const ADMIN_ROUTE_ORDER = [
 
 function loadStoredPublicLocale() {
   try {
+    const requestedLocale = new URLSearchParams(window.location.search).get('lang')
+    if (PUBLIC_LOCALES.has(requestedLocale)) {
+      window.localStorage.setItem(PUBLIC_LOCALE_STORAGE_KEY, requestedLocale)
+      return requestedLocale
+    }
+
     const value = window.localStorage.getItem(PUBLIC_LOCALE_STORAGE_KEY)
     return PUBLIC_LOCALES.has(value) ? value : 'en'
   } catch {
@@ -128,6 +137,9 @@ function App() {
     setLocale(nextLocale)
     try {
       window.localStorage.setItem(PUBLIC_LOCALE_STORAGE_KEY, nextLocale)
+      const url = new URL(window.location.href)
+      url.searchParams.set('lang', nextLocale)
+      window.history.replaceState(null, '', `${url.pathname}${url.search}${url.hash}`)
     } catch {
       // Ignore storage failures; the in-memory state still updates for this session.
     }
@@ -172,6 +184,7 @@ function App() {
           <Route path="dashboard" element={guardedAdmin(ADMIN_ROUTE_ROLES.dashboard, <DashboardPage />)} />
           <Route path="rfq" element={guardedAdmin(ADMIN_ROUTE_ROLES.rfq, <RfqManagementPage />)} />
           <Route path="customers" element={guardedAdmin(ADMIN_ROUTE_ROLES.customers, <CustomerManagementPage />)} />
+          <Route path="export-orders" element={guardedAdmin(ADMIN_ROUTE_ROLES.exportOrders, <ExportOrderManagementPage />)} />
           <Route path="product-categories" element={guardedAdmin(ADMIN_ROUTE_ROLES.productCategories, <ProductCategoryAdminPage />)} />
           <Route path="products" element={guardedAdmin(ADMIN_ROUTE_ROLES.products, <ProductCatalogListPage />)} />
           <Route path="products/new" element={guardedAdmin(ADMIN_ROUTE_ROLES.products, <ProductCatalogEditPage />)} />

@@ -3,6 +3,7 @@ import { Link, NavLink, Outlet } from 'react-router-dom'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { QuickContactIcon } from '../components/QuickContactIcon'
 import { COMPANY_CONTACT } from '../data/companyContact'
+import { useBreadcrumbJsonLd } from '../hooks/useBreadcrumbJsonLd'
 import { loadHomeContent } from '../services/homeContentApi'
 import fortisLogo from '../image/logo fortis.png'
 
@@ -81,6 +82,8 @@ const MOBILE_LANGUAGE_OPTIONS = [
 
 export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
   const copy = LAYOUT_COPY[locale] ?? LAYOUT_COPY.en
+  useBreadcrumbJsonLd({ locale, navigationItems })
+
   const [wechatCopied, setWechatCopied] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
@@ -218,7 +221,7 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
       >
         <div className="brand-identity">
           <NavLink to="/" aria-label="Fortis VN home">
-            <img className="brand-logo" src={fortisLogo} alt="Fortis VN logo" />
+            <img className="brand-logo" src={fortisLogo} alt="Fortis VN logo" decoding="async" />
           </NavLink>
           {/* <div>
             <p className="brand-kicker">FORTIS VN</p>

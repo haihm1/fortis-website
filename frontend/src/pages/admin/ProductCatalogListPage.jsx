@@ -131,7 +131,7 @@ export function ProductCatalogListPage() {
               >
                 <div className="catalog-card-image">
                   {product.imageUrl ? (
-                    <img src={product.imageUrl} alt={product.name} />
+                    <img src={product.imageUrl} alt={product.name} loading="lazy" decoding="async" />
                   ) : (
                     <div style={{ display: 'grid', placeItems: 'center', height: '100%', color: '#9ab3a7' }}>
                       <IconImage />

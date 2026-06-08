@@ -1,4 +1,4 @@
-const SITE_URL = import.meta.env.VITE_SITE_URL ?? 'https://fortisvn.vn'
+const SITE_URL = import.meta.env.VITE_SITE_URL ?? 'https://fortisvn.com'
 
 export const SEO = {
   home: {
@@ -151,8 +151,12 @@ export function buildProductSchema(product) {
         name: 'Fortis VN Co., Ltd.',
       },
     },
-    additionalProperty: (product.specifications ?? [])
-      .filter((spec) => spec.label && spec.value)
+    additionalProperty: [
+      product.hsCode ? { label: 'HS Code', value: product.hsCode } : null,
+      product.packagingSpec ? { label: 'Packaging specification', value: product.packagingSpec } : null,
+      ...(product.specifications ?? []),
+    ]
+      .filter((spec) => spec?.label && spec?.value)
       .map((spec) => ({
         '@type': 'PropertyValue',
         name: spec.label,

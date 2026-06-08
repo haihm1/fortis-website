@@ -60,6 +60,12 @@ public class ProductEntity extends BaseAuditEntity {
 	@Column(name = "specification_file_url", length = 500)
 	private String specificationFileUrl;
 
+	@Column(name = "hs_code", length = 80)
+	private String hsCode;
+
+	@Column(name = "packaging_spec", length = 500)
+	private String packagingSpec;
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(name = "product_gallery_images", joinColumns = @JoinColumn(name = "product_id"))
 	@Column(name = "image_url", nullable = false, length = 500)
@@ -244,6 +250,22 @@ public class ProductEntity extends BaseAuditEntity {
 
 	public void setSpecificationFileUrl(String specificationFileUrl) {
 		this.specificationFileUrl = specificationFileUrl;
+	}
+
+	public String getHsCode() {
+		return hsCode;
+	}
+
+	public void setHsCode(String hsCode) {
+		this.hsCode = hsCode;
+	}
+
+	public String getPackagingSpec() {
+		return packagingSpec;
+	}
+
+	public void setPackagingSpec(String packagingSpec) {
+		this.packagingSpec = packagingSpec;
 	}
 
 	public List<String> getGalleryImageUrls() {

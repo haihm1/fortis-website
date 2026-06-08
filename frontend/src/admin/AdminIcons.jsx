@@ -40,6 +40,17 @@ export function IconCatalog(props) {
   )
 }
 
+export function IconPackage(props) {
+  return (
+    <svg {...baseProps} {...props}>
+      <path d="m21 8-9-5-9 5 9 5 9-5z" />
+      <path d="M3 8v8l9 5 9-5V8" />
+      <path d="M12 13v8" />
+      <path d="m7.5 5.5 9 5" />
+    </svg>
+  )
+}
+
 export function IconCompany(props) {
   return (
     <svg {...baseProps} {...props}>

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
 import { getFallbackExportMarketDetail } from '../data/exportMarketFallback'
-import { buildBreadcrumbSchema, buildOrganizationSchema } from '../data/seoConfig'
+import { buildOrganizationSchema } from '../data/seoConfig'
 import { loadExportMarketArticle } from '../services/exportMarketApi'
 import { formatDisplayDate } from '../utils/dateFormat'
 
@@ -42,14 +42,6 @@ export function ExportMarketDetailPage({ locale }) {
     locale,
   })
   useJsonLd('organization', buildOrganizationSchema())
-  useJsonLd(
-    'export-market-detail-breadcrumb',
-    buildBreadcrumbSchema([
-      { name: pageData.labels.breadcrumbHome, path: '/' },
-      { name: pageData.labels.breadcrumbCurrent, path: '/export-market' },
-      { name: article.title, path: `/export-market/${article.slug}` },
-    ]),
-  )
 
   return (
     <main className="export-market-detail-page">
@@ -76,7 +68,13 @@ export function ExportMarketDetailPage({ locale }) {
             <span>{article.category}</span>
           </div>
           <h1>{article.title}</h1>
-          <img className="export-market-article-image" src={article.image} alt={article.title} />
+          <img
+            className="export-market-article-image"
+            src={article.image}
+            alt={article.title}
+            fetchPriority="high"
+            decoding="async"
+          />
           <div className="export-market-article-content">
             {article.paragraphs.map((paragraph) => (
               <p key={paragraph}>{paragraph}</p>
@@ -100,7 +98,12 @@ function SidebarList({ title, articles }) {
       <div className="export-market-sidebar-list">
         {articles.map((article) => (
           <Link key={article.id} to={`/export-market/${article.slug}`}>
-            <img src={article.image} alt={`${article.title} thumbnail`} />
+            <img
+              src={article.image}
+              alt={`${article.title} thumbnail`}
+              loading="lazy"
+              decoding="async"
+            />
             <span>
               <small>{formatDisplayDate(article.publishedAt)}</small>
               <strong>{article.title}</strong>

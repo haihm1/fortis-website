@@ -329,6 +329,8 @@ public class DatabaseSeeder {
 		product.setSummaryVi(summaryVi);
 		product.setSummaryEn(summaryEn);
 		product.setImageUrl(imageUrl);
+		product.setHsCode(defaultHsCode(id));
+		product.setPackagingSpec(thickness);
 		product.setApplicationsVi(applicationsVi);
 		product.setApplicationsEn(applicationsEn);
 		product.setThickness(thickness);
@@ -338,6 +340,16 @@ public class DatabaseSeeder {
 		product.setActive(true);
 		product.setFeatured(true);
 		return product;
+	}
+
+	private String defaultHsCode(String productId) {
+		return switch (productId) {
+			case "green-skin-pomelo" -> "0805.40";
+			case "cavendish-banana" -> "0803.90";
+			case "diamond-cut-coconut", "whole-fresh-coconut" -> "0801.12";
+			case "desiccated-coconut" -> "0801.11";
+			default -> "0810.90";
+		};
 	}
 
 	private void seedExportMarket(ExportMarketArticleRepository articleRepository) {

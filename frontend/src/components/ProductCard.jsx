@@ -29,7 +29,13 @@ export function ProductCard({
         aria-label={`${labels.selectProduct}: ${product.name}`}
       >
         <span className="b2b-product-image-frame">
-          <img className="b2b-product-image" src={image} alt={`${product.name} thumbnail`} />
+          <img
+            className="b2b-product-image"
+            src={image}
+            alt={`${product.name} thumbnail`}
+            loading="lazy"
+            decoding="async"
+          />
           <span className="b2b-product-overlay" aria-hidden="true" />
           <span className="b2b-product-hover-action">{labels.viewDetail}</span>
         </span>

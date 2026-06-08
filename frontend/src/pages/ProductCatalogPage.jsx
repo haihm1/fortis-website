@@ -279,6 +279,8 @@ export function ProductCatalogPage({ locale }) {
           <img
             src="https://picsum.photos/seed/fortis-agriculture-banner/1200/760"
             alt="Agricultural export product catalog banner"
+            fetchPriority="high"
+            decoding="async"
           />
         </div>
       </section>

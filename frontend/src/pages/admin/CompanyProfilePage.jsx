@@ -156,7 +156,7 @@ export function CompanyProfilePage() {
                     <div className="thumbnail-cell">
                       <div className="thumbnail-cell-image">
                         {banner.imageUrl ? (
-                          <img src={banner.imageUrl} alt={banner.titleVi} />
+                          <img src={banner.imageUrl} alt={banner.titleVi} loading="lazy" decoding="async" />
                         ) : (
                           <IconImage style={{ color: 'var(--admin-text-muted)' }} />
                         )}
@@ -387,9 +387,9 @@ export function CompanyProfilePage() {
               <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1fr)', gap: 14 }}>
                 <div className="thumbnail-cell-image" style={{ width: '100%', height: 140 }}>
                   {bannerImage ? (
-                    <img src={URL.createObjectURL(bannerImage)} alt="preview" />
+                    <img src={URL.createObjectURL(bannerImage)} alt="preview" decoding="async" />
                   ) : editingBanner.imageUrl ? (
-                    <img src={editingBanner.imageUrl} alt={editingBanner.titleVi} />
+                    <img src={editingBanner.imageUrl} alt={editingBanner.titleVi} loading="lazy" decoding="async" />
                   ) : (
                     <IconImage style={{ color: 'var(--admin-text-muted)' }} />
                   )}

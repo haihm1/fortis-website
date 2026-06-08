@@ -21,6 +21,7 @@ const ROLE_OPTIONS = [
   { value: 'CONTENT_EDITOR', label: 'Content Editor', badge: 'badge-info' },
   { value: 'CONTENT_PUBLISHER', label: 'Content Publisher', badge: 'badge-info' },
   { value: 'CONTACT_MANAGER', label: 'Contact Manager', badge: 'badge-warn' },
+  { value: 'EXPORT_MANAGER', label: 'Export Manager', badge: 'badge-success' },
   { value: 'ACCOUNT_MANAGER', label: 'Account Manager', badge: 'badge-warn' },
 ]
 

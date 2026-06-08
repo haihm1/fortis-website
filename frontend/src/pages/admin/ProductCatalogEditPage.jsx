@@ -36,6 +36,8 @@ const EMPTY_PRODUCT = {
   detailDescription: '',
   detailDescriptionEn: '',
   detailDescriptionZh: '',
+  hsCode: '',
+  packagingSpec: '',
   quoteLabel: '',
   featured: false,
   applications: [''],
@@ -104,6 +106,8 @@ export function ProductCatalogEditPage() {
               detailDescription: product.detailDescription ?? '',
               detailDescriptionEn: product.detailDescriptionEn ?? '',
               detailDescriptionZh: product.detailDescriptionZh ?? '',
+              hsCode: product.hsCode ?? '',
+              packagingSpec: product.packagingSpec ?? '',
               quoteLabel: product.quoteLabel ?? '',
               featured: Boolean(product.featured),
               applications: product.applications?.length ? product.applications : [''],
@@ -274,6 +278,8 @@ export function ProductCatalogEditPage() {
         detailDescription: form.detailDescription.trim(),
         detailDescriptionEn: form.detailDescriptionEn.trim(),
         detailDescriptionZh: form.detailDescriptionZh.trim(),
+        hsCode: form.hsCode.trim(),
+        packagingSpec: form.packagingSpec.trim(),
         quoteLabel: form.quoteLabel || null,
         featured: form.featured,
         applications: cleanedApplications,
@@ -484,7 +490,12 @@ export function ProductCatalogEditPage() {
               <div className="gallery-grid product-gallery-admin-grid">
                 {galleryImages.map((imageUrl, index) => (
                   <div className="gallery-cell product-gallery-admin-cell" key={imageUrl}>
-                    <img src={imageUrl} alt={`${form.name || 'Product'} gallery ${index + 1}`} />
+                    <img
+                      src={imageUrl}
+                      alt={`${form.name || 'Product'} gallery ${index + 1}`}
+                      loading="lazy"
+                      decoding="async"
+                    />
                     <div className="product-gallery-admin-overlay">
                       {index === 0 ? <span>Ảnh đại diện</span> : <span>Gallery #{index + 1}</span>}
                       <button
@@ -552,6 +563,28 @@ export function ProductCatalogEditPage() {
                     ))}
                   </select>
                 </label>
+
+                <div className="admin-form-grid-2">
+                  <label className="field">
+                    <span className="field-label">Mã HS Code</span>
+                    <input
+                      className="field-input"
+                      value={form.hsCode}
+                      onChange={(event) => setForm((c) => ({ ...c, hsCode: event.target.value }))}
+                      placeholder="Vd: 0801.11"
+                    />
+                  </label>
+
+                  <label className="field">
+                    <span className="field-label">Quy cách đóng gói</span>
+                    <input
+                      className="field-input"
+                      value={form.packagingSpec}
+                      onChange={(event) => setForm((c) => ({ ...c, packagingSpec: event.target.value }))}
+                      placeholder="Vd: 25 kg / bao, 12 kg / carton"
+                    />
+                  </label>
+                </div>
 
                 <div className="field">
                   <span className="field-label">Thông số kỹ thuật</span>

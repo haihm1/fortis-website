@@ -33,6 +33,8 @@ public record AdminCatalogResponse(
 			String detailDescription,
 			String detailDescriptionEn,
 			String detailDescriptionZh,
+			String hsCode,
+			String packagingSpec,
 			String imageUrl,
 			String specificationFileUrl,
 			List<String> galleryImages,

@@ -25,6 +25,7 @@ public class AccountManagementService {
 			"CONTENT_EDITOR",
 			"CONTENT_PUBLISHER",
 			"CONTACT_MANAGER",
+			"EXPORT_MANAGER",
 			"ACCOUNT_MANAGER"
 	);
 

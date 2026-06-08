@@ -26,7 +26,14 @@ export function HeroBannerSection({ slides }) {
         {slides.map((slide, index) => (
           <SwiperSlide key={slide.title}>
             <article className="hero-banner-slide">
-              <img className="hero-banner-image" src={slide.image} alt={slide.alt} />
+              <img
+                className="hero-banner-image"
+                src={slide.image}
+                alt={slide.alt}
+                fetchPriority={index === 0 ? 'high' : 'auto'}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+              />
               <div className="hero-banner-overlay" aria-hidden="true" />
               <div className="hero-banner-content">
                 {activeIndex === index ? (

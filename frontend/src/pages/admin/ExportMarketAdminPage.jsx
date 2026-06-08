@@ -261,7 +261,7 @@ export function ExportMarketAdminPage() {
             </label>
 
             <div className="admin-export-preview">
-              <img src={form.imageUrl} alt="Export Market preview" />
+              <img src={form.imageUrl} alt="Export Market preview" loading="lazy" decoding="async" />
               <div>
                 <span>{form.category}</span>
                 <strong>{form.titleVi || 'Tiêu đề bài viết'}</strong>
@@ -400,7 +400,7 @@ export function ExportMarketAdminPage() {
         <div className="admin-export-grid">
           {filteredArticles.map((article) => (
             <article key={article.id} className="admin-export-card">
-              <img src={article.imageUrl} alt={article.titleVi} />
+              <img src={article.imageUrl} alt={article.titleVi} loading="lazy" decoding="async" />
               <div className="admin-export-card-body">
                 <div className="admin-export-card-meta">
                   <span>{formatDisplayDate(article.publishedAt)}</span>

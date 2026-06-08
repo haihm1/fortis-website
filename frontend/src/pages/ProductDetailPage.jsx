@@ -3,7 +3,7 @@ import { Link, useParams } from 'react-router-dom'
 import { SectionHeading } from '../components/SectionHeading'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
-import { SEO, buildProductSeo, buildProductSchema, buildBreadcrumbSchema } from '../data/seoConfig'
+import { SEO, buildProductSeo, buildProductSchema } from '../data/seoConfig'
 import { loadProductCatalog } from '../services/productCatalogApi'
 
 const DETAIL_COPY = {
@@ -18,6 +18,8 @@ const DETAIL_COPY = {
     qualityControl: 'Quy trình kiểm soát chất lượng',
     applications: 'Thị trường / kênh tiêu thụ',
     technicalSpecs: 'Thông số kỹ thuật',
+    hsCode: 'Mã HS',
+    packagingSpec: 'Quy cách đóng gói',
     relatedProducts: 'Sản phẩm liên quan',
     relatedDescription: 'Các sản phẩm cùng nhóm để buyer so sánh nhanh trước khi gửi RFQ.',
     notFound: 'Không tìm thấy sản phẩm theo đường dẫn này.',
@@ -35,6 +37,8 @@ const DETAIL_COPY = {
     qualityControl: 'Quality control process',
     applications: 'Markets / channels',
     technicalSpecs: 'Technical specifications',
+    hsCode: 'HS Code',
+    packagingSpec: 'Packaging specification',
     relatedProducts: 'Related products',
     relatedDescription:
       'Products from the same category so buyers can compare before sending an RFQ.',
@@ -53,6 +57,8 @@ const DETAIL_COPY = {
     qualityControl: '质量控制流程',
     applications: '市场 / 渠道',
     technicalSpecs: '技术规格',
+    hsCode: 'HS 编码',
+    packagingSpec: '包装规格',
     relatedProducts: '相关产品',
     relatedDescription: '同类产品便于买家在发送 RFQ 前快速比较。',
     notFound: '未找到该产品。',
@@ -101,6 +107,17 @@ export function ProductDetailPage({ locale }) {
 
   const productSeo = buildProductSeo(product, locale)
   const catalogSeo = SEO.products[locale] ?? SEO.products.en
+  const technicalSpecifications = useMemo(() => {
+    if (!product) {
+      return []
+    }
+
+    return [
+      product.hsCode ? { label: copy.hsCode, value: product.hsCode, featured: true } : null,
+      product.packagingSpec ? { label: copy.packagingSpec, value: product.packagingSpec, featured: true } : null,
+      ...(product.specifications ?? []),
+    ].filter(Boolean)
+  }, [copy.hsCode, copy.packagingSpec, product])
 
   useSeoMeta(
     productSeo
@@ -108,16 +125,6 @@ export function ProductDetailPage({ locale }) {
       : { title: catalogSeo.title, description: catalogSeo.description, path: catalogSeo.path, locale },
   )
   useJsonLd('product', buildProductSchema(product))
-  useJsonLd(
-    'breadcrumb',
-    product
-      ? buildBreadcrumbSchema([
-          { name: locale === 'vi' ? 'Trang chủ' : locale === 'zh' ? '首页' : 'Home', path: '/' },
-          { name: locale === 'vi' ? 'Sản phẩm' : locale === 'zh' ? '产品' : 'Products', path: '/products' },
-          { name: product.name, path: `/products/${product.slug}` },
-        ])
-      : null,
-  )
 
   const selectedImageUrl =
     product?.gallery?.includes(selectedImage) ? selectedImage : product?.gallery?.[0] ?? product?.image ?? ''
@@ -185,8 +192,11 @@ export function ProductDetailPage({ locale }) {
             <div className="catalog-spec-card">
               <p className="subsection-title">{copy.technicalSpecs}</p>
               <dl className="catalog-spec-list">
-                {(product.specifications ?? []).map((spec) => (
-                  <div key={`${spec.label}-${spec.value}`}>
+                {technicalSpecifications.map((spec) => (
+                  <div
+                    key={`${spec.label}-${spec.value}`}
+                    className={spec.featured ? 'catalog-spec-featured' : undefined}
+                  >
                     <dt>{spec.label}</dt>
                     <dd>{spec.value}</dd>
                   </div>

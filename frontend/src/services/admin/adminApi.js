@@ -92,6 +92,46 @@ export function deleteAdminCustomer(token, customerId) {
   })
 }
 
+export function getAdminExportOrders(token) {
+  return request('/api/admin/export-orders', token)
+}
+
+export function createAdminExportOrder(token, payload) {
+  return request('/api/admin/export-orders', token, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function updateAdminExportOrder(token, orderId, payload) {
+  return request(`/api/admin/export-orders/${orderId}`, token, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function updateAdminExportOrderStatus(token, orderId, payload) {
+  return request(`/api/admin/export-orders/${orderId}/status`, token, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+  })
+}
+
+export function deleteAdminExportOrder(token, orderId) {
+  return request(`/api/admin/export-orders/${orderId}`, token, {
+    method: 'DELETE',
+  })
+}
+
 export function getAdminContent(token) {
   return request('/api/admin/content', token).then(normalizeAdminContent)
 }

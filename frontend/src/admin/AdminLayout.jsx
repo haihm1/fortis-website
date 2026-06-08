@@ -9,6 +9,7 @@ import {
   IconLogout,
   IconMenu,
   IconNavigation,
+  IconPackage,
   IconRfq,
   IconUsers,
   IconClose,
@@ -33,6 +34,12 @@ const NAV_ITEMS = [
     label: 'Customer Leads',
     icon: IconUsers,
     roles: ['SUPER_ADMIN', 'CONTACT_MANAGER'],
+  },
+  {
+    path: '/admin/export-orders',
+    label: 'Export Orders',
+    icon: IconPackage,
+    roles: ['SUPER_ADMIN', 'EXPORT_MANAGER', 'CONTACT_MANAGER'],
   },
   {
     path: '/admin/products',
