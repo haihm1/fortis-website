@@ -5,19 +5,19 @@ export const SEO = {
     vi: {
       title: 'Nông sản xuất khẩu ổn định, minh bạch và đúng chuẩn',
       description:
-        'Fortis VN – đối tác cung ứng nông sản Việt Nam cho thị trường xuất khẩu quốc tế. Chuyên bưởi, chuối, dừa tươi, cơm dừa sấy. Sourcing minh bạch, giao hàng ổn định, hỗ trợ B2B linh hoạt.',
+        'FortisVN – đối tác cung ứng nông sản Việt Nam cho thị trường xuất khẩu quốc tế. Chuyên bưởi, chuối, dừa tươi, cơm dừa sấy. Sourcing minh bạch, giao hàng ổn định, hỗ trợ B2B linh hoạt.',
       path: '/',
     },
     en: {
       title: 'Reliable, Transparent Vietnamese Agricultural Export Solutions',
       description:
-        'Fortis VN is a Vietnamese agricultural product supply partner for global buyers. Specialising in pomelo, banana, fresh coconut and desiccated coconut. Transparent sourcing, stable delivery, flexible B2B support.',
+        'FortisVN is a Vietnamese agricultural product supply partner for global buyers. Specialising in pomelo, banana, fresh coconut and desiccated coconut. Transparent sourcing, stable delivery, flexible B2B support.',
       path: '/',
     },
     zh: {
       title: '可靠透明的越南农产品出口解决方案',
       description:
-        'Fortis VN 是面向全球买家的越南农产品供应伙伴，专注于水果、椰子及农产品出口，提供透明采购、稳定交付和灵活的 B2B 支持。',
+        'FortisVN 是面向全球买家的越南农产品供应伙伴，专注于水果、椰子及农产品出口，提供透明采购、稳定交付和灵活的 B2B 支持。',
       path: '/',
     },
   },
@@ -25,19 +25,19 @@ export const SEO = {
     vi: {
       title: 'Catalog Nông Sản Xuất Khẩu',
       description:
-        'Khám phá danh mục nông sản xuất khẩu của Fortis VN: bưởi da xanh, chuối Cavendish, dừa tươi gọt kim cương, cơm dừa sấy, nước cốt dừa. Lọc theo quy cách, chứng nhận và thị trường.',
+        'Khám phá danh mục nông sản xuất khẩu của FortisVN: bưởi da xanh, chuối Cavendish, dừa tươi gọt kim cương, cơm dừa sấy, nước cốt dừa. Lọc theo quy cách, chứng nhận và thị trường.',
       path: '/products',
     },
     en: {
       title: 'Export Agricultural Product Catalog',
       description:
-        "Browse Fortis VN's export catalogue: green-skin pomelo, Cavendish banana, diamond-cut coconut, desiccated coconut, coconut milk. Filter by packing, certification and target market.",
+        "Browse FortisVN's export catalogue: green-skin pomelo, Cavendish banana, diamond-cut coconut, desiccated coconut, coconut milk. Filter by packing, certification and target market.",
       path: '/products',
     },
     zh: {
       title: '出口农产品目录',
       description:
-        '浏览 Fortis VN 出口产品目录，按包装、认证和目标市场筛选重点农产品。',
+        '浏览 FortisVN 出口产品目录，按包装、认证和目标市场筛选重点农产品。',
       path: '/products',
     },
   },
@@ -45,19 +45,19 @@ export const SEO = {
     vi: {
       title: 'Liên Hệ',
       description:
-        'Liên hệ Fortis VN để nhận báo giá, thảo luận quy cách đóng gói hoặc lịch giao hàng. Địa chỉ: 6/40/165 Dương Quảng Hàm, phường Nghĩa Đô, Hà Nội. Email: fortisvn.coltd@gmail.com.',
+        'Liên hệ FortisVN để nhận báo giá, thảo luận quy cách đóng gói hoặc lịch giao hàng. Địa chỉ: 6/40/165 Dương Quảng Hàm, phường Nghĩa Đô, Hà Nội. Email: fortisvn.coltd@gmail.com.',
       path: '/contact',
     },
     en: {
       title: 'Contact Us',
       description:
-        'Contact Fortis VN for a quote, packing specifications or shipment scheduling. Address: 6/40/165 Duong Quang Ham, Nghia Do Ward, Hanoi, Vietnam. Email: fortisvn.coltd@gmail.com.',
+        'Contact FortisVN for a quote, packing specifications or shipment scheduling. Address: 6/40/165 Duong Quang Ham, Nghia Do Ward, Hanoi, Vietnam. Email: fortisvn.coltd@gmail.com.',
       path: '/contact',
     },
     zh: {
       title: '联系我们',
       description:
-        '联系 Fortis VN 获取报价、包装规格或出货计划。邮箱：fortisvn.coltd@gmail.com。',
+        '联系 FortisVN 获取报价、包装规格或出货计划。邮箱：fortisvn.coltd@gmail.com。',
       path: '/contact',
     },
   },
@@ -73,10 +73,10 @@ export function buildProductSeo(product, locale) {
   return {
     title: product.name,
     description: isVi
-      ? `${product.name} – ${product.summary}. ${primarySpec?.label ?? 'Thông số'}: ${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? 'Tiêu chuẩn'}: ${secondarySpec?.value ?? ''}. Liên hệ Fortis VN để nhận báo giá xuất khẩu.`
+      ? `${product.name} – ${product.summary}. ${primarySpec?.label ?? 'Thông số'}: ${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? 'Tiêu chuẩn'}: ${secondarySpec?.value ?? ''}. Liên hệ FortisVN để nhận báo giá xuất khẩu.`
       : isZh
-        ? `${product.name} - ${product.summary}. ${primarySpec?.label ?? '规格'}：${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? '标准'}：${secondarySpec?.value ?? ''}. 联系 Fortis VN 获取出口报价。`
-        : `${product.name} – ${product.summary}. ${primarySpec?.label ?? 'Specification'}: ${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? 'Standard'}: ${secondarySpec?.value ?? ''}. Contact Fortis VN for an export quote.`,
+        ? `${product.name} - ${product.summary}. ${primarySpec?.label ?? '规格'}：${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? '标准'}：${secondarySpec?.value ?? ''}. 联系 FortisVN 获取出口报价。`
+        : `${product.name} – ${product.summary}. ${primarySpec?.label ?? 'Specification'}: ${primarySpec?.value ?? ''}. ${secondarySpec?.label ?? 'Standard'}: ${secondarySpec?.value ?? ''}. Contact FortisVN for an export quote.`,
     path: `/products/${product.slug}`,
     image: product.image,
     type: 'article',
@@ -89,12 +89,12 @@ export function buildOrganizationSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'Organization',
-    name: 'Fortis VN Co., Ltd.',
-    alternateName: 'Công ty TNHH Fortis VN',
+    name: 'FortisVN Co., Ltd.',
+    alternateName: 'Công ty TNHH FortisVN',
     url: SITE_URL,
     logo: `${SITE_URL}/logo.png`,
     description:
-      'Fortis VN is an export-focused Vietnamese agricultural product supply partner for international buyers, specialising in fresh fruit and coconut-based products.',
+      'FortisVN is an export-focused Vietnamese agricultural product supply partner for international buyers, specialising in fresh fruit and coconut-based products.',
     address: {
       '@type': 'PostalAddress',
       streetAddress: '6/40/165 Dương Quảng Hàm',
@@ -121,7 +121,7 @@ export function buildWebsiteSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    name: 'Fortis VN',
+    name: 'FortisVN',
     url: SITE_URL,
     description: 'Export-focused Vietnamese agricultural product supply partner for global buyers.',
     inLanguage: ['vi', 'en'],
@@ -140,7 +140,7 @@ export function buildProductSchema(product) {
     url: `${SITE_URL}/products/${product.slug}`,
     brand: {
       '@type': 'Brand',
-      name: 'Fortis VN',
+      name: 'FortisVN',
     },
     offers: {
       '@type': 'Offer',
@@ -148,7 +148,7 @@ export function buildProductSchema(product) {
       priceCurrency: 'USD',
       seller: {
         '@type': 'Organization',
-        name: 'Fortis VN Co., Ltd.',
+        name: 'FortisVN Co., Ltd.',
       },
     },
     additionalProperty: [
@@ -169,12 +169,12 @@ export function buildContactPageSchema() {
   return {
     '@context': 'https://schema.org',
     '@type': 'ContactPage',
-    name: 'Contact Fortis VN',
+    name: 'Contact FortisVN',
     url: `${SITE_URL}/contact`,
     mainEntity: {
       '@type': 'LocalBusiness',
-      name: 'Fortis VN Co., Ltd.',
-      alternateName: 'Công ty TNHH Fortis VN',
+      name: 'FortisVN Co., Ltd.',
+      alternateName: 'Công ty TNHH FortisVN',
       address: {
         '@type': 'PostalAddress',
         streetAddress: '6/40/165 Dương Quảng Hàm',

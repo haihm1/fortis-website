@@ -5,7 +5,7 @@ import { QuickContactIcon } from '../components/QuickContactIcon'
 import { COMPANY_CONTACT } from '../data/companyContact'
 import { useBreadcrumbJsonLd } from '../hooks/useBreadcrumbJsonLd'
 import { loadHomeContent } from '../services/homeContentApi'
-import fortisLogo from '../image/logo fortis.png'
+import fortisLogo from '../image/LOGO center.png'
 
 const LAYOUT_COPY = {
   vi: {
@@ -220,14 +220,14 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
         className={`topbar ${isScrolled ? 'is-scrolled' : ''} ${isMobileMenuOpen ? 'is-mobile-open' : ''}`}
       >
         <div className="brand-identity">
-          <NavLink to="/" aria-label="Fortis VN home">
-            <img className="brand-logo" src={fortisLogo} alt="Fortis VN logo" decoding="async" />
+          <NavLink to="/" aria-label="FortisVN home">
+            <img className="brand-logo" src={fortisLogo} alt="FortisVN logo" decoding="async" />
           </NavLink>
           {/* <div>
-            <p className="brand-kicker">FORTIS VN</p>
+            <p className="brand-kicker">FortisVN</p>
             <div className="brand-block">
-              <h1>Công ty TNHH Fortis VN</h1>
-              <p>Fortis VN Co., Ltd.</p>
+              <h1>Công ty TNHH FortisVN</h1>
+              <p>FortisVN Co., Ltd.</p>
             </div>
           </div> */}
         </div>

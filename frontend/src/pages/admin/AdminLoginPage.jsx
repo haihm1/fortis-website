@@ -38,7 +38,7 @@ export function AdminLoginPage({ onLoginSuccess }) {
           <div className="admin-login-brand">
             <div className="admin-brand-mark" aria-hidden="true">F</div>
             <div className="admin-brand-text">
-              <strong>Fortis VN</strong>
+              <strong>FortisVN</strong>
               <span>Admin Portal</span>
             </div>
           </div>

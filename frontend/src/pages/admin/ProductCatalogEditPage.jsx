@@ -334,7 +334,7 @@ export function ProductCatalogEditPage() {
               {isCreate ? 'Add Product' : 'Edit Product'}
             </h1>
             <p style={{ margin: '4px 0 0', color: 'var(--admin-text-soft)', fontSize: '0.88rem' }}>
-              {isCreate ? 'Tạo mới sản phẩm trong catalog Fortis VN.' : `Cập nhật sản phẩm: ${form.name}`}
+              {isCreate ? 'Tạo mới sản phẩm trong catalog FortisVN.' : `Cập nhật sản phẩm: ${form.name}`}
             </p>
           </div>
         </div>

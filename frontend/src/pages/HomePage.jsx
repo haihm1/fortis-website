@@ -21,8 +21,8 @@ const MEDIA = {
   pepper: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1200&q=85',
   cashew: 'https://images.unsplash.com/photo-1606923829579-0cb981a83e2f?auto=format&fit=crop&w=1200&q=85',
   fruit: 'https://images.unsplash.com/photo-1619566636858-adf3ef46400b?auto=format&fit=crop&w=1200&q=85',
-  forest: 'https://images.unsplash.com/photo-1513836279014-a89f7a76ae86?auto=format&fit=crop&w=1200&q=85',
-  seafood: 'https://images.unsplash.com/photo-1615141982883-c7ad0e69fd62?auto=format&fit=crop&w=1200&q=85',
+  spices: 'https://images.unsplash.com/photo-1532336414038-cf19250c5757?auto=format&fit=crop&w=1200&q=85',
+  charcoal: 'https://images.unsplash.com/photo-1518621736915-f3b1c41bfd00?auto=format&fit=crop&w=1200&q=85',
   coffeeNews: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1200&q=85',
   marketNews: 'https://images.unsplash.com/photo-1523741543316-beb7fc7023d8?auto=format&fit=crop&w=1200&q=85',
   strategyNews: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1200&q=85',
@@ -40,37 +40,37 @@ const MotionDiv = motion.div
 const CONTENT = {
   vi: {
     heroEyebrow: 'Vietnamese Agrimex Partner',
-    heroTitle: 'Fortis VN kết nối nông sản Việt với thị trường quốc tế.',
+    heroTitle: 'FortisVN kết nối nông sản Việt với thị trường quốc tế.',
     heroDescription:
       'Mô phỏng tinh thần VietLinh Agrimex với banner lớn, danh mục sản phẩm rõ ràng và tin thị trường xuất khẩu giàu hình ảnh.',
     primaryAction: 'Xem sản phẩm',
     secondaryAction: 'Tin thị trường',
     categories: {
       eyebrow: 'Danh mục',
-      title: 'Nông sản, lâm sản và hải sản xuất khẩu.',
-      description: 'Ba nhóm ngành chính được trình bày bằng ảnh nền lớn, overlay xanh và chuyển động hover.',
+      title: 'Nông sản, gia vị và than xuất khẩu.',
+      description: 'Ba nhóm ngành chủ lực của FortisVN với nguồn cung ổn định, chất lượng kiểm soát và quy cách đóng gói theo yêu cầu từng thị trường.',
       items: [
         {
           title: 'Nông sản',
-          description: 'Trái cây tươi, gia vị, gạo và các mặt hàng nông sản Việt Nam theo mùa.',
+          description: 'Trái cây tươi, gạo, cà phê và các mặt hàng nông sản Việt Nam theo mùa.',
           alt: 'Nông sản Việt Nam và trái cây nhiệt đới',
         },
         {
-          title: 'Lâm sản',
-          description: 'Gỗ, nguyên liệu giấy và các nhóm sản phẩm có nguồn gốc rừng được kiểm soát.',
-          alt: 'Lâm sản và gỗ xuất khẩu',
+          title: 'Gia vị',
+          description: 'Quế, hồi, tiêu và các loại gia vị Việt Nam đạt chuẩn xuất khẩu.',
+          alt: 'Gia vị Việt Nam quế hồi tiêu xuất khẩu',
         },
         {
-          title: 'Hải sản',
-          description: 'Nguồn cung hải sản đông lạnh, đóng gói xuất khẩu và hỗ trợ chuỗi lạnh.',
-          alt: 'Hải sản đông lạnh đóng gói xuất khẩu',
+          title: 'Than',
+          description: 'Than gáo dừa, than củi và than ép phục vụ nhu cầu công nghiệp và xuất khẩu.',
+          alt: 'Than gáo dừa và than củi xuất khẩu',
         },
       ],
     },
     products: {
-      eyebrow: 'Products',
-      title: 'Sản phẩm nổi bật',
-      description: 'Các mặt hàng gia vị và nông sản chủ lực, dùng ảnh thật từ site tham khảo để khóa đúng tinh thần giao diện.',
+      eyebrow: 'Sản phẩm tiêu biểu',
+      title: 'Các mặt hàng xuất khẩu chủ lực của FortisVN',
+      description: 'Tuyển chọn nông sản, gia vị và than đạt chuẩn xuất khẩu, kiểm soát chất lượng từ vùng trồng đến khâu đóng gói.',
     },
     news: {
       eyebrow: 'Export Market',
@@ -87,37 +87,37 @@ const CONTENT = {
   },
   en: {
     heroEyebrow: 'Vietnamese Agrimex Partner',
-    heroTitle: 'Fortis VN connects Vietnamese produce with global markets.',
+    heroTitle: 'FortisVN connects Vietnamese produce with global markets.',
     heroDescription:
       'A VietLinh Agrimex-inspired homepage with an immersive hero, clear product categories and export market news.',
     primaryAction: 'View products',
     secondaryAction: 'Market news',
     categories: {
       eyebrow: 'Categories',
-      title: 'Agricultural, forest and seafood exports.',
-      description: 'Three core groups are presented with large background images, green overlays and tactile hover motion.',
+      title: 'Agricultural products, spices and charcoal exports.',
+      description: 'Three core product groups from FortisVN, backed by stable supply, controlled quality and packing formats tailored to each market.',
       items: [
         {
           title: 'Agricultural Products',
-          description: 'Fresh fruits, spices, rice and seasonal Vietnamese agricultural products.',
+          description: 'Fresh fruits, rice, coffee and seasonal Vietnamese agricultural products.',
           alt: 'Vietnamese agricultural products and tropical fruit',
         },
         {
-          title: 'Forest Products',
-          description: 'Wood, paper materials and controlled forest-sourced product groups.',
-          alt: 'Forest products and export wood materials',
+          title: 'Spices',
+          description: 'Cassia cinnamon, star anise, pepper and other export-grade Vietnamese spices.',
+          alt: 'Vietnamese spices cinnamon star anise pepper for export',
         },
         {
-          title: 'Seafood',
-          description: 'Frozen seafood supply with export packing support and cold-chain coordination.',
-          alt: 'Frozen seafood packed for export',
+          title: 'Charcoal',
+          description: 'Coconut shell charcoal, hardwood charcoal and briquettes for industry and export.',
+          alt: 'Coconut shell and hardwood charcoal for export',
         },
       ],
     },
     products: {
-      eyebrow: 'Products',
-      title: 'Featured products',
-      description: 'Key spice and agricultural items using real reference media to keep the visual tone close to the sample site.',
+      eyebrow: 'Featured products',
+      title: "FortisVN's key export products",
+      description: 'A curated range of export-grade agricultural products, spices and charcoal, quality-controlled from the growing area to final packaging.',
     },
     news: {
       eyebrow: 'Export Market',
@@ -134,37 +134,37 @@ const CONTENT = {
   },
   zh: {
     heroEyebrow: '越南农产品出口伙伴',
-    heroTitle: 'Fortis VN 将越南农产品连接到国际市场。',
+    heroTitle: 'FortisVN 将越南农产品连接到国际市场。',
     heroDescription:
-      '以沉浸式横幅、清晰产品分类和出口市场资讯展示 Fortis VN 的贸易能力。',
+      '以沉浸式横幅、清晰产品分类和出口市场资讯展示 FortisVN 的贸易能力。',
     primaryAction: '查看产品',
     secondaryAction: '市场资讯',
     categories: {
       eyebrow: '分类',
-      title: '农产品、林产品和水产品出口。',
-      description: '三大核心品类以大图、绿色叠层和悬停动效呈现。',
+      title: '农产品、香辛料和木炭出口。',
+      description: 'FortisVN 的三大核心品类，拥有稳定供应、严格质量管控，并按各市场需求提供相应包装规格。',
       items: [
         {
           title: '农产品',
-          description: '新鲜水果、香辛料、大米及越南季节性农产品。',
+          description: '新鲜水果、大米、咖啡及越南季节性农产品。',
           alt: '越南农产品和热带水果',
         },
         {
-          title: '林产品',
-          description: '木材、造纸原料及可控来源的林产品类别。',
-          alt: '林产品和出口木材原料',
+          title: '香辛料',
+          description: '肉桂、八角、胡椒及其他符合出口标准的越南香辛料。',
+          alt: '越南香辛料肉桂八角胡椒出口',
         },
         {
-          title: '水产品',
-          description: '冷冻水产品供应、出口包装支持及冷链协调。',
-          alt: '出口包装冷冻水产品',
+          title: '木炭',
+          description: '椰壳炭、硬木炭及炭砖，供工业与出口使用。',
+          alt: '出口用椰壳炭和硬木炭',
         },
       ],
     },
     products: {
-      eyebrow: 'Products',
-      title: '精选产品',
-      description: '由 Fortis VN 管理团队选择并展示给首页访客的重点产品。',
+      eyebrow: '精选产品',
+      title: 'FortisVN 的核心出口产品',
+      description: '精选符合出口标准的农产品、香辛料和木炭，从种植区到包装全程严格管控质量。',
     },
     news: {
       eyebrow: 'Export Market',
@@ -253,7 +253,7 @@ function buildHeroSlides(copy, pageData) {
       title: slide.title || copy.heroTitle,
       description: slide.description || copy.heroDescription,
       image: slide.image || fallbackImages[index % fallbackImages.length],
-      alt: `${slide.title || 'Fortis VN export'} banner`,
+      alt: `${slide.title || 'FortisVN export'} banner`,
       overlayLabel: slide.overlayLabel,
       facts: slide.facts ?? [],
       primaryActionLabel: copy.primaryAction,
@@ -267,7 +267,7 @@ function buildHeroSlides(copy, pageData) {
     title: copy.heroTitle,
     description: copy.heroDescription,
     image: MEDIA.hero,
-    alt: 'Fortis VN export product hero banner',
+    alt: 'FortisVN export product hero banner',
     primaryActionLabel: copy.primaryAction,
     secondaryActionLabel: copy.secondaryAction,
     secondaryActionHref: '#export-market',
@@ -330,22 +330,22 @@ function buildCompanyProfileSection(pageData, fallbackSection, locale) {
 }
 
 function CategorySection({ copy }) {
-  const categoryImages = [MEDIA.fruit, MEDIA.forest, MEDIA.seafood]
+  const categoryImages = [MEDIA.fruit, MEDIA.spices, MEDIA.charcoal]
   const categories = (copy.items ?? [
     {
       title: 'Nông sản',
-      description: 'Fresh fruits, spices, rice and seasonal Vietnamese agricultural products.',
+      description: 'Fresh fruits, rice, coffee and seasonal Vietnamese agricultural products.',
       alt: 'Vietnamese agricultural products and passion fruit',
     },
     {
-      title: 'Lâm sản',
-      description: 'Wood, pulp, paper and certified forest-sourced product groups.',
-      alt: 'Forest products and wood veneer for export',
+      title: 'Gia vị',
+      description: 'Cassia cinnamon, star anise, pepper and other export-grade Vietnamese spices.',
+      alt: 'Vietnamese spices cinnamon star anise pepper for export',
     },
     {
-      title: 'Hải sản',
-      description: 'Frozen seafood supply backed by cold storage and export packaging.',
-      alt: 'Frozen shrimp seafood export product',
+      title: 'Than',
+      description: 'Coconut shell charcoal, hardwood charcoal and briquettes for industry and export.',
+      alt: 'Coconut shell and hardwood charcoal for export',
     },
   ]).map((category, index) => ({
     ...category,

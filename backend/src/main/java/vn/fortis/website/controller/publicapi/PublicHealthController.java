@@ -8,7 +8,7 @@ public class PublicHealthController {
 
 	@GetMapping("/")
 	public String root() {
-		return "Fortis VN API";
+		return "FortisVN API";
 	}
 
 	@GetMapping("/health")

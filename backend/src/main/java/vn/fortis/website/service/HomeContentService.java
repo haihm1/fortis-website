@@ -38,9 +38,9 @@ public class HomeContentService {
 		return new HomePageResponse(
 				locale,
 				new HomePageResponse.CompanyInfo(
-						"Công ty TNHH Fortis VN",
-						"Fortis VN Co., Ltd.",
-						"FORTIS VN",
+						"Công ty TNHH FortisVN",
+						"FortisVN Co., Ltd.",
+						"FortisVN",
 						chinese
 								? "可靠、透明、符合出口需求的农产品解决方案。"
 								: english
@@ -131,19 +131,19 @@ public class HomeContentService {
 		if ("zh".equals(locale)) {
 			return new HomePageResponse.SectionHeader(
 					"核心价值",
-					"Fortis VN 与国际客户建立长期出口合作的基础。",
+					"FortisVN 与国际客户建立长期出口合作的基础。",
 					"首页采用组件化 UI 与 API-ready 结构，便于后续扩展 CMS、农产品目录、公司资料和询价流程。"
 			);
 		}
 		return "en".equals(locale)
 				? new HomePageResponse.SectionHeader(
 						"Core values",
-						"The principles behind a long-term export partnership with Fortis VN.",
+						"The principles behind a long-term export partnership with FortisVN.",
 						"The homepage is built with a componentized UI and API-ready structure so a CMS, agricultural catalogue, company profile and RFQ flows can be added later."
 				)
 				: new HomePageResponse.SectionHeader(
 						"Giá trị cốt lõi",
-						"Nền tảng để Fortis VN làm việc bền vững với khách hàng quốc tế.",
+						"Nền tảng để FortisVN làm việc bền vững với khách hàng quốc tế.",
 						"Trang chủ được xây theo mô hình component + API để sau này bổ sung CMS, danh mục nông sản, hồ sơ năng lực và form RFQ dễ dàng hơn."
 				);
 	}
@@ -176,20 +176,20 @@ public class HomeContentService {
 		if ("zh".equals(locale)) {
 			return new HomePageResponse.SectionHeader(
 					"精选产品",
-					"重点产品阵容让买家快速了解贸易能力。",
-					"由 Fortis VN 管理团队选择并展示给首页访客的产品。"
+					"FortisVN 的核心出口产品",
+					"精选符合出口标准的农产品、香辛料和木炭，从种植区到包装全程严格管控质量。"
 			);
 		}
 		return "en".equals(locale)
 				? new HomePageResponse.SectionHeader(
 						"Featured products",
-						"A focused product lineup that immediately shows trading capability.",
-						"Selected products curated by the Fortis VN admin team for buyers visiting the homepage."
+						"FortisVN's key export products",
+						"A curated range of export-grade agricultural products, spices and charcoal, quality-controlled from the growing area to final packaging."
 				)
 				: new HomePageResponse.SectionHeader(
 						"Sản phẩm tiêu biểu",
-						"Nhóm sản phẩm chủ lực để khách truy cập thấy ngay năng lực thương mại.",
-						"Các sản phẩm được đội ngũ Fortis VN chọn hiển thị nổi bật trên trang chủ."
+						"Các mặt hàng xuất khẩu chủ lực của FortisVN",
+						"Tuyển chọn nông sản, gia vị và than đạt chuẩn xuất khẩu, kiểm soát chất lượng từ vùng trồng đến khâu đóng gói."
 				);
 	}
 

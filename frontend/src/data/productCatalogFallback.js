@@ -165,7 +165,7 @@ const PRODUCT_CATALOG_FALLBACK = {
     ],
     quoteSection: {
       eyebrow: 'Nhận báo giá',
-      title: 'Gửi nhanh nhu cầu về mặt hàng, quy cách đóng gói và lịch giao để đội ngũ Fortis VN phản hồi.',
+      title: 'Gửi nhanh nhu cầu về mặt hàng, quy cách đóng gói và lịch giao để đội ngũ FortisVN phản hồi.',
       description:
         'Có thể đính kèm tiêu chuẩn mua hàng, yêu cầu thị trường hoặc tài liệu tham chiếu để báo giá chính xác hơn.',
       fields: {
@@ -353,7 +353,7 @@ const PRODUCT_CATALOG_FALLBACK = {
     ],
     quoteSection: {
       eyebrow: 'Get a quote',
-      title: 'Share your crop, packing and shipment requirements so Fortis VN can respond quickly.',
+      title: 'Share your crop, packing and shipment requirements so FortisVN can respond quickly.',
       description:
         'Attach buying specs, target market requirements or reference documents for a more accurate quotation.',
       fields: {

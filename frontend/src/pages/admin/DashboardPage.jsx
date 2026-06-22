@@ -163,7 +163,7 @@ export function DashboardPage() {
       <header className="admin-page-header">
         <div>
           <h1>Dashboard</h1>
-          <p>Tổng quan vận hành Fortis VN — RFQ, catalog và tài khoản.</p>
+          <p>Tổng quan vận hành FortisVN — RFQ, catalog và tài khoản.</p>
         </div>
       </header>
 

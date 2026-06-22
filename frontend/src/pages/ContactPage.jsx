@@ -16,7 +16,7 @@ import { submitContactRequest } from '../services/publicContactApi'
 const COPY = {
   vi: {
     eyebrow: 'Liên hệ',
-    title: 'Kết nối cùng đội ngũ Fortis VN',
+    title: 'Kết nối cùng đội ngũ FortisVN',
     description:
       'Gửi yêu cầu của bạn về sản phẩm, quy cách đóng gói hoặc lịch giao hàng. Đội ngũ của chúng tôi sẽ phản hồi trong thời gian sớm nhất.',
     infoTitle: 'Thông tin công ty',
@@ -44,7 +44,7 @@ const COPY = {
       submit: 'Gửi yêu cầu',
     },
     successTitle: 'Gửi thành công!',
-    success: 'Yêu cầu của bạn đã được gửi. Cảm ơn bạn đã liên hệ Fortis VN! Đội ngũ sẽ phản hồi sớm nhất.',
+    success: 'Yêu cầu của bạn đã được gửi. Cảm ơn bạn đã liên hệ FortisVN! Đội ngũ sẽ phản hồi sớm nhất.',
     error: 'Không thể gửi yêu cầu lúc này. Vui lòng thử lại hoặc dùng các kênh liên hệ nhanh.',
     sending: 'Đang gửi...',
     closeModal: 'Đóng',
@@ -52,7 +52,7 @@ const COPY = {
   },
   en: {
     eyebrow: 'Contact',
-    title: 'Get in touch with the Fortis VN team',
+    title: 'Get in touch with the FortisVN team',
     description:
       'Share your inquiry about products, packing specifications or shipment schedules. Our team will respond as soon as possible.',
     infoTitle: 'Company information',
@@ -80,7 +80,7 @@ const COPY = {
       submit: 'Send request',
     },
     successTitle: 'Request submitted!',
-    success: 'Your request has been submitted. Thank you for contacting Fortis VN! Our team will reply as soon as possible.',
+    success: 'Your request has been submitted. Thank you for contacting FortisVN! Our team will reply as soon as possible.',
     error: 'Unable to submit your request right now. Please try again or use a quick contact channel.',
     sending: 'Sending...',
     closeModal: 'Close',
@@ -88,7 +88,7 @@ const COPY = {
   },
   zh: {
     eyebrow: '联系我们',
-    title: '联系 Fortis VN 团队',
+    title: '联系 FortisVN 团队',
     description:
       '请告诉我们您的产品、包装规格或出货计划需求。我们的团队会尽快回复。',
     infoTitle: '公司信息',
@@ -114,7 +114,7 @@ const COPY = {
       submit: '发送请求',
     },
     successTitle: '提交成功！',
-    success: '您的请求已提交。感谢联系 Fortis VN！我们的团队会尽快回复。',
+    success: '您的请求已提交。感谢联系 FortisVN！我们的团队会尽快回复。',
     error: '暂时无法提交请求。请稍后再试或使用快速联系渠道。',
     sending: '提交中...',
     closeModal: '关闭',
@@ -330,7 +330,7 @@ export function ContactPage({ locale }) {
         <div className="contact-map-frame">
           <iframe
             src={getMapEmbedUrl()}
-            title="Fortis VN office location"
+            title="FortisVN office location"
             loading="lazy"
             allowFullScreen
             referrerPolicy="no-referrer-when-downgrade"

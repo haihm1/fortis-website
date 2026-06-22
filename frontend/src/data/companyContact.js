@@ -1,6 +1,6 @@
 export const COMPANY_CONTACT = {
-  vietnameseName: 'Công ty TNHH Fortis VN',
-  englishName: 'Fortis VN Co., Ltd.',
+  vietnameseName: 'Công ty TNHH FortisVN',
+  englishName: 'FortisVN Co., Ltd.',
   address: '6/40/165 Dương Quảng Hàm, phường Nghĩa Đô, Hà Nội',
   addressEn: '6/40/165 Duong Quang Ham, Nghia Do Ward, Hanoi, Vietnam',
   hotlineDisplay: '+84 378 414 824',

@@ -1568,7 +1568,7 @@ main {
   }
 }
 
-/* ===== Fortis VN homepage phase 1 ===== */
+/* ===== FortisVN homepage phase 1 ===== */
 .topbar {
   position: fixed;
   left: 0;
@@ -1646,11 +1646,11 @@ main {
 }
 
 .brand-logo {
-  width: 118px;
-  max-height: 64px;
-  padding: 8px 10px;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, 0.92);
+  width: 150px;
+  max-height: 78px;
+  padding: 0;
+  border-radius: 0;
+  background: transparent;
 }
 
 .home-page {
@@ -2292,7 +2292,7 @@ main {
   }
 
   .topbar .brand-logo {
-    width: 132px;
+    width: 156px;
   }
 
   .topbar .language-switcher {

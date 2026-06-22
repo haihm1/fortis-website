@@ -12,7 +12,7 @@ export function HeroBannerSection({ slides }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
   return (
-    <section className="hero-banner-section" aria-label="Fortis VN hero banner">
+    <section className="hero-banner-section" aria-label="FortisVN hero banner">
       <Swiper
         className="hero-banner-swiper"
         modules={[Autoplay, Navigation, Pagination]}

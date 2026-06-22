@@ -12,7 +12,7 @@
 	<artifactId>fortis-website-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>fortis-website-api</name>
-	<description>Fortis VN corporate website API</description>
+	<description>FortisVN corporate website API</description>
 	<url/>
 	<licenses>
 		<license/>

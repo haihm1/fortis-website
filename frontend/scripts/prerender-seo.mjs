@@ -10,7 +10,7 @@ const templatePath = path.join(distDir, 'index.html')
 
 const SITE_URL = stripTrailingSlash(process.env.VITE_SITE_URL || 'https://fortisvn.com')
 const API_BASE_URL = stripTrailingSlash(process.env.PRERENDER_API_BASE_URL || process.env.VITE_API_BASE_URL || '')
-const SITE_TITLE = 'Fortis VN'
+const SITE_TITLE = 'FortisVN'
 const MAX_TITLE_LENGTH = 60
 
 const STATIC_ROUTES = [
@@ -18,7 +18,7 @@ const STATIC_ROUTES = [
     path: '/',
     title: 'Vietnamese Agricultural Export Solutions',
     description:
-      'Fortis VN supplies Vietnamese agricultural products for global B2B buyers with transparent sourcing, stable delivery and export documentation support.',
+      'FortisVN supplies Vietnamese agricultural products for global B2B buyers with transparent sourcing, stable delivery and export documentation support.',
     html: renderHomeHtml(),
   },
 ]
@@ -74,7 +74,7 @@ function normalizeCatalog(data) {
     return {
       ...product,
       categoryName,
-      name: product.name || 'Fortis VN product',
+      name: product.name || 'FortisVN product',
       summary: product.summary || '',
       slug: product.slug,
       image: product.image || product.gallery?.[0] || '',
@@ -117,7 +117,7 @@ function buildProductsRoute(catalog) {
     path: '/products',
     title: 'Export Product Catalog',
     description:
-      'Browse Fortis VN export products, HS codes, packing specifications and B2B sourcing options for Vietnamese agricultural goods.',
+      'Browse FortisVN export products, HS codes, packing specifications and B2B sourcing options for Vietnamese agricultural goods.',
     html: `
       <main class="seo-prerender-page">
         <nav><a href="/">Home</a> / <span>Products</span></nav>
@@ -163,7 +163,7 @@ function buildProductRoute(product) {
 function renderHomeHtml() {
   return `
     <main class="seo-prerender-page">
-      <h1>Fortis VN connects Vietnamese produce with global markets.</h1>
+      <h1>FortisVN connects Vietnamese produce with global markets.</h1>
       <p>Export-focused Vietnamese agricultural product supply partner for global buyers.</p>
       <section>
         <h2>Agricultural, forest and seafood exports</h2>
@@ -269,7 +269,7 @@ function buildProductDescription(product) {
     product.summary,
     product.hsCode ? `HS Code: ${product.hsCode}` : '',
     product.packagingSpec ? `Packing: ${product.packagingSpec}` : '',
-    'Contact Fortis VN for export sourcing and quotation.',
+    'Contact FortisVN for export sourcing and quotation.',
   ].filter(Boolean)
 
   return parts.join(' ')

@@ -74,7 +74,7 @@ const FILTER_COPY = {
 const QUOTE_STATUS_COPY = {
   vi: {
     successTitle: 'Gửi thành công!',
-    success: 'Yêu cầu báo giá của bạn đã được tiếp nhận. Đội ngũ Fortis VN sẽ phản hồi sớm nhất có thể.',
+    success: 'Yêu cầu báo giá của bạn đã được tiếp nhận. Đội ngũ FortisVN sẽ phản hồi sớm nhất có thể.',
     error: 'Không thể gửi yêu cầu lúc này. Vui lòng thử lại.',
     sending: 'Đang gửi...',
     productInterestLabel: 'Sản phẩm đang quan tâm',
@@ -82,7 +82,7 @@ const QUOTE_STATUS_COPY = {
   },
   en: {
     successTitle: 'Request submitted!',
-    success: 'Your quote request has been received. The Fortis VN team will get back to you as soon as possible.',
+    success: 'Your quote request has been received. The FortisVN team will get back to you as soon as possible.',
     error: 'Unable to submit the request right now. Please try again.',
     sending: 'Sending...',
     productInterestLabel: 'Product interest',
@@ -90,7 +90,7 @@ const QUOTE_STATUS_COPY = {
   },
   zh: {
     successTitle: '提交成功！',
-    success: '您的报价请求已收到。Fortis VN 团队会尽快回复。',
+    success: '您的报价请求已收到。FortisVN 团队会尽快回复。',
     error: '暂时无法提交请求。请稍后再试。',
     sending: '提交中...',
     productInterestLabel: '感兴趣的产品',

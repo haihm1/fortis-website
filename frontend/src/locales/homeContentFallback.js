@@ -2,9 +2,9 @@ const homeContentFallback = {
   vi: {
     locale: 'vi',
     company: {
-      vietnameseName: 'Công ty TNHH Fortis VN',
-      englishName: 'Fortis VN Co., Ltd.',
-      shortName: 'FORTIS VN',
+      vietnameseName: 'Công ty TNHH FortisVN',
+      englishName: 'FortisVN Co., Ltd.',
+      shortName: 'FortisVN',
       tagline: 'Giải pháp nông sản xuất khẩu ổn định, minh bạch và đúng chuẩn.',
       primaryActionLabel: 'Xem sản phẩm chủ lực',
       address: '6/40/165 Dương Quảng Hàm, phường Nghĩa Đô, Hà Nội',
@@ -12,13 +12,13 @@ const homeContentFallback = {
       email: 'fortisvn.coltd@gmail.com',
     },
     introductionArticle:
-      'Fortis VN tập trung vào thương mại và kết nối chuỗi cung ứng cho các mặt hàng nông sản phục vụ xuất khẩu, trong đó ưu tiên vùng trồng ổn định, kiểm soát chất lượng và hỗ trợ tài liệu thương mại cho khách hàng B2B.',
+      'FortisVN tập trung vào thương mại và kết nối chuỗi cung ứng cho các mặt hàng nông sản phục vụ xuất khẩu, trong đó ưu tiên vùng trồng ổn định, kiểm soát chất lượng và hỗ trợ tài liệu thương mại cho khách hàng B2B.',
     heroSlides: [
       {
         eyebrow: 'Vùng trồng tuyển chọn',
         title: 'Kết nối nông sản Việt từ vùng trồng đến đơn hàng xuất khẩu.',
         description:
-          'Fortis VN định vị như một đối tác thương mại nông sản đáng tin cậy với năng lực sourcing, kiểm soát chất lượng và tổ chức giao hàng theo yêu cầu từng thị trường.',
+          'FortisVN định vị như một đối tác thương mại nông sản đáng tin cậy với năng lực sourcing, kiểm soát chất lượng và tổ chức giao hàng theo yêu cầu từng thị trường.',
         image:
           'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80',
         overlayLabel: 'Selected growing regions',
@@ -59,7 +59,7 @@ const homeContentFallback = {
     ],
     coreValuesSection: {
       eyebrow: 'Giá trị cốt lõi',
-      title: 'Nền tảng để Fortis VN làm việc bền vững với khách hàng quốc tế.',
+      title: 'Nền tảng để FortisVN làm việc bền vững với khách hàng quốc tế.',
       description:
         'Trang chủ được xây theo mô hình component + API để sau này bổ sung CMS, danh mục nông sản, hồ sơ năng lực và form RFQ dễ dàng hơn.',
     },
@@ -91,9 +91,9 @@ const homeContentFallback = {
     ],
     featuredProductsSection: {
       eyebrow: 'Sản phẩm tiêu biểu',
-      title: 'Nhóm sản phẩm chủ lực để khách truy cập thấy ngay năng lực thương mại.',
+      title: 'Các mặt hàng xuất khẩu chủ lực của FortisVN',
       description:
-        'Các sản phẩm được đội ngũ Fortis VN chọn hiển thị nổi bật trên trang chủ.',
+        'Tuyển chọn nông sản, gia vị và than đạt chuẩn xuất khẩu, kiểm soát chất lượng từ vùng trồng đến khâu đóng gói.',
     },
     featuredProducts: [
       {
@@ -179,9 +179,9 @@ const homeContentFallback = {
   en: {
     locale: 'en',
     company: {
-      vietnameseName: 'Công ty TNHH Fortis VN',
-      englishName: 'Fortis VN Co., Ltd.',
-      shortName: 'FORTIS VN',
+      vietnameseName: 'Công ty TNHH FortisVN',
+      englishName: 'FortisVN Co., Ltd.',
+      shortName: 'FortisVN',
       tagline: 'Reliable, transparent and export-ready agricultural product solutions.',
       primaryActionLabel: 'View featured products',
       secondaryActionLabel: 'See certificates',
@@ -190,13 +190,13 @@ const homeContentFallback = {
       email: 'fortisvn.coltd@gmail.com',
     },
     introductionArticle:
-      'Fortis VN focuses on export-oriented agricultural trading and supply-chain coordination, prioritizing stable growing regions, quality control and commercial documentation support for B2B buyers.',
+      'FortisVN focuses on export-oriented agricultural trading and supply-chain coordination, prioritizing stable growing regions, quality control and commercial documentation support for B2B buyers.',
     heroSlides: [
       {
         eyebrow: 'Selected growing regions',
         title: 'Linking Vietnamese agricultural products from farm lots to export orders.',
         description:
-          'Fortis VN is positioned as a trusted agricultural trading partner with sourcing discipline, quality control and shipment coordination for international buyers.',
+          'FortisVN is positioned as a trusted agricultural trading partner with sourcing discipline, quality control and shipment coordination for international buyers.',
         image:
           'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80',
         overlayLabel: 'Selected growing regions',
@@ -237,7 +237,7 @@ const homeContentFallback = {
     ],
     coreValuesSection: {
       eyebrow: 'Core values',
-      title: 'The principles behind a long-term export partnership with Fortis VN.',
+      title: 'The principles behind a long-term export partnership with FortisVN.',
       description:
         'The homepage is built with a componentized UI and API-ready structure so a CMS, agricultural catalogue, company profile and RFQ flows can be added later.',
     },
@@ -269,9 +269,9 @@ const homeContentFallback = {
     ],
     featuredProductsSection: {
       eyebrow: 'Featured products',
-      title: 'A focused product lineup that immediately shows trading capability.',
+      title: "FortisVN's key export products",
       description:
-        'Selected products curated by the Fortis VN admin team for buyers visiting the homepage.',
+        'A curated range of export-grade agricultural products, spices and charcoal, quality-controlled from the growing area to final packaging.',
     },
     featuredProducts: [
       {

@@ -1,6 +1,6 @@
 # Fortis Website Development Plan
 
-Tai lieu nay la backlog chinh cho cac giai doan phat trien tiep theo cua website Fortis VN.
+Tai lieu nay la backlog chinh cho cac giai doan phat trien tiep theo cua website FortisVN.
 
 ## Usage Rules
 - Co the goi task bang ma muc, vi du: `1.2`, `3.2`, `4.2`.

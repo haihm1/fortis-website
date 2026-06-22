@@ -40,7 +40,7 @@ public class ContactNotificationService {
 
 		SimpleMailMessage mailMessage = new SimpleMailMessage();
 		mailMessage.setTo(notificationEmail);
-		mailMessage.setSubject("[Fortis VN] New contact request from " + contactMessage.fullName());
+		mailMessage.setSubject("[FortisVN] New contact request from " + contactMessage.fullName());
 		mailMessage.setText(buildEmailBody(contactMessage));
 
 		try {

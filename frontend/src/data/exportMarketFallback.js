@@ -8,14 +8,14 @@ const fallbackArticles = {
         '7 tháng đầu năm ghi nhận giá trị xuất khẩu hồ tiêu tăng dù sản lượng giảm, trong khi quế tiếp tục mở rộng tại các thị trường trọng điểm.',
       image: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1400&q=85',
       category: 'Pepper & Cinnamon',
-      author: 'Fortis VN',
+      author: 'FortisVN',
       publishedAt: '2025-08-12',
       featured: true,
       paragraphs: [
         'Theo thống kê từ ngày 1/1 đến 31/7/2025, Việt Nam xuất khẩu 145.046 tấn hồ tiêu các loại. Hồ tiêu đen đạt 124.271 tấn, hồ tiêu trắng đạt 20.775 tấn.',
         'Tổng kim ngạch xuất khẩu hồ tiêu đạt khoảng 988 triệu USD. Dù sản lượng giảm so với cùng kỳ, giá trị xuất khẩu tăng nhờ mặt bằng giá bình quân cao hơn.',
         'Đối với quế, Việt Nam xuất khẩu 73.080 tấn trong cùng giai đoạn, kim ngạch đạt khoảng 187,5 triệu USD. Ấn Độ tiếp tục là thị trường lớn nhất, tiếp theo là Hoa Kỳ, Bangladesh, UAE và Trung Quốc.',
-        'Fortis VN theo dõi các biến động này để hỗ trợ khách hàng B2B lên kế hoạch mua hàng, chốt quy cách đóng gói và tối ưu lịch giao theo mùa vụ.',
+        'FortisVN theo dõi các biến động này để hỗ trợ khách hàng B2B lên kế hoạch mua hàng, chốt quy cách đóng gói và tối ưu lịch giao theo mùa vụ.',
       ],
     },
     {
@@ -26,7 +26,7 @@ const fallbackArticles = {
         'Cà phê tiếp tục đóng vai trò dẫn dắt khi nhiều nhóm nông, lâm, thủy sản tăng trưởng mạnh trong các tháng đầu năm.',
       image: 'https://images.unsplash.com/photo-1447933601403-0c6688de566e?auto=format&fit=crop&w=1400&q=85',
       category: 'Coffee',
-      author: 'Fortis VN',
+      author: 'FortisVN',
       publishedAt: '2025-08-11',
       featured: true,
       paragraphs: [
@@ -43,13 +43,13 @@ const fallbackArticles = {
         'Nông nghiệp Việt Nam cần tiếp tục đầu tư vào chất lượng, truy xuất nguồn gốc và năng lực chế biến để giữ đà tăng trưởng.',
       image: 'https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1400&q=85',
       category: 'Strategy',
-      author: 'Fortis VN',
+      author: 'FortisVN',
       publishedAt: '2025-08-10',
       featured: false,
       paragraphs: [
         'Trong bối cảnh rào cản kỹ thuật ngày càng rõ, lợi thế giá không còn là yếu tố duy nhất để cạnh tranh.',
         'Doanh nghiệp cần xây dựng vùng nguyên liệu ổn định, tiêu chuẩn kiểm soát chất lượng và dữ liệu truy xuất minh bạch.',
-        'Fortis VN định hướng phát triển mạng lưới đối tác có khả năng đáp ứng đều về chất lượng, chứng từ và tiến độ giao hàng.',
+        'FortisVN định hướng phát triển mạng lưới đối tác có khả năng đáp ứng đều về chất lượng, chứng từ và tiến độ giao hàng.',
       ],
     },
     {
@@ -60,7 +60,7 @@ const fallbackArticles = {
         'Mùa vải mở ra cơ hội ngắn hạn cho các đơn hàng trái cây tươi nếu kiểm soát tốt thu hoạch, làm mát và logistics.',
       image: 'https://images.unsplash.com/photo-1621939514649-280e2ee25f60?auto=format&fit=crop&w=1400&q=85',
       category: 'Fresh Fruit',
-      author: 'Fortis VN',
+      author: 'FortisVN',
       publishedAt: '2025-06-18',
       featured: false,
       paragraphs: [
@@ -97,7 +97,7 @@ fallbackArticles.en = fallbackArticles.vi.map((article) => ({
       'From January 1 to July 31, 2025, Vietnam exported 145,046 tons of pepper, including 124,271 tons of black pepper and 20,775 tons of white pepper.',
       'Total pepper export turnover reached around USD 988 million. Although volume declined year over year, export value improved thanks to higher average prices.',
       'For cinnamon, Vietnam shipped 73,080 tons in the same period with turnover of about USD 187.5 million. India remained the largest market, followed by the United States, Bangladesh, the UAE and China.',
-      'Fortis VN tracks these movements to help B2B customers plan sourcing, confirm packing specifications and optimize shipment schedules around seasonal supply.',
+      'FortisVN tracks these movements to help B2B customers plan sourcing, confirm packing specifications and optimize shipment schedules around seasonal supply.',
     ],
     'coffee-export-throne': [
       'Stable demand from roasting and processing markets helped coffee maintain strong export value.',
@@ -107,7 +107,7 @@ fallbackArticles.en = fallbackArticles.vi.map((article) => ({
     'long-term-agricultural-export-strategy': [
       'As technical barriers become more visible, price advantage alone is no longer enough to compete.',
       'Companies need stable sourcing regions, quality-control standards and transparent traceability data.',
-      'Fortis VN aims to develop a partner network capable of consistent quality, documentation and delivery performance.',
+      'FortisVN aims to develop a partner network capable of consistent quality, documentation and delivery performance.',
     ],
     'lychee-export-orders': [
       'Lychee has a short season, so purchasing, packing and shipment planning should be prepared early.',

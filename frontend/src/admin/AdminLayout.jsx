@@ -114,7 +114,7 @@ export function AdminLayout({ adminAuth, onLogout }) {
           <div className="admin-brand">
             <div className="admin-brand-mark" aria-hidden="true">F</div>
             <div className="admin-brand-text">
-              <strong>Fortis VN</strong>
+              <strong>FortisVN</strong>
               <span>Admin Portal</span>
             </div>
             <button

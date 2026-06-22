@@ -1,6 +1,6 @@
-# Fortis VN — Website giới thiệu và bán hàng nông sản xuất khẩu
+# FortisVN — Website giới thiệu và bán hàng nông sản xuất khẩu
 
-Website doanh nghiệp + portal quản trị của **Fortis VN**, phục vụ giới thiệu năng lực sản xuất, công bố catalog nông sản xuất khẩu, thu thập yêu cầu báo giá (RFQ) và cho phép đội vận hành quản lý nội dung qua giao diện admin.
+Website doanh nghiệp + portal quản trị của **FortisVN**, phục vụ giới thiệu năng lực sản xuất, công bố catalog nông sản xuất khẩu, thu thập yêu cầu báo giá (RFQ) và cho phép đội vận hành quản lý nội dung qua giao diện admin.
 
 Dự án được tổ chức theo mô hình **monorepo** gồm hai phần độc lập triển khai:
 
@@ -380,4 +380,4 @@ Xem chi tiết theo Priority/Status trong [`DEVELOPMENT_PLAN.md`](./DEVELOPMENT_
 
 ## License & ownership
 
-Dự án nội bộ của **Fortis VN**. Không công bố license công khai trong repo.
+Dự án nội bộ của **FortisVN**. Không công bố license công khai trong repo.

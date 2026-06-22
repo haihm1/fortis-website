@@ -1,6 +1,6 @@
-# Fortis VN SEO & Performance Upgrade Plan
+# FortisVN SEO & Performance Upgrade Plan
 
-File nay la nguon task chinh cho cac dot nang cap SEO, Core Web Vitals va kha nang index cua website Fortis VN.
+File nay la nguon task chinh cho cac dot nang cap SEO, Core Web Vitals va kha nang index cua website FortisVN.
 
 ## Nguyen tac thuc hien
 
@@ -94,7 +94,7 @@ File nay la nguon task chinh cho cac dot nang cap SEO, Core Web Vitals va kha na
 
 **Ket qua:**
 
-- Da cap nhat `useSeoMeta.js` de title luon theo dang `[Ten trang] | Fortis VN` va gioi han trong 60 ky tu.
+- Da cap nhat `useSeoMeta.js` de title luon theo dang `[Ten trang] | FortisVN` va gioi han trong 60 ky tu.
 - Da tu dong chen alternate hreflang cho `vi`, `en`, `zh` va `x-default`.
 - Do website chua co route rieng theo ngon ngu, URL hreflang dang dung query `?lang=vi`, `?lang=en`, `?lang=zh`.
 - Da cap nhat `App.jsx` de doc `?lang=` khi mo trang va luu lai ngon ngu tuong ung.

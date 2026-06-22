@@ -92,11 +92,11 @@ public class DatabaseSeeder {
 			profile.setHotline(defaultHotline);
 			profile.setEmail(defaultEmail);
 			profile.setAboutArticleVi("""
-					Fortis VN tập trung vào thương mại và kết nối chuỗi cung ứng cho các mặt hàng nông sản phục vụ xuất khẩu,
+					FortisVN tập trung vào thương mại và kết nối chuỗi cung ứng cho các mặt hàng nông sản phục vụ xuất khẩu,
 					trong đó ưu tiên vùng trồng ổn định, kiểm soát chất lượng và hỗ trợ tài liệu thương mại cho khách hàng B2B.
 					""".strip());
 			profile.setAboutArticleEn("""
-					Fortis VN focuses on export-oriented agricultural trading and supply-chain coordination, prioritizing stable growing regions,
+					FortisVN focuses on export-oriented agricultural trading and supply-chain coordination, prioritizing stable growing regions,
 					quality control and commercial documentation support for B2B buyers.
 					""".strip());
 			contentProfileRepository.save(profile);
@@ -111,8 +111,8 @@ public class DatabaseSeeder {
 						1,
 						"Kết nối nông sản Việt từ vùng trồng đến đơn hàng xuất khẩu.",
 						"Linking Vietnamese agricultural products from farm lots to export orders.",
-						"Fortis VN định vị như một đối tác thương mại nông sản đáng tin cậy với năng lực sourcing, kiểm soát chất lượng và tổ chức giao hàng theo yêu cầu từng thị trường.",
-						"Fortis VN is positioned as a trusted agricultural trading partner with sourcing discipline, quality control and shipment coordination for international buyers.",
+						"FortisVN định vị như một đối tác thương mại nông sản đáng tin cậy với năng lực sourcing, kiểm soát chất lượng và tổ chức giao hàng theo yêu cầu từng thị trường.",
+						"FortisVN is positioned as a trusted agricultural trading partner with sourcing discipline, quality control and shipment coordination for international buyers.",
 						"Selected growing regions",
 						"https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=1600&q=80"
 				),
@@ -373,13 +373,13 @@ public class DatabaseSeeder {
 								"Theo thống kê từ ngày 1/1 đến 31/7/2025, Việt Nam xuất khẩu 145.046 tấn hồ tiêu các loại. Hồ tiêu đen đạt 124.271 tấn, hồ tiêu trắng đạt 20.775 tấn.",
 								"Tổng kim ngạch xuất khẩu hồ tiêu đạt khoảng 988 triệu USD. Dù sản lượng giảm so với cùng kỳ, giá trị xuất khẩu tăng nhờ mặt bằng giá bình quân cao hơn.",
 								"Đối với quế, Việt Nam xuất khẩu 73.080 tấn trong cùng giai đoạn, kim ngạch đạt khoảng 187,5 triệu USD. Ấn Độ tiếp tục là thị trường lớn nhất, tiếp theo là Hoa Kỳ, Bangladesh, UAE và Trung Quốc.",
-								"Fortis VN theo dõi các biến động này để hỗ trợ khách hàng B2B lên kế hoạch mua hàng, chốt quy cách đóng gói và tối ưu lịch giao theo mùa vụ."
+								"FortisVN theo dõi các biến động này để hỗ trợ khách hàng B2B lên kế hoạch mua hàng, chốt quy cách đóng gói và tối ưu lịch giao theo mùa vụ."
 						),
 						List.of(
 								"From January 1 to July 31, 2025, Vietnam exported 145,046 tons of pepper, including 124,271 tons of black pepper and 20,775 tons of white pepper.",
 								"Total pepper export turnover reached around USD 988 million. Although volume declined year over year, export value improved thanks to higher average prices.",
 								"For cinnamon, Vietnam shipped 73,080 tons in the same period with turnover of about USD 187.5 million. India remained the largest market, followed by the United States, Bangladesh, the UAE and China.",
-								"Fortis VN tracks these movements to help B2B customers plan sourcing, confirm packing specifications and optimize shipment schedules around seasonal supply."
+								"FortisVN tracks these movements to help B2B customers plan sourcing, confirm packing specifications and optimize shipment schedules around seasonal supply."
 						)
 				),
 				buildArticle(
@@ -418,12 +418,12 @@ public class DatabaseSeeder {
 						List.of(
 								"Trong bối cảnh rào cản kỹ thuật ngày càng rõ, lợi thế giá không còn là yếu tố duy nhất để cạnh tranh.",
 								"Doanh nghiệp cần xây dựng vùng nguyên liệu ổn định, tiêu chuẩn kiểm soát chất lượng và dữ liệu truy xuất minh bạch.",
-								"Fortis VN định hướng phát triển mạng lưới đối tác có khả năng đáp ứng đều về chất lượng, chứng từ và tiến độ giao hàng."
+								"FortisVN định hướng phát triển mạng lưới đối tác có khả năng đáp ứng đều về chất lượng, chứng từ và tiến độ giao hàng."
 						),
 						List.of(
 								"As technical barriers become more visible, price advantage alone is no longer enough to compete.",
 								"Companies need stable sourcing regions, quality-control standards and transparent traceability data.",
-								"Fortis VN aims to develop a partner network capable of consistent quality, documentation and delivery performance."
+								"FortisVN aims to develop a partner network capable of consistent quality, documentation and delivery performance."
 						)
 				),
 				buildArticle(
@@ -474,7 +474,7 @@ public class DatabaseSeeder {
 		article.setExcerptEn(excerptEn);
 		article.setImageUrl(imageUrl);
 		article.setCategory(category);
-		article.setAuthor("Fortis VN");
+		article.setAuthor("FortisVN");
 		article.setPublishedAt(publishedAt);
 		article.setFeatured(featured);
 		article.setActive(true);

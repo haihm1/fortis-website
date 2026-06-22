@@ -24,7 +24,7 @@ const EMPTY_FORM = {
   excerptZh: '',
   imageUrl: 'https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=1400&q=85',
   category: 'Market Update',
-  author: 'Fortis VN',
+  author: 'FortisVN',
   publishedAt: new Date().toISOString().slice(0, 10),
   featured: false,
   active: true,

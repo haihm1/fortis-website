@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 
 const SITE_URL = import.meta.env.VITE_SITE_URL ?? 'https://fortisvn.com'
-const SITE_TITLE = 'Fortis VN'
+const SITE_TITLE = 'FortisVN'
 const TITLE_SEPARATOR = ' | '
 const MAX_TITLE_LENGTH = 60
 const HREFLANG_LOCALES = ['vi', 'en', 'zh']

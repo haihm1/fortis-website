@@ -177,7 +177,7 @@ public class ProductCatalogService {
 		if ("zh".equals(locale)) {
 			return new ProductCatalogResponse.QuoteSection(
 					"获取报价",
-					"请提交产品、包装和出货需求，Fortis VN 将尽快回复。",
+					"请提交产品、包装和出货需求，FortisVN 将尽快回复。",
 					"可附上采购规格、目标市场要求或参考文件，以便获得更准确的报价。",
 					new ProductCatalogResponse.QuoteFields(
 							"姓名",
@@ -196,7 +196,7 @@ public class ProductCatalogService {
 		if ("en".equals(locale)) {
 			return new ProductCatalogResponse.QuoteSection(
 					"Get a quote",
-					"Share your crop, packing and shipment requirements so Fortis VN can respond quickly.",
+					"Share your crop, packing and shipment requirements so FortisVN can respond quickly.",
 					"Attach buying specs, target market requirements or reference documents for a more accurate quotation.",
 					new ProductCatalogResponse.QuoteFields(
 							"Full name",
@@ -215,7 +215,7 @@ public class ProductCatalogService {
 
 		return new ProductCatalogResponse.QuoteSection(
 				"Nhận báo giá",
-				"Gửi nhanh nhu cầu về mặt hàng, quy cách đóng gói và lịch giao để đội ngũ Fortis VN phản hồi.",
+				"Gửi nhanh nhu cầu về mặt hàng, quy cách đóng gói và lịch giao để đội ngũ FortisVN phản hồi.",
 				"Có thể đính kèm tiêu chuẩn mua hàng, yêu cầu thị trường hoặc tài liệu tham chiếu để báo giá chính xác hơn.",
 				new ProductCatalogResponse.QuoteFields(
 						"Họ và tên",
