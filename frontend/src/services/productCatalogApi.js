@@ -1,4 +1,3 @@
-import { getFallbackProductCatalog } from '../data/productCatalogFallback'
 import { API_BASE_URL } from './apiConfig'
 
 function normalizeCatalog(data) {
@@ -58,32 +57,20 @@ function normalizeSpecifications(specifications) {
 }
 
 export async function loadProductCatalog(locale, signal) {
-  try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/public/catalog?lang=${encodeURIComponent(locale)}`,
-      {
-        method: 'GET',
-        headers: {
-          Accept: 'application/json',
-        },
-        signal,
+  const response = await fetch(
+    `${API_BASE_URL}/api/public/catalog?lang=${encodeURIComponent(locale)}`,
+    {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
       },
-    )
+      signal,
+    },
+  )
 
-    if (!response.ok) {
-      throw new Error(`Product catalog request failed with status ${response.status}`)
-    }
-
-    const data = normalizeCatalog(await response.json())
-    return { data, source: 'api' }
-  } catch (error) {
-    if (error.name === 'AbortError') {
-      throw error
-    }
-
-    return {
-      data: normalizeCatalog(getFallbackProductCatalog(locale)),
-      source: 'fallback',
-    }
+  if (!response.ok) {
+    throw new Error(`Product catalog request failed with status ${response.status}`)
   }
+
+  return normalizeCatalog(await response.json())
 }

@@ -1,11 +1,12 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FaqSection } from '../components/FaqSection'
+import { PageLoading } from '../components/PageLoading'
 import { SectionHeading } from '../components/SectionHeading'
+import { useBackendData } from '../hooks/useBackendData'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
-import { getFallbackHomeContent } from '../locales/homeContentFallback'
 import { HeroBannerSection } from '../sections/HeroBannerSection'
 import { loadHomeContent } from '../services/homeContentApi'
 import {
@@ -183,34 +184,18 @@ const CONTENT = {
 
 export function HomePage({ locale, visibleMenuKeys }) {
   const location = useLocation()
-  const [pageData, setPageData] = useState(() => getFallbackHomeContent(locale))
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function hydrateHomePage() {
-      try {
-        const result = await loadHomeContent(locale, controller.signal)
-        setPageData(result.data)
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setPageData(getFallbackHomeContent(locale))
-        }
-      }
-    }
-
-    hydrateHomePage()
-
-    return () => controller.abort()
-  }, [locale])
+  const pageData = useBackendData((signal) => loadHomeContent(locale, signal), [locale])
 
   const copy = useMemo(() => CONTENT[locale] ?? CONTENT.en, [locale])
   const seo = SEO.home[locale] ?? SEO.home.en
-  const heroSlides = useMemo(() => buildHeroSlides(copy, pageData), [copy, pageData])
-  const products = useMemo(() => buildProducts(pageData, copy.detailButton), [pageData, copy.detailButton])
-  const featuredProductsSection = pageData.featuredProductsSection ?? copy.products
+  const heroSlides = useMemo(() => buildHeroSlides(copy, pageData ?? {}), [copy, pageData])
+  const products = useMemo(
+    () => buildProducts(pageData ?? {}, copy.detailButton),
+    [pageData, copy.detailButton],
+  )
+  const featuredProductsSection = pageData?.featuredProductsSection ?? copy.products
   const companyProfileSection = useMemo(
-    () => buildCompanyProfileSection(pageData, copy.profile, locale),
+    () => buildCompanyProfileSection(pageData ?? {}, copy.profile, locale),
     [pageData, copy.profile, locale],
   )
   const showServices = !visibleMenuKeys || visibleMenuKeys.has('services')
@@ -230,6 +215,10 @@ export function HomePage({ locale, visibleMenuKeys }) {
   useSeoMeta({ title: seo.title, description: seo.description, path: seo.path, locale })
   useJsonLd('organization', buildOrganizationSchema())
   useJsonLd('website', buildWebsiteSchema())
+
+  if (!pageData) {
+    return <PageLoading locale={locale} />
+  }
 
   return (
     <main className="home-page">
@@ -540,7 +529,7 @@ function CompanyProfileSection({ section, certificates }) {
             ) : null}
           </dl>
           <div className="company-profile-actions">
-            <a className="primary-button" href="/company-profile.pdf">{section.profileButton}</a>
+            <a className="primary-button" href="/company-profile.pdf" download="PROFILE-FORTISVN.pdf">{section.profileButton}</a>
           </div>
         </div>
         <div className="certificate-list">

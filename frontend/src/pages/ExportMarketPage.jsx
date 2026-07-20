@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { PageLoading } from '../components/PageLoading'
+import { useBackendData } from '../hooks/useBackendData'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
-import { getFallbackExportMarket } from '../data/exportMarketFallback'
 import { buildOrganizationSchema } from '../data/seoConfig'
 import { loadExportMarket } from '../services/exportMarketApi'
 import { formatDisplayDate } from '../utils/dateFormat'
@@ -11,40 +12,25 @@ import { formatDisplayDate } from '../utils/dateFormat'
 const MotionArticle = motion.article
 
 export function ExportMarketPage({ locale }) {
-  const [pageData, setPageData] = useState(() => getFallbackExportMarket(locale))
-
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function hydrateExportMarket() {
-      try {
-        const result = await loadExportMarket(locale, controller.signal)
-        setPageData(result.data)
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setPageData(getFallbackExportMarket(locale))
-        }
-      }
-    }
-
-    hydrateExportMarket()
-
-    return () => controller.abort()
-  }, [locale])
+  const pageData = useBackendData((signal) => loadExportMarket(locale, signal), [locale])
 
   const featuredArticle = useMemo(
-    () => pageData.articles.find((article) => article.featured) ?? pageData.articles[0],
-    [pageData.articles],
+    () => pageData?.articles?.find((article) => article.featured) ?? pageData?.articles?.[0],
+    [pageData],
   )
-  const listArticles = pageData.articles.filter((article) => article.id !== featuredArticle?.id)
+  const listArticles = pageData?.articles?.filter((article) => article.id !== featuredArticle?.id) ?? []
 
   useSeoMeta({
-    title: pageData.pageHeader.title,
-    description: pageData.pageHeader.description,
+    title: pageData?.pageHeader.title ?? '',
+    description: pageData?.pageHeader.description ?? '',
     path: '/export-market',
     locale,
   })
   useJsonLd('organization', buildOrganizationSchema())
+
+  if (!pageData) {
+    return <PageLoading locale={locale} />
+  }
 
   return (
     <main className="export-market-page">

@@ -1,7 +1,6 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { getFallbackProductCatalog } from '../src/data/productCatalogFallback.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..')
@@ -28,38 +27,43 @@ async function main() {
   const catalog = await loadCatalog()
   const routes = [
     ...STATIC_ROUTES,
-    buildProductsRoute(catalog),
-    ...catalog.products.map((product) => buildProductRoute(product)),
+    ...(catalog
+      ? [buildProductsRoute(catalog), ...catalog.products.map((product) => buildProductRoute(product))]
+      : []),
   ]
 
   for (const route of routes) {
     await writeRoute(template, route)
   }
 
+  if (!catalog) {
+    console.warn('[prerender-seo] Backend catalog unavailable — skipped product SEO routes for this build.')
+  }
+
   console.log(`[prerender-seo] Generated ${routes.length} static HTML route(s).`)
 }
 
 async function loadCatalog() {
-  if (API_BASE_URL) {
-    try {
-      const response = await fetch(`${API_BASE_URL}/api/public/catalog?lang=en`, {
-        headers: { Accept: 'application/json' },
-      })
-
-      if (!response.ok) {
-        throw new Error(`Catalog API returned ${response.status}`)
-      }
-
-      const data = await response.json()
-      return normalizeCatalog(data)
-    } catch (error) {
-      console.warn(`[prerender-seo] Catalog API unavailable, using fallback catalog. ${error.message}`)
-    }
-  } else {
-    console.warn('[prerender-seo] VITE_API_BASE_URL is not set, using fallback catalog.')
+  if (!API_BASE_URL) {
+    console.warn('[prerender-seo] VITE_API_BASE_URL is not set, skipping product SEO routes.')
+    return null
   }
 
-  return normalizeCatalog(getFallbackProductCatalog('en'))
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/public/catalog?lang=en`, {
+      headers: { Accept: 'application/json' },
+    })
+
+    if (!response.ok) {
+      throw new Error(`Catalog API returned ${response.status}`)
+    }
+
+    const data = await response.json()
+    return normalizeCatalog(data)
+  } catch (error) {
+    console.warn(`[prerender-seo] Catalog API unavailable, skipping product SEO routes. ${error.message}`)
+    return null
+  }
 }
 
 function normalizeCatalog(data) {
