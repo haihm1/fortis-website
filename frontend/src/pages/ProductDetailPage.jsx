@@ -120,93 +120,123 @@ export function ProductDetailPage({ locale }) {
   if (!product) {
     return (
       <main>
-        <section className="catalog-hero">
-          <div className="catalog-hero-copy">
-            <SectionHeading
-              eyebrow={copy.breadcrumbProducts}
-              title={copy.notFound}
-              description={copy.notFoundDescription}
-            />
-            <Link className="secondary-button detail-back-link" to="/products">
-              {copy.backToCatalog}
-            </Link>
-          </div>
+        <section className="mx-auto max-w-[1240px] px-4 py-20 sm:px-6 lg:px-8">
+          <SectionHeading
+            eyebrow={copy.breadcrumbProducts}
+            title={copy.notFound}
+            description={copy.notFoundDescription}
+          />
+          <Link
+            className="mt-8 inline-flex h-11 cursor-pointer items-center rounded-full px-6 text-sm font-semibold text-forest-800 ring-1 ring-forest-800/30 transition-colors hover:bg-forest-50"
+            to="/products"
+          >
+            {copy.backToCatalog}
+          </Link>
         </section>
       </main>
     )
   }
 
+  const cardClass = 'rounded-2xl bg-white p-6 shadow-card ring-1 ring-forest-950/5'
+  const cardTitleClass = 'text-xs font-semibold tracking-[0.2em] text-forest-950/50 uppercase'
+
   return (
     <main>
-      <section className="catalog-hero">
-        <div className="catalog-hero-copy">
-          <p className="product-chip">
-            {copy.breadcrumbProducts} / {product.categoryName}
-          </p>
-          <SectionHeading
-            eyebrow={product.categoryName}
-            title={product.name}
-            description={product.summary}
-          />
+      <section className="bg-gradient-to-b from-forest-50 to-stone-25">
+        <div className="mx-auto max-w-[1240px] px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+          <nav className="flex items-center gap-2 text-sm text-forest-950/50" aria-label="Breadcrumb">
+            <Link className="cursor-pointer font-medium text-forest-800 transition-colors hover:text-gold-600" to="/products">
+              {copy.breadcrumbProducts}
+            </Link>
+            <span aria-hidden="true">/</span>
+            <span>{product.categoryName}</span>
+          </nav>
+          <div className="mt-5">
+            <SectionHeading
+              eyebrow={product.categoryName}
+              title={product.name}
+              description={product.summary}
+            />
+          </div>
         </div>
       </section>
 
-      <section className="product-detail-page">
-        <div className="product-detail-main">
-          <div className="product-detail-gallery">
+      <section className="mx-auto max-w-[1240px] space-y-10 px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
+        <div className="grid gap-8 lg:grid-cols-[1.2fr_1fr] lg:items-start">
+          <div>
             <div
-              className="product-detail-gallery-main"
+              className="aspect-[4/3] w-full rounded-2xl bg-forest-100 bg-cover bg-center shadow-card"
               style={{ backgroundImage: `url(${selectedImageUrl})` }}
+              role="img"
+              aria-label={`${product.name} photo`}
             />
-            <div className="product-detail-gallery-thumbs">
-              {product.gallery.map((image) => (
-                <button
-                  key={image}
-                  type="button"
-                  className={selectedImageUrl === image ? 'is-active' : ''}
-                  onClick={() => setSelectedImage(image)}
-                >
-                  <span style={{ backgroundImage: `url(${image})` }} />
-                </button>
-              ))}
-            </div>
+            {product.gallery.length > 1 ? (
+              <div className="mt-4 flex flex-wrap gap-3">
+                {product.gallery.map((image) => (
+                  <button
+                    key={image}
+                    type="button"
+                    className={`h-20 w-24 cursor-pointer overflow-hidden rounded-xl transition-all ${
+                      selectedImageUrl === image
+                        ? 'ring-2 ring-gold-500'
+                        : 'ring-1 ring-forest-950/10 hover:ring-forest-950/30'
+                    }`}
+                    onClick={() => setSelectedImage(image)}
+                  >
+                    <span
+                      className="block h-full w-full bg-cover bg-center"
+                      style={{ backgroundImage: `url(${image})` }}
+                    />
+                  </button>
+                ))}
+              </div>
+            ) : null}
           </div>
 
-          <div className="product-detail-sidebar">
-            <div className="catalog-spec-card">
-              <p className="subsection-title">{copy.technicalSpecs}</p>
-              <dl className="catalog-spec-list">
+          <div className="space-y-5">
+            <div className={cardClass}>
+              <p className={cardTitleClass}>{copy.technicalSpecs}</p>
+              <dl className="mt-4 divide-y divide-forest-950/8">
                 {technicalSpecifications.map((spec) => (
                   <div
                     key={`${spec.label}-${spec.value}`}
-                    className={spec.featured ? 'catalog-spec-featured' : undefined}
+                    className="flex items-baseline justify-between gap-4 py-2.5 text-sm"
                   >
-                    <dt>{spec.label}</dt>
-                    <dd>{spec.value}</dd>
+                    <dt className={`shrink-0 ${spec.featured ? 'font-semibold text-gold-700' : 'font-medium text-forest-950/50'}`}>
+                      {spec.label}
+                    </dt>
+                    <dd className="text-right text-forest-950/85">{spec.value}</dd>
                   </div>
                 ))}
               </dl>
             </div>
 
-            <div className="catalog-spec-card">
-              <p className="subsection-title">{copy.applications}</p>
-              <ul className="catalog-application-list">
-                {product.applications.map((application) => (
-                  <li key={application}>{application}</li>
-                ))}
-              </ul>
-            </div>
+            {product.applications.length > 0 ? (
+              <div className={cardClass}>
+                <p className={cardTitleClass}>{copy.applications}</p>
+                <ul className="mt-4 flex flex-wrap gap-2">
+                  {product.applications.map((application) => (
+                    <li
+                      key={application}
+                      className="rounded-full bg-forest-50 px-3 py-1.5 text-sm text-forest-800"
+                    >
+                      {application}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
 
-            <div className="product-detail-actions">
-              <Link className="secondary-button detail-back-link" to="/products">
-                {copy.backToCatalog}
-              </Link>
-              <a className="primary-button" href={`/products#quote-request`}>
+            <div className="flex flex-wrap gap-3">
+              <a
+                className="inline-flex h-12 cursor-pointer items-center rounded-full bg-gold-500 px-7 text-sm font-semibold text-forest-950 transition-colors hover:bg-gold-400"
+                href={`/products#quote-request`}
+              >
                 {copy.quote}
               </a>
               {product.specificationFileUrl ? (
                 <a
-                  className="secondary-button detail-download-link"
+                  className="inline-flex h-12 cursor-pointer items-center rounded-full px-6 text-sm font-semibold text-forest-800 ring-1 ring-forest-800/30 transition-colors hover:bg-forest-50"
                   href={product.specificationFileUrl}
                   target="_blank"
                   rel="noreferrer"
@@ -214,32 +244,38 @@ export function ProductDetailPage({ locale }) {
                   {copy.downloadSpec}
                 </a>
               ) : null}
+              <Link
+                className="inline-flex h-12 cursor-pointer items-center rounded-full px-6 text-sm font-semibold text-forest-950/60 transition-colors hover:text-forest-950"
+                to="/products"
+              >
+                {copy.backToCatalog}
+              </Link>
             </div>
           </div>
         </div>
 
         {product.detailDescription || product.highlights?.length || product.qualityControlSteps?.length ? (
-          <div className="product-detail-content">
+          <div className="space-y-6">
             {product.detailDescription ? (
-              <article className="catalog-spec-card product-detail-copy">
-                <p className="subsection-title">{copy.detailDescription}</p>
+              <article className={`${cardClass} lg:p-8`}>
+                <p className={cardTitleClass}>{copy.detailDescription}</p>
                 <div
-                  className="product-rich-text"
+                  className="prose-fortis mt-4"
                   dangerouslySetInnerHTML={{ __html: sanitizeRichText(product.detailDescription) }}
                 />
               </article>
             ) : null}
 
             {product.highlights?.length || product.qualityControlSteps?.length ? (
-              <div className="product-detail-secondary-grid">
+              <div className="grid gap-6 md:grid-cols-2">
                 {product.highlights?.length ? (
-                  <article className="catalog-spec-card">
-                    <p className="subsection-title">{copy.highlights}</p>
-                    <dl className="catalog-spec-list">
+                  <article className={cardClass}>
+                    <p className={cardTitleClass}>{copy.highlights}</p>
+                    <dl className="mt-4 space-y-3">
                       {product.highlights.map((item) => (
-                        <div key={`${item.label}-${item.value}`}>
-                          <dt>{item.label}</dt>
-                          <dd>{item.value}</dd>
+                        <div key={`${item.label}-${item.value}`} className="text-sm">
+                          <dt className="font-semibold text-forest-950">{item.label}</dt>
+                          <dd className="mt-0.5 leading-relaxed text-forest-950/65">{item.value}</dd>
                         </div>
                       ))}
                     </dl>
@@ -247,13 +283,13 @@ export function ProductDetailPage({ locale }) {
                 ) : null}
 
                 {product.qualityControlSteps?.length ? (
-                  <article className="catalog-spec-card">
-                    <p className="subsection-title">{copy.qualityControl}</p>
-                    <dl className="catalog-spec-list">
+                  <article className={cardClass}>
+                    <p className={cardTitleClass}>{copy.qualityControl}</p>
+                    <dl className="mt-4 space-y-3">
                       {product.qualityControlSteps.map((item) => (
-                        <div key={`${item.label}-${item.value}`}>
-                          <dt>{item.label}</dt>
-                          <dd>{item.value}</dd>
+                        <div key={`${item.label}-${item.value}`} className="text-sm">
+                          <dt className="font-semibold text-forest-950">{item.label}</dt>
+                          <dd className="mt-0.5 leading-relaxed text-forest-950/65">{item.value}</dd>
                         </div>
                       ))}
                     </dl>
@@ -265,32 +301,58 @@ export function ProductDetailPage({ locale }) {
         ) : null}
 
         {relatedProducts.length > 0 ? (
-          <div className="catalog-block">
-            <div className="catalog-block-header">
-              <div>
-                <p className="subsection-title">{copy.relatedProducts}</p>
-                <p className="catalog-detail-summary">{copy.relatedDescription}</p>
-              </div>
-            </div>
+          <div>
+            <p className={cardTitleClass}>{copy.relatedProducts}</p>
+            <p className="mt-2 max-w-xl text-sm leading-relaxed text-forest-950/60">
+              {copy.relatedDescription}
+            </p>
 
-            <div className="product-catalog-grid">
+            <div className="mt-6 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
               {relatedProducts.map((item) => (
-                <article key={item.id} className="catalog-product-card">
-                  <div
-                    className="catalog-product-image"
-                    style={{ backgroundImage: `url(${item.image})` }}
-                  />
-                  <div className="catalog-product-body">
-                    <p className="product-chip">{item.categoryName}</p>
-                    <h3>{item.name}</h3>
-                    <p>{item.summary}</p>
-                    <div className="catalog-product-specs-preview">
-                      {(item.specifications ?? []).slice(0, 2).map((spec) => (
-                        <span key={`${spec.label}-${spec.value}`}>{spec.value}</span>
-                      ))}
-                    </div>
-                    <Link className="secondary-button" to={`/products/${item.slug}`}>
+                <article
+                  key={item.id}
+                  className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-shadow duration-300 hover:shadow-card-hover"
+                >
+                  <Link to={`/products/${item.slug}`} className="block cursor-pointer">
+                    <div
+                      className="aspect-[4/3] bg-forest-100 bg-cover bg-center transition-transform duration-500 ease-out group-hover:scale-105"
+                      style={{ backgroundImage: `url(${item.image})` }}
+                      role="img"
+                      aria-label={`${item.name} thumbnail`}
+                    />
+                  </Link>
+                  <div className="flex flex-1 flex-col p-5">
+                    <p className="inline-block self-start rounded-full bg-forest-50 px-2.5 py-1 text-xs font-medium text-forest-800">
+                      {item.categoryName}
+                    </p>
+                    <h3 className="mt-2.5 font-display text-lg leading-snug font-semibold text-forest-950">
+                      {item.name}
+                    </h3>
+                    {item.summary ? (
+                      <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-forest-950/60">
+                        {item.summary}
+                      </p>
+                    ) : null}
+                    {(item.specifications ?? []).length > 0 ? (
+                      <div className="mt-3 flex flex-wrap gap-1.5">
+                        {(item.specifications ?? []).slice(0, 2).map((spec) => (
+                          <span
+                            key={`${spec.label}-${spec.value}`}
+                            className="rounded-full bg-stone-25 px-2.5 py-1 text-xs text-forest-950/70 ring-1 ring-forest-950/8"
+                          >
+                            {spec.value}
+                          </span>
+                        ))}
+                      </div>
+                    ) : null}
+                    <Link
+                      className="mt-auto inline-flex cursor-pointer items-center gap-1.5 pt-4 text-sm font-semibold text-gold-600 transition-colors hover:text-gold-700"
+                      to={`/products/${item.slug}`}
+                    >
                       {copy.viewDetail}
+                      <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                        <path d="M3 8h10m0 0L9 4m4 4l-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
                     </Link>
                   </div>
                 </article>

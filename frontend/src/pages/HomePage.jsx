@@ -221,7 +221,7 @@ export function HomePage({ locale, visibleMenuKeys }) {
   }
 
   return (
-    <main className="home-page">
+    <main className="home-page overflow-x-clip">
       <HeroBannerSection slides={heroSlides} />
       {showServices ? <CategorySection copy={copy.categories} /> : null}
       <FeaturedProductsSection section={featuredProductsSection} products={products} />
@@ -342,34 +342,41 @@ function CategorySection({ copy }) {
   }))
 
   return (
-    <section className="content-section category-section" id="categories">
-      <SectionHeading eyebrow={copy.eyebrow} title={copy.title} description={copy.description} />
-      <div className="category-card-grid">
-        {categories.map((category, index) => (
-          <MotionArticle
-            className="category-card"
-            key={category.title}
-            variants={reveal}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.55, delay: index * 0.08 }}
-          >
-            <img
-              className="category-card-image"
-              src={category.image}
-              alt={category.alt}
-              loading="lazy"
-              decoding="async"
-            />
-            <div className="category-card-overlay" />
-            <div className="category-card-content">
-              <span>{String(index + 1).padStart(2, '0')}</span>
-              <h3>{category.title}</h3>
-              <p>{category.description}</p>
-            </div>
-          </MotionArticle>
-        ))}
+    <section className="bg-white" id="categories">
+      <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <SectionHeading eyebrow={copy.eyebrow} title={copy.title} description={copy.description} />
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3 lg:gap-6">
+          {categories.map((category, index) => (
+            <MotionArticle
+              className="group relative h-[420px] overflow-hidden rounded-2xl lg:h-[480px]"
+              key={category.title}
+              variants={reveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.55, delay: index * 0.08 }}
+            >
+              <img
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                src={category.image}
+                alt={category.alt}
+                loading="lazy"
+                decoding="async"
+              />
+              <div
+                className="absolute inset-0 bg-gradient-to-t from-forest-950/90 via-forest-950/35 to-forest-950/5"
+                aria-hidden="true"
+              />
+              <div className="absolute inset-x-0 bottom-0 p-6 lg:p-8">
+                <span className="font-display text-sm font-semibold text-gold-300">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                <h3 className="mt-2 font-display text-2xl font-semibold text-white">{category.title}</h3>
+                <p className="mt-3 text-sm leading-relaxed text-white/75">{category.description}</p>
+              </div>
+            </MotionArticle>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -377,54 +384,78 @@ function CategorySection({ copy }) {
 
 function FeaturedProductsSection({ section, products }) {
   return (
-    <section className="content-section section-muted featured-products-home" id="featured-products">
-      <SectionHeading eyebrow={section.eyebrow} title={section.title} description={section.description} />
-      <div className="featured-product-grid">
-        {products.map((product, index) => (
-          <MotionArticle
-            className="featured-product-card"
-            key={product.name}
-            variants={reveal}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.2 }}
-            transition={{ duration: 0.55, delay: index * 0.08 }}
-          >
-            <div className="featured-product-image-wrap">
-              <img
-                className="featured-product-image"
-                src={product.image}
-                alt={product.alt}
-                loading="lazy"
-                decoding="async"
-              />
-              <a className="featured-product-action" href={product.href}>
-                {product.actionLabel}
+    <section className="bg-stone-25" id="featured-products">
+      <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <SectionHeading eyebrow={section.eyebrow} title={section.title} description={section.description} />
+        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:mt-14 xl:grid-cols-4">
+          {products.map((product, index) => (
+            <MotionArticle
+              className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-shadow duration-300 hover:shadow-card-hover"
+              key={product.name}
+              variants={reveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.55, delay: index * 0.08 }}
+            >
+              <a href={product.href} className="relative block aspect-[4/3] overflow-hidden">
+                <img
+                  className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                  src={product.image}
+                  alt={product.alt}
+                  loading="lazy"
+                  decoding="async"
+                />
+                {product.category ? (
+                  <span className="absolute top-3 left-3 rounded-full bg-forest-950/70 px-3 py-1 text-xs font-medium text-white backdrop-blur-sm">
+                    {product.category}
+                  </span>
+                ) : null}
               </a>
-            </div>
-            <div className="featured-product-body">
-              <h3>{product.name}</h3>
-              <p>{product.summary}</p>
-              {product.specifications.length > 0 ? (
-                <dl className="featured-product-specs">
-                  {product.specifications.slice(0, 3).map((spec) => (
-                    <div key={`${product.name}-${spec.label}-${spec.value}`}>
-                      <dt>{spec.label}</dt>
-                      <dd>{spec.value}</dd>
-                    </div>
-                  ))}
-                </dl>
-              ) : null}
-              {product.applications.length > 0 ? (
-                <ul className="featured-product-applications">
-                  {product.applications.slice(0, 3).map((application) => (
-                    <li key={`${product.name}-${application}`}>{application}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </div>
-          </MotionArticle>
-        ))}
+              <div className="flex flex-1 flex-col p-5">
+                <h3 className="font-display text-lg leading-snug font-semibold text-forest-950">
+                  {product.name}
+                </h3>
+                {product.summary ? (
+                  <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-forest-950/60">
+                    {product.summary}
+                  </p>
+                ) : null}
+                {product.specifications.length > 0 ? (
+                  <dl className="mt-4 space-y-1.5 border-t border-forest-950/8 pt-4">
+                    {product.specifications.slice(0, 3).map((spec) => (
+                      <div key={`${product.name}-${spec.label}-${spec.value}`} className="flex gap-2 text-xs">
+                        <dt className="shrink-0 font-medium text-forest-950/50">{spec.label}:</dt>
+                        <dd className="text-forest-950/80">{spec.value}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                ) : null}
+                {product.applications.length > 0 ? (
+                  <ul className="mt-3 flex flex-wrap gap-1.5">
+                    {product.applications.slice(0, 3).map((application) => (
+                      <li
+                        key={`${product.name}-${application}`}
+                        className="rounded-full bg-forest-50 px-2.5 py-1 text-xs text-forest-800"
+                      >
+                        {application}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+                <a
+                  className="mt-auto inline-flex cursor-pointer items-center gap-1.5 pt-5 text-sm font-semibold text-gold-600 transition-colors hover:text-gold-700"
+                  href={product.href}
+                >
+                  {product.actionLabel}
+                  <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                    <path d="M3 8h10m0 0L9 4m4 4l-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                </a>
+              </div>
+            </MotionArticle>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -453,34 +484,42 @@ function ExportMarketNewsSection({ section }) {
   ]
 
   return (
-    <section className="content-section export-news-section" id="export-market">
-      <SectionHeading eyebrow={section.eyebrow} title={section.title} description={section.description} />
-      <div className="export-news-grid">
-        {news.map((item, index) => (
-          <MotionArticle
-            className="export-news-card"
-            key={item.title}
-            variants={reveal}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.55, delay: index * 0.1 }}
-          >
-            <a href={item.href} className="export-news-image-link">
-              <img
-                className="export-news-image"
-                src={item.image}
-                alt={item.alt}
-                loading="lazy"
-                decoding="async"
-              />
-            </a>
-            <a href={item.href} className="export-news-body">
-              <p className="section-eyebrow">Export market</p>
-              <h3>{item.title}</h3>
-            </a>
-          </MotionArticle>
-        ))}
+    <section className="bg-white" id="export-market">
+      <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <SectionHeading eyebrow={section.eyebrow} title={section.title} description={section.description} />
+        <div className="mt-10 grid gap-6 md:grid-cols-3 lg:mt-14">
+          {news.map((item, index) => (
+            <MotionArticle
+              className="group overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-shadow duration-300 hover:shadow-card-hover"
+              key={item.title}
+              variants={reveal}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, amount: 0.25 }}
+              transition={{ duration: 0.55, delay: index * 0.1 }}
+            >
+              <a href={item.href} className="block cursor-pointer">
+                <span className="block aspect-[16/10] overflow-hidden">
+                  <img
+                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                    src={item.image}
+                    alt={item.alt}
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </span>
+                <span className="block p-5 lg:p-6">
+                  <span className="text-xs font-semibold tracking-[0.2em] text-gold-600 uppercase">
+                    Export market
+                  </span>
+                  <h3 className="mt-2 font-display text-lg leading-snug font-semibold text-forest-950 transition-colors group-hover:text-forest-700">
+                    {item.title}
+                  </h3>
+                </span>
+              </a>
+            </MotionArticle>
+          ))}
+        </div>
       </div>
     </section>
   )
@@ -488,62 +527,79 @@ function ExportMarketNewsSection({ section }) {
 
 function CompanyProfileSection({ section, certificates }) {
   return (
-    <section className="content-section company-profile-section" id="company-profile">
+    <section className="bg-forest-950" id="company-profile">
       <MotionDiv
-        className="company-profile-panel"
+        className="mx-auto grid max-w-[1240px] gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:items-start lg:px-8 lg:py-24"
         initial={{ opacity: 0, y: 34 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.25 }}
         transition={{ duration: 0.6 }}
       >
         <div>
-          <p className="section-eyebrow">{section.eyebrow}</p>
-          <h2>{section.title}</h2>
-          <div className="company-profile-copy">
+          <p className="text-xs font-semibold tracking-[0.25em] text-gold-400 uppercase">{section.eyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl leading-tight font-semibold text-white lg:text-4xl">
+            {section.title}
+          </h2>
+          <div className="mt-5 space-y-4">
             {String(section.description ?? '')
               .split(/\n+/)
               .map((paragraph) => paragraph.trim())
               .filter(Boolean)
               .map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
+                <p key={paragraph} className="text-sm leading-relaxed text-white/70 lg:text-base">
+                  {paragraph}
+                </p>
               ))}
           </div>
-          <dl className="company-profile-contact">
+          <dl className="mt-8 space-y-3 border-t border-white/15 pt-6 text-sm">
             {section.address ? (
-              <div>
-                <dt>{section.labels.address}</dt>
-                <dd>{section.address}</dd>
+              <div className="flex gap-2">
+                <dt className="shrink-0 font-medium text-gold-400">{section.labels.address}:</dt>
+                <dd className="text-white/80">{section.address}</dd>
               </div>
             ) : null}
             {section.hotline ? (
-              <div>
-                <dt>{section.labels.hotline}</dt>
-                <dd>{section.hotline}</dd>
+              <div className="flex gap-2">
+                <dt className="shrink-0 font-medium text-gold-400">{section.labels.hotline}:</dt>
+                <dd className="text-white/80">{section.hotline}</dd>
               </div>
             ) : null}
             {section.email ? (
-              <div>
-                <dt>{section.labels.email}</dt>
-                <dd>{section.email}</dd>
+              <div className="flex gap-2">
+                <dt className="shrink-0 font-medium text-gold-400">{section.labels.email}:</dt>
+                <dd className="text-white/80">{section.email}</dd>
               </div>
             ) : null}
           </dl>
-          <div className="company-profile-actions">
-            <a className="primary-button" href="/company-profile.pdf" download="PROFILE-FORTISVN.pdf">{section.profileButton}</a>
+          <div className="mt-8">
+            <a
+              className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-full bg-gold-500 px-7 text-sm font-semibold text-forest-950 transition-colors duration-200 hover:bg-gold-400"
+              href="/company-profile.pdf"
+              download="PROFILE-FORTISVN.pdf"
+            >
+              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <path d="M8 2v8m0 0L5 7m3 3l3-3M3 13h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+              {section.profileButton}
+            </a>
           </div>
         </div>
-        <div className="certificate-list">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
           {(certificates ?? []).slice(0, 4).map((certificate) => (
-            <article key={certificate.name} className="certificate-item">
+            <article
+              key={certificate.name}
+              className="flex items-start gap-4 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10"
+            >
               <img
+                className="h-14 w-14 shrink-0 rounded-xl object-cover"
                 src={MEDIA.certificate}
                 alt={`${certificate.name} certificate badge`}
                 loading="lazy"
                 decoding="async"
               />
               <div>
-                <strong>{certificate.name}</strong>
-                <p>{certificate.description}</p>
+                <strong className="block text-sm font-semibold text-white">{certificate.name}</strong>
+                <p className="mt-1 text-xs leading-relaxed text-white/60">{certificate.description}</p>
               </div>
             </article>
           ))}

@@ -33,41 +33,65 @@ export function ExportMarketPage({ locale }) {
   }
 
   return (
-    <main className="export-market-page">
-      <section className="export-market-hero">
-        <nav className="catalog-breadcrumb" aria-label="Breadcrumb">
-          <Link to="/">{pageData.labels.breadcrumbHome}</Link>
-          <span aria-hidden="true">/</span>
-          <span>{pageData.labels.breadcrumbCurrent}</span>
-        </nav>
-        <p className="section-eyebrow">{pageData.pageHeader.eyebrow}</p>
-        <h1>{pageData.pageHeader.title}</h1>
-        <p>{pageData.pageHeader.description}</p>
+    <main>
+      <section className="bg-gradient-to-b from-forest-50 to-stone-25">
+        <div className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <nav className="flex items-center gap-2 text-sm text-forest-950/50" aria-label="Breadcrumb">
+            <Link className="cursor-pointer font-medium text-forest-800 transition-colors hover:text-gold-600" to="/">
+              {pageData.labels.breadcrumbHome}
+            </Link>
+            <span aria-hidden="true">/</span>
+            <span>{pageData.labels.breadcrumbCurrent}</span>
+          </nav>
+          <p className="mt-5 text-xs font-semibold tracking-[0.25em] text-gold-600 uppercase">
+            {pageData.pageHeader.eyebrow}
+          </p>
+          <h1 className="mt-3 max-w-3xl font-display text-3xl leading-tight font-semibold text-forest-950 lg:text-5xl">
+            {pageData.pageHeader.title}
+          </h1>
+          <p className="mt-4 max-w-2xl text-base leading-relaxed text-forest-950/60">
+            {pageData.pageHeader.description}
+          </p>
+        </div>
       </section>
 
-      <section className="export-market-list-section">
+      <section className="mx-auto max-w-[1240px] space-y-10 px-4 pb-16 sm:px-6 lg:px-8 lg:pb-24">
         {featuredArticle ? (
           <MotionArticle
-            className="export-market-featured-card"
+            className="group grid overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-shadow duration-300 hover:shadow-card-hover lg:grid-cols-2"
             initial={{ opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Link to={`/export-market/${featuredArticle.slug}`} className="export-market-featured-image">
+            <Link
+              to={`/export-market/${featuredArticle.slug}`}
+              className="block cursor-pointer overflow-hidden"
+            >
               <img
+                className="aspect-[16/10] h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                 src={featuredArticle.image}
                 alt={`${featuredArticle.title} thumbnail`}
                 loading="lazy"
                 decoding="async"
               />
             </Link>
-            <div className="export-market-featured-body">
+            <div className="flex flex-col justify-center p-6 lg:p-10">
               <ArticleMeta article={featuredArticle} />
-              <h2>
-                <Link to={`/export-market/${featuredArticle.slug}`}>{featuredArticle.title}</Link>
+              <h2 className="mt-3 font-display text-2xl leading-snug font-semibold text-forest-950 lg:text-3xl">
+                <Link
+                  className="cursor-pointer transition-colors hover:text-forest-700"
+                  to={`/export-market/${featuredArticle.slug}`}
+                >
+                  {featuredArticle.title}
+                </Link>
               </h2>
-              <p>{featuredArticle.excerpt}</p>
-              <Link className="primary-button" to={`/export-market/${featuredArticle.slug}`}>
+              <p className="mt-4 line-clamp-4 text-sm leading-relaxed text-forest-950/65 lg:text-base">
+                {featuredArticle.excerpt}
+              </p>
+              <Link
+                className="mt-7 inline-flex h-11 cursor-pointer items-center self-start rounded-full bg-forest-800 px-6 text-sm font-semibold text-white transition-colors hover:bg-forest-900"
+                to={`/export-market/${featuredArticle.slug}`}
+              >
                 {pageData.labels.readMore}
               </Link>
             </div>
@@ -75,9 +99,11 @@ export function ExportMarketPage({ locale }) {
         ) : null}
 
         {pageData.articles.length === 0 ? (
-          <div className="catalog-empty">{pageData.labels.noArticles}</div>
+          <div className="rounded-2xl bg-white p-10 text-center text-sm text-forest-950/60 shadow-card ring-1 ring-forest-950/5">
+            {pageData.labels.noArticles}
+          </div>
         ) : (
-          <div className="export-market-card-grid">
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {listArticles.map((article, index) => (
               <ArticleCard
                 article={article}
@@ -96,27 +122,39 @@ export function ExportMarketPage({ locale }) {
 function ArticleCard({ article, readMoreLabel, index }) {
   return (
     <MotionArticle
-      className="export-market-card"
+      className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-shadow duration-300 hover:shadow-card-hover"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.42, delay: index * 0.06 }}
     >
-      <Link className="export-market-card-image" to={`/export-market/${article.slug}`}>
+      <Link className="block cursor-pointer overflow-hidden" to={`/export-market/${article.slug}`}>
         <img
+          className="aspect-[16/10] w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           src={article.image}
           alt={`${article.title} thumbnail`}
           loading="lazy"
           decoding="async"
         />
       </Link>
-      <div className="export-market-card-body">
+      <div className="flex flex-1 flex-col p-5 lg:p-6">
         <ArticleMeta article={article} />
-        <h2>
-          <Link to={`/export-market/${article.slug}`}>{article.title}</Link>
+        <h2 className="mt-2.5 font-display text-lg leading-snug font-semibold text-forest-950">
+          <Link
+            className="cursor-pointer transition-colors hover:text-forest-700"
+            to={`/export-market/${article.slug}`}
+          >
+            {article.title}
+          </Link>
         </h2>
-        <p>{article.excerpt}</p>
-        <Link className="export-market-read-more" to={`/export-market/${article.slug}`}>
+        <p className="mt-2 line-clamp-3 text-sm leading-relaxed text-forest-950/60">{article.excerpt}</p>
+        <Link
+          className="mt-auto inline-flex cursor-pointer items-center gap-1.5 pt-4 text-sm font-semibold text-gold-600 transition-colors hover:text-gold-700"
+          to={`/export-market/${article.slug}`}
+        >
           {readMoreLabel}
+          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3 8h10m0 0L9 4m4 4l-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
         </Link>
       </div>
     </MotionArticle>
@@ -125,9 +163,10 @@ function ArticleCard({ article, readMoreLabel, index }) {
 
 function ArticleMeta({ article }) {
   return (
-    <div className="export-market-meta">
+    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-forest-950/50">
       <span>{formatDisplayDate(article.publishedAt)}</span>
-      <span>{article.category}</span>
+      <span className="h-1 w-1 rounded-full bg-gold-500" aria-hidden="true" />
+      <span className="font-medium text-gold-700">{article.category}</span>
     </div>
   )
 }

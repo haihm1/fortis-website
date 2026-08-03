@@ -96,25 +96,34 @@ export function FaqSection({ locale = 'en' }) {
 
   return (
     <MotionSection
-      className="content-section faq-section"
+      className="bg-stone-25"
       initial={{ opacity: 0, y: 28 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.55 }}
     >
-      <div className="section-heading">
-        <p className="section-eyebrow">{copy.eyebrow}</p>
-        <h2>{copy.title}</h2>
-        <p>{copy.description}</p>
-      </div>
+      <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <div className="max-w-2xl">
+          <p className="text-xs font-semibold tracking-[0.25em] text-gold-600 uppercase">{copy.eyebrow}</p>
+          <h2 className="mt-3 font-display text-3xl leading-tight font-semibold text-forest-950 lg:text-4xl">
+            {copy.title}
+          </h2>
+          <p className="mt-4 text-base leading-relaxed text-forest-950/60">{copy.description}</p>
+        </div>
 
-      <div className="faq-grid">
-        {questions.map((item) => (
-          <article className="faq-card" key={item.question}>
-            <h3>{item.question}</h3>
-            <p>{item.answer}</p>
-          </article>
-        ))}
+        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:mt-14">
+          {questions.map((item) => (
+            <article
+              className="rounded-2xl bg-white p-6 shadow-card ring-1 ring-forest-950/5 lg:p-7"
+              key={item.question}
+            >
+              <h3 className="font-display text-lg leading-snug font-semibold text-forest-950">
+                {item.question}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-forest-950/65">{item.answer}</p>
+            </article>
+          ))}
+        </div>
       </div>
     </MotionSection>
   )
