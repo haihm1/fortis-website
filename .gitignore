@@ -1,3 +1,9 @@
 # Production secrets for root-level Docker Compose (see DEPLOYMENT.md)
 .env.production
 .env.production.example
+
+# macOS
+.DS_Store
+
+# Per-machine Claude Code permissions (launch.json is shared, this is not)
+.claude/settings.local.json
