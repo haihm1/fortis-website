@@ -16,6 +16,11 @@ import { filterProducts, getSpecificationOptions } from '../utils/productCatalog
 const PRODUCTS_PER_PAGE = 8
 const EMPTY_PRODUCTS = []
 
+const INPUT_CLASS =
+  'h-12 w-full rounded-xl border border-forest-950/15 bg-white px-4 text-sm text-forest-950 transition-colors placeholder:text-forest-950/35 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30 focus:outline-none'
+const TEXTAREA_CLASS =
+  'w-full rounded-xl border border-forest-950/15 bg-white px-4 py-3 text-sm text-forest-950 transition-colors placeholder:text-forest-950/35 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30 focus:outline-none'
+
 const FILTER_COPY = {
   vi: {
     title: 'Bộ lọc catalog',
@@ -254,75 +259,120 @@ export function ProductCatalogPage({ locale }) {
   const labels = catalogData.labels
 
   return (
-    <main className="b2b-catalog-page">
-      <section className="catalog-hero b2b-catalog-hero">
-        <div className="catalog-hero-copy">
-          <nav className="catalog-breadcrumb" aria-label="Breadcrumb">
-            <Link to="/">{filterCopy.breadcrumbHome}</Link>
-            <span aria-hidden="true">/</span>
-            <span>{filterCopy.breadcrumbCurrent}</span>
-          </nav>
-          <SectionHeading
-            eyebrow={catalogData.pageHeader.eyebrow}
-            title={catalogData.pageHeader.title}
-            description={catalogData.pageHeader.description}
-          />
-        </div>
-        <div className="b2b-catalog-hero-image">
-          <img
-            src="https://picsum.photos/seed/fortis-agriculture-banner/1200/760"
-            alt="Agricultural export product catalog banner"
-            fetchPriority="high"
-            decoding="async"
-          />
+    <main>
+      <section className="bg-gradient-to-b from-forest-50 to-stone-25">
+        <div className="mx-auto grid max-w-[1240px] items-center gap-10 px-4 py-14 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:px-8 lg:py-20">
+          <div>
+            <nav className="flex items-center gap-2 text-sm text-forest-950/50" aria-label="Breadcrumb">
+              <Link className="cursor-pointer font-medium text-forest-800 transition-colors hover:text-gold-600" to="/">
+                {filterCopy.breadcrumbHome}
+              </Link>
+              <span aria-hidden="true">/</span>
+              <span>{filterCopy.breadcrumbCurrent}</span>
+            </nav>
+            <div className="mt-5">
+              <SectionHeading
+                eyebrow={catalogData.pageHeader.eyebrow}
+                title={catalogData.pageHeader.title}
+                description={catalogData.pageHeader.description}
+              />
+            </div>
+          </div>
+          <div className="hidden overflow-hidden rounded-2xl shadow-card lg:block">
+            <img
+              className="aspect-[3/2] h-auto w-full object-cover"
+              src="https://picsum.photos/seed/fortis-agriculture-banner/1200/760"
+              alt="Agricultural export product catalog banner"
+              fetchPriority="high"
+              decoding="async"
+            />
+          </div>
         </div>
       </section>
 
-      <section className="catalog-section b2b-catalog-layout">
-        <aside className="catalog-sidebar">
-          <div className="catalog-sidebar-card">
-            <p className="subsection-title">{filterCopy.categoryLabel}</p>
-            <div className="category-list">
+      <section className="mx-auto grid max-w-[1240px] items-start gap-8 px-4 pb-16 sm:px-6 lg:grid-cols-[280px_1fr] lg:px-8 lg:pb-24">
+        <aside className="space-y-5 lg:sticky lg:top-24">
+          <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-forest-950/5">
+            <p className="text-xs font-semibold tracking-[0.2em] text-forest-950/50 uppercase">
+              {filterCopy.categoryLabel}
+            </p>
+            <div className="mt-3 space-y-1.5">
               <button
                 type="button"
-                className={selectedCategoryId === 'all' ? 'is-active' : ''}
+                className={`flex w-full cursor-pointer items-center justify-between rounded-xl px-4 py-3 text-left text-sm font-medium transition-colors ${
+                  selectedCategoryId === 'all'
+                    ? 'bg-forest-800 text-white'
+                    : 'text-forest-950/80 hover:bg-forest-50'
+                }`}
                 onClick={() => handleSelectCategory('all')}
               >
                 <span>{labels.allProducts}</span>
-                <strong>{catalogData.products.length}</strong>
+                <strong
+                  className={`rounded-full px-2 py-0.5 text-xs ${
+                    selectedCategoryId === 'all' ? 'bg-white/15 text-white' : 'bg-forest-50 text-forest-800'
+                  }`}
+                >
+                  {catalogData.products.length}
+                </strong>
               </button>
 
               {catalogData.categories.map((category) => {
                 const count = catalogData.products.filter(
                   (product) => product.categoryId === category.id,
                 ).length
+                const isActive = selectedCategoryId === category.id
 
                 return (
                   <button
                     key={category.id}
                     type="button"
-                    className={selectedCategoryId === category.id ? 'is-active' : ''}
+                    className={`w-full cursor-pointer rounded-xl px-4 py-3 text-left transition-colors ${
+                      isActive ? 'bg-forest-800 text-white' : 'text-forest-950/80 hover:bg-forest-50'
+                    }`}
                     onClick={() => handleSelectCategory(category.id)}
                   >
-                    <span>{category.name}</span>
-                    <strong>{count}</strong>
-                    <small>{category.description}</small>
+                    <span className="flex items-center justify-between text-sm font-medium">
+                      <span>{category.name}</span>
+                      <strong
+                        className={`rounded-full px-2 py-0.5 text-xs ${
+                          isActive ? 'bg-white/15 text-white' : 'bg-forest-50 text-forest-800'
+                        }`}
+                      >
+                        {count}
+                      </strong>
+                    </span>
+                    {category.description ? (
+                      <small
+                        className={`mt-1 block text-xs leading-relaxed ${
+                          isActive ? 'text-white/65' : 'text-forest-950/45'
+                        }`}
+                      >
+                        {category.description}
+                      </small>
+                    ) : null}
                   </button>
                 )
               })}
             </div>
           </div>
 
-          <div className="catalog-sidebar-card">
-            <div className="catalog-block-header">
-              <p className="subsection-title">{filterCopy.title}</p>
-              <button type="button" className="secondary-button" onClick={handleResetFilters}>
+          <div className="rounded-2xl bg-white p-5 shadow-card ring-1 ring-forest-950/5">
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs font-semibold tracking-[0.2em] text-forest-950/50 uppercase">
+                {filterCopy.title}
+              </p>
+              <button
+                type="button"
+                className="cursor-pointer text-xs font-semibold text-gold-600 transition-colors hover:text-gold-700"
+                onClick={handleResetFilters}
+              >
                 {filterCopy.reset}
               </button>
             </div>
 
-            <div className="catalog-filter-grid">
+            <div className="mt-3 space-y-3">
               <input
+                className={INPUT_CLASS}
                 type="search"
                 value={search}
                 placeholder={filterCopy.search}
@@ -333,6 +383,7 @@ export function ProductCatalogPage({ locale }) {
                 }}
               />
               <select
+                className={`${INPUT_CLASS} cursor-pointer`}
                 value={selectedSpecification}
                 aria-label={filterCopy.specification}
                 onChange={(event) => {
@@ -351,170 +402,199 @@ export function ProductCatalogPage({ locale }) {
           </div>
         </aside>
 
-        <div className="catalog-content">
-          <div className="catalog-block b2b-product-toolbar">
+        <div>
+          <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
-              <p className="subsection-title">{labels.productList}</p>
-              <strong>
+              <p className="text-xs font-semibold tracking-[0.2em] text-forest-950/50 uppercase">
+                {labels.productList}
+              </p>
+              <strong className="mt-1 block font-display text-xl font-semibold text-forest-950">
                 {filteredProducts.length} {filterCopy.resultCount}
               </strong>
             </div>
-            <p>
+            <p className="text-sm text-forest-950/50">
               {filterCopy.page} {safeCurrentPage} / {totalPages}
             </p>
           </div>
 
-          <div className="catalog-block b2b-grid-block">
-            {filteredProducts.length === 0 ? (
-              <div className="catalog-empty">{labels.empty}</div>
-            ) : (
-              <>
-                <div className="product-catalog-grid b2b-product-grid">
-                  {paginatedProducts.map((product, index) => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      index={index}
-                      image={getProductThumbnail(product)}
-                      isActive={selectedProduct?.id === product.id}
-                      labels={filterCopy}
-                      onSelect={handleSelectProduct}
-                    />
-                  ))}
-                </div>
+          {filteredProducts.length === 0 ? (
+            <div className="mt-6 rounded-2xl bg-white p-10 text-center text-sm text-forest-950/60 shadow-card ring-1 ring-forest-950/5">
+              {labels.empty}
+            </div>
+          ) : (
+            <>
+              <div className="mt-6 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+                {paginatedProducts.map((product, index) => (
+                  <ProductCard
+                    key={product.id}
+                    product={product}
+                    index={index}
+                    image={getProductThumbnail(product)}
+                    isActive={selectedProduct?.id === product.id}
+                    labels={filterCopy}
+                    onSelect={handleSelectProduct}
+                  />
+                ))}
+              </div>
 
-                <div className="catalog-pagination" aria-label="Product pagination">
+              <div className="mt-8 flex flex-wrap items-center justify-center gap-2" aria-label="Product pagination">
+                <button
+                  type="button"
+                  className="inline-flex h-11 cursor-pointer items-center rounded-full px-4 text-sm font-medium text-forest-950/70 ring-1 ring-forest-950/15 transition-colors hover:bg-forest-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  onClick={() => handleChangePage(safeCurrentPage - 1)}
+                  disabled={safeCurrentPage === 1}
+                >
+                  {filterCopy.previous}
+                </button>
+                {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
                   <button
+                    key={page}
                     type="button"
-                    onClick={() => handleChangePage(safeCurrentPage - 1)}
-                    disabled={safeCurrentPage === 1}
+                    className={`inline-flex h-11 w-11 cursor-pointer items-center justify-center rounded-full text-sm font-semibold transition-colors ${
+                      page === safeCurrentPage
+                        ? 'bg-forest-800 text-white'
+                        : 'text-forest-950/70 ring-1 ring-forest-950/15 hover:bg-forest-50'
+                    }`}
+                    onClick={() => handleChangePage(page)}
+                    aria-current={page === safeCurrentPage ? 'page' : undefined}
                   >
-                    {filterCopy.previous}
+                    {page}
                   </button>
-                  {Array.from({ length: totalPages }, (_, index) => index + 1).map((page) => (
-                    <button
-                      key={page}
-                      type="button"
-                      className={page === safeCurrentPage ? 'is-active' : ''}
-                      onClick={() => handleChangePage(page)}
-                      aria-current={page === safeCurrentPage ? 'page' : undefined}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => handleChangePage(safeCurrentPage + 1)}
-                    disabled={safeCurrentPage === totalPages}
-                  >
-                    {filterCopy.next}
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
+                ))}
+                <button
+                  type="button"
+                  className="inline-flex h-11 cursor-pointer items-center rounded-full px-4 text-sm font-medium text-forest-950/70 ring-1 ring-forest-950/15 transition-colors hover:bg-forest-50 disabled:cursor-not-allowed disabled:opacity-40"
+                  onClick={() => handleChangePage(safeCurrentPage + 1)}
+                  disabled={safeCurrentPage === totalPages}
+                >
+                  {filterCopy.next}
+                </button>
+              </div>
+            </>
+          )}
         </div>
       </section>
 
-      <section className="quote-section" id="quote-request">
-        <div className="quote-copy">
-          <SectionHeading
-            eyebrow={catalogData.quoteSection.eyebrow}
-            title={catalogData.quoteSection.title}
-            description={catalogData.quoteSection.description}
-          />
-        </div>
-
-        <form className="quote-form" onSubmit={handleQuoteSubmit}>
-          <input
-            type="text"
-            required
-            value={quoteForm.fullName}
-            placeholder={catalogData.quoteSection.fields.name}
-            aria-label={catalogData.quoteSection.fields.name}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, fullName: event.target.value }))
-            }
-          />
-          <input
-            type="text"
-            value={quoteForm.companyName}
-            placeholder={catalogData.quoteSection.fields.company}
-            aria-label={catalogData.quoteSection.fields.company}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, companyName: event.target.value }))
-            }
-          />
-          <input
-            type="email"
-            required
-            value={quoteForm.email}
-            placeholder={catalogData.quoteSection.fields.email}
-            aria-label={catalogData.quoteSection.fields.email}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, email: event.target.value }))
-            }
-          />
-          <PhoneInput
-            required
-            dialCode={quoteForm.phoneDialCode}
-            localNumber={quoteForm.phoneLocalNumber}
-            ariaLabel={catalogData.quoteSection.fields.phone}
-            onDialCodeChange={(code) =>
-              setQuoteForm((current) => ({ ...current, phoneDialCode: code }))
-            }
-            onLocalNumberChange={(num) =>
-              setQuoteForm((current) => ({ ...current, phoneLocalNumber: num }))
-            }
-          />
-          <input
-            type="text"
-            value={quoteForm.requestedQuantity}
-            placeholder={catalogData.quoteSection.fields.quantity}
-            aria-label={catalogData.quoteSection.fields.quantity}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, requestedQuantity: event.target.value }))
-            }
-          />
-          <input
-            type="text"
-            value={quoteForm.targetMarket}
-            placeholder={catalogData.quoteSection.fields.targetMarket}
-            aria-label={catalogData.quoteSection.fields.targetMarket}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, targetMarket: event.target.value }))
-            }
-          />
-          <label className="quote-file-field">
-          {selectedProduct ? (
-            <p className="form-message quote-selected-product">
-              {quoteStatusCopy.productInterestLabel}: <strong>{selectedProduct.name}</strong>
+      <section className="bg-forest-950" id="quote-request">
+        <div className="mx-auto grid max-w-[1240px] gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:items-start lg:px-8 lg:py-24">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.25em] text-gold-400 uppercase">
+              {catalogData.quoteSection.eyebrow}
             </p>
-          ) : null}
-          </label>
-          <textarea
-            rows="4"
-            value={quoteForm.specificationDetails}
-            placeholder={catalogData.quoteSection.fields.specificationDetails}
-            aria-label={catalogData.quoteSection.fields.specificationDetails}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, specificationDetails: event.target.value }))
-            }
-          />
-          <textarea
-            rows="5"
-            value={quoteForm.message}
-            placeholder={catalogData.quoteSection.fields.message}
-            aria-label={catalogData.quoteSection.fields.message}
-            onChange={(event) =>
-              setQuoteForm((current) => ({ ...current, message: event.target.value }))
-            }
-          />
-          {quoteFeedback ? <p className="form-message error">{quoteFeedback}</p> : null}
-          <button type="submit" className="primary-button" disabled={quoteSubmitting}>
-            {quoteSubmitting ? quoteStatusCopy.sending : catalogData.quoteSection.fields.submit}
-          </button>
-        </form>
+            <h2 className="mt-3 font-display text-3xl leading-tight font-semibold text-white lg:text-4xl">
+              {catalogData.quoteSection.title}
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/70">
+              {catalogData.quoteSection.description}
+            </p>
+            {selectedProduct ? (
+              <p className="mt-6 inline-block rounded-full bg-white/10 px-4 py-2 text-sm text-white/85 ring-1 ring-white/15">
+                {quoteStatusCopy.productInterestLabel}:{' '}
+                <strong className="font-semibold text-gold-300">{selectedProduct.name}</strong>
+              </p>
+            ) : null}
+          </div>
+
+          <form
+            className="grid gap-4 rounded-2xl bg-white p-6 shadow-card-hover sm:grid-cols-2 lg:p-8"
+            onSubmit={handleQuoteSubmit}
+          >
+            <input
+              className={INPUT_CLASS}
+              type="text"
+              required
+              value={quoteForm.fullName}
+              placeholder={catalogData.quoteSection.fields.name}
+              aria-label={catalogData.quoteSection.fields.name}
+              onChange={(event) =>
+                setQuoteForm((current) => ({ ...current, fullName: event.target.value }))
+              }
+            />
+            <input
+              className={INPUT_CLASS}
+              type="text"
+              value={quoteForm.companyName}
+              placeholder={catalogData.quoteSection.fields.company}
+              aria-label={catalogData.quoteSection.fields.company}
+              onChange={(event) =>
+                setQuoteForm((current) => ({ ...current, companyName: event.target.value }))
+              }
+            />
+            <input
+              className={INPUT_CLASS}
+              type="email"
+              required
+              value={quoteForm.email}
+              placeholder={catalogData.quoteSection.fields.email}
+              aria-label={catalogData.quoteSection.fields.email}
+              onChange={(event) =>
+                setQuoteForm((current) => ({ ...current, email: event.target.value }))
+              }
+            />
+            <PhoneInput
+              required
+              dialCode={quoteForm.phoneDialCode}
+              localNumber={quoteForm.phoneLocalNumber}
+              ariaLabel={catalogData.quoteSection.fields.phone}
+              onDialCodeChange={(code) =>
+                setQuoteForm((current) => ({ ...current, phoneDialCode: code }))
+              }
+              onLocalNumberChange={(num) =>
+                setQuoteForm((current) => ({ ...current, phoneLocalNumber: num }))
+              }
+            />
+            <input
+              className={INPUT_CLASS}
+              type="text"
+              value={quoteForm.requestedQuantity}
+              placeholder={catalogData.quoteSection.fields.quantity}
+              aria-label={catalogData.quoteSection.fields.quantity}
+              onChange={(event) =>
+                setQuoteForm((current) => ({ ...current, requestedQuantity: event.target.value }))
+              }
+            />
+            <input
+              className={INPUT_CLASS}
+              type="text"
+              value={quoteForm.targetMarket}
+              placeholder={catalogData.quoteSection.fields.targetMarket}
+              aria-label={catalogData.quoteSection.fields.targetMarket}
+              onChange={(event) =>
+                setQuoteForm((current) => ({ ...current, targetMarket: event.target.value }))
+              }
+            />
+            <textarea
+              className={`${TEXTAREA_CLASS} sm:col-span-2`}
+              rows="4"
+              value={quoteForm.specificationDetails}
+              placeholder={catalogData.quoteSection.fields.specificationDetails}
+              aria-label={catalogData.quoteSection.fields.specificationDetails}
+              onChange={(event) =>
+                setQuoteForm((current) => ({ ...current, specificationDetails: event.target.value }))
+              }
+            />
+            <textarea
+              className={`${TEXTAREA_CLASS} sm:col-span-2`}
+              rows="5"
+              value={quoteForm.message}
+              placeholder={catalogData.quoteSection.fields.message}
+              aria-label={catalogData.quoteSection.fields.message}
+              onChange={(event) =>
+                setQuoteForm((current) => ({ ...current, message: event.target.value }))
+              }
+            />
+            {quoteFeedback ? (
+              <p className="text-sm font-medium text-red-600 sm:col-span-2">{quoteFeedback}</p>
+            ) : null}
+            <button
+              type="submit"
+              className="inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-gold-500 px-8 text-sm font-semibold text-forest-950 transition-colors hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2 sm:justify-self-start"
+              disabled={quoteSubmitting}
+            >
+              {quoteSubmitting ? quoteStatusCopy.sending : catalogData.quoteSection.fields.submit}
+            </button>
+          </form>
+        </div>
       </section>
 
       <SuccessModal

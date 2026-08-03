@@ -209,83 +209,87 @@ export function ContactPage({ locale }) {
     }
   }
 
+  const cardClass = 'rounded-2xl bg-white p-6 shadow-card ring-1 ring-forest-950/5 lg:p-8'
+  const cardTitleClass = 'text-xs font-semibold tracking-[0.2em] text-forest-950/50 uppercase'
+  const inputClass =
+    'h-12 w-full rounded-xl border border-forest-950/15 bg-white px-4 text-sm text-forest-950 transition-colors placeholder:text-forest-950/35 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30 focus:outline-none'
+
   return (
     <main>
-      <section className="catalog-hero">
-        <div className="catalog-hero-copy">
-          <SectionHeading
-            eyebrow={copy.eyebrow}
-            title={copy.title}
-            description={copy.description}
-          />
+      <section className="bg-gradient-to-b from-forest-50 to-stone-25">
+        <div className="mx-auto max-w-[1240px] px-4 py-14 sm:px-6 lg:px-8 lg:py-20">
+          <SectionHeading eyebrow={copy.eyebrow} title={copy.title} description={copy.description} />
         </div>
       </section>
 
-      <section className="contact-section">
-        <div className="contact-grid">
-          <div className="contact-info-card">
-            <p className="subsection-title">{copy.infoTitle}</p>
-            <h3 className="contact-info-name">{COMPANY_CONTACT.vietnameseName}</h3>
-            <p className="contact-info-subname">{COMPANY_CONTACT.englishName}</p>
+      <section className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-8">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <div className={cardClass}>
+            <p className={cardTitleClass}>{copy.infoTitle}</p>
+            <h3 className="mt-3 font-display text-xl font-semibold text-forest-950">
+              {COMPANY_CONTACT.vietnameseName}
+            </h3>
+            <p className="mt-1 text-sm text-forest-950/55">{COMPANY_CONTACT.englishName}</p>
 
-            <ul className="contact-info-list">
-              <li>
-                <span className="contact-info-icon" aria-hidden="true">
-                  <QuickContactIcon type="map" />
-                </span>
-                <div>
-                  <p className="contact-info-label">{copy.addressLabel}</p>
-                  <p className="contact-info-value">{address}</p>
-                </div>
-              </li>
-              <li>
-                <span className="contact-info-icon" aria-hidden="true">
-                  <QuickContactIcon type="clock" />
-                </span>
-                <div>
-                  <p className="contact-info-label">{copy.hoursLabel}</p>
-                  <p className="contact-info-value">{workingHours}</p>
-                </div>
-              </li>
-              <li>
-                <span className="contact-info-icon" aria-hidden="true">
-                  <QuickContactIcon type="phone" />
-                </span>
-                <div>
-                  <p className="contact-info-label">{copy.hotlineLabel}</p>
-                  <a className="contact-info-value" href={COMPANY_CONTACT.hotlineHref}>
-                    {COMPANY_CONTACT.hotlineDisplay}
-                  </a>
-                </div>
-              </li>
-              <li>
-                <span className="contact-info-icon" aria-hidden="true">
-                  <QuickContactIcon type="email" />
-                </span>
-                <div>
-                  <p className="contact-info-label">{copy.emailLabel}</p>
-                  <a className="contact-info-value" href={COMPANY_CONTACT.emailHref}>
-                    {COMPANY_CONTACT.email}
-                  </a>
-                </div>
-              </li>
+            <ul className="mt-6 space-y-5">
+              {[
+                { icon: 'map', label: copy.addressLabel, value: address },
+                { icon: 'clock', label: copy.hoursLabel, value: workingHours },
+                {
+                  icon: 'phone',
+                  label: copy.hotlineLabel,
+                  value: COMPANY_CONTACT.hotlineDisplay,
+                  href: COMPANY_CONTACT.hotlineHref,
+                },
+                {
+                  icon: 'email',
+                  label: copy.emailLabel,
+                  value: COMPANY_CONTACT.email,
+                  href: COMPANY_CONTACT.emailHref,
+                },
+              ].map((item) => (
+                <li key={item.label} className="flex items-start gap-4">
+                  <span
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-forest-50 text-gold-600"
+                    aria-hidden="true"
+                  >
+                    <QuickContactIcon type={item.icon} />
+                  </span>
+                  <div>
+                    <p className="text-xs font-medium text-forest-950/50">{item.label}</p>
+                    {item.href ? (
+                      <a
+                        className="mt-0.5 block cursor-pointer text-sm font-medium text-forest-950 transition-colors hover:text-gold-600"
+                        href={item.href}
+                      >
+                        {item.value}
+                      </a>
+                    ) : (
+                      <p className="mt-0.5 text-sm font-medium text-forest-950">{item.value}</p>
+                    )}
+                  </div>
+                </li>
+              ))}
             </ul>
           </div>
 
-          <div className="contact-channels-card">
-            <p className="subsection-title">{copy.channelsTitle}</p>
-            <p className="contact-channels-description">{copy.channelsDescription}</p>
+          <div className={cardClass}>
+            <p className={cardTitleClass}>{copy.channelsTitle}</p>
+            <p className="mt-3 text-sm leading-relaxed text-forest-950/60">{copy.channelsDescription}</p>
 
-            <div className="contact-channels-grid">
+            <div className="mt-6 grid gap-3 sm:grid-cols-2">
               {quickChannels.map((channel) => {
                 const content = (
                   <>
-                    <span className="contact-channel-icon" aria-hidden="true">
+                    <span
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-forest-50 text-gold-600"
+                      aria-hidden="true"
+                    >
                       <QuickContactIcon type={channel.icon} />
                     </span>
-                    <div>
-                      <p className="contact-channel-label">{channel.label}</p>
-                      <p className="contact-channel-value">{channel.value}</p>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-forest-950">{channel.label}</p>
+                      <p className="truncate text-xs text-forest-950/55">{channel.value}</p>
                     </div>
                   </>
                 )
@@ -294,7 +298,7 @@ export function ContactPage({ locale }) {
                   return (
                     <a
                       key={channel.key}
-                      className="contact-channel-item"
+                      className="flex cursor-pointer items-center gap-3 rounded-xl p-3 ring-1 ring-forest-950/10 transition-all hover:bg-forest-50 hover:ring-forest-950/20"
                       href={channel.href}
                       target={channel.external ? '_blank' : undefined}
                       rel={channel.external ? 'noreferrer' : undefined}
@@ -305,7 +309,10 @@ export function ContactPage({ locale }) {
                 }
 
                 return (
-                  <div key={channel.key} className="contact-channel-item">
+                  <div
+                    key={channel.key}
+                    className="flex items-center gap-3 rounded-xl p-3 ring-1 ring-forest-950/10"
+                  >
                     {content}
                   </div>
                 )
@@ -315,11 +322,11 @@ export function ContactPage({ locale }) {
         </div>
       </section>
 
-      <section className="contact-map-section">
-        <div className="contact-map-header">
-          <p className="subsection-title">{copy.mapTitle}</p>
+      <section className="mx-auto max-w-[1240px] px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className={cardTitleClass}>{copy.mapTitle}</p>
           <a
-            className="secondary-button"
+            className="inline-flex h-10 cursor-pointer items-center rounded-full px-5 text-sm font-semibold text-forest-800 ring-1 ring-forest-800/30 transition-colors hover:bg-forest-50"
             href={getMapDirectionsUrl()}
             target="_blank"
             rel="noreferrer"
@@ -327,8 +334,9 @@ export function ContactPage({ locale }) {
             {copy.mapDirections}
           </a>
         </div>
-        <div className="contact-map-frame">
+        <div className="mt-4 overflow-hidden rounded-2xl shadow-card ring-1 ring-forest-950/5">
           <iframe
+            className="block h-[380px] w-full border-0"
             src={getMapEmbedUrl()}
             title="FortisVN office location"
             loading="lazy"
@@ -338,80 +346,101 @@ export function ContactPage({ locale }) {
         </div>
       </section>
 
-      <section className="quote-section" id="contact-form">
-        <div className="quote-copy">
-          <SectionHeading
-            eyebrow={copy.formEyebrow}
-            title={copy.formTitle}
-            description={copy.formDescription}
-          />
-        </div>
-
-        <form className="quote-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            required
-            value={form.fullName}
-            placeholder={copy.fields.fullName}
-            aria-label={copy.fields.fullName}
-            onChange={(event) => updateField('fullName', event.target.value)}
-          />
-          <input
-            type="text"
-            value={form.companyName}
-            placeholder={copy.fields.companyName}
-            aria-label={copy.fields.companyName}
-            onChange={(event) => updateField('companyName', event.target.value)}
-          />
-          <input
-            type="email"
-            required
-            value={form.email}
-            placeholder={copy.fields.email}
-            aria-label={copy.fields.email}
-            onChange={(event) => updateField('email', event.target.value)}
-          />
-          <PhoneInput
-            required
-            dialCode={form.phoneDialCode}
-            localNumber={form.phoneLocalNumber}
-            placeholder={copy.fields.phone}
-            ariaLabel={copy.fields.phone}
-            onDialCodeChange={(code) => updateField('phoneDialCode', code)}
-            onLocalNumberChange={(num) => updateField('phoneLocalNumber', num)}
-          />
-          <input
-            type="text"
-            value={form.productInterest}
-            placeholder={copy.fields.productInterest}
-            aria-label={copy.fields.productInterest}
-            onChange={(event) => updateField('productInterest', event.target.value)}
-          />
-          <input
-            type="text"
-            value={form.targetMarket}
-            placeholder={copy.fields.targetMarket}
-            aria-label={copy.fields.targetMarket}
-            onChange={(event) => updateField('targetMarket', event.target.value)}
-          />
-          <textarea
-            rows="6"
-            required
-            value={form.message}
-            placeholder={copy.fields.message}
-            aria-label={copy.fields.message}
-            onChange={(event) => updateField('message', event.target.value)}
-          />
-          {feedback.message ? (
-            <p className={`form-message ${feedback.type === 'error' ? 'error' : ''}`}>
-              {feedback.message}
+      <section className="bg-forest-950" id="contact-form">
+        <div className="mx-auto grid max-w-[1240px] gap-10 px-4 py-16 sm:px-6 lg:grid-cols-[1fr_1.2fr] lg:items-start lg:px-8 lg:py-24">
+          <div>
+            <p className="text-xs font-semibold tracking-[0.25em] text-gold-400 uppercase">
+              {copy.formEyebrow}
             </p>
-          ) : null}
-          <p style={{ marginTop: '12px' , textAlign: 'right'}} className="contact-required-hint">{copy.requiredHint}</p>
-          <button type="submit" className="primary-button" disabled={submitting}>
-            {submitting ? copy.sending : copy.fields.submit}
-          </button>
-        </form>
+            <h2 className="mt-3 font-display text-3xl leading-tight font-semibold text-white lg:text-4xl">
+              {copy.formTitle}
+            </h2>
+            <p className="mt-4 text-base leading-relaxed text-white/70">{copy.formDescription}</p>
+          </div>
+
+          <form
+            className="grid gap-4 rounded-2xl bg-white p-6 shadow-card-hover sm:grid-cols-2 lg:p-8"
+            onSubmit={handleSubmit}
+          >
+            <input
+              className={inputClass}
+              type="text"
+              required
+              value={form.fullName}
+              placeholder={copy.fields.fullName}
+              aria-label={copy.fields.fullName}
+              onChange={(event) => updateField('fullName', event.target.value)}
+            />
+            <input
+              className={inputClass}
+              type="text"
+              value={form.companyName}
+              placeholder={copy.fields.companyName}
+              aria-label={copy.fields.companyName}
+              onChange={(event) => updateField('companyName', event.target.value)}
+            />
+            <input
+              className={inputClass}
+              type="email"
+              required
+              value={form.email}
+              placeholder={copy.fields.email}
+              aria-label={copy.fields.email}
+              onChange={(event) => updateField('email', event.target.value)}
+            />
+            <PhoneInput
+              required
+              dialCode={form.phoneDialCode}
+              localNumber={form.phoneLocalNumber}
+              placeholder={copy.fields.phone}
+              ariaLabel={copy.fields.phone}
+              onDialCodeChange={(code) => updateField('phoneDialCode', code)}
+              onLocalNumberChange={(num) => updateField('phoneLocalNumber', num)}
+            />
+            <input
+              className={inputClass}
+              type="text"
+              value={form.productInterest}
+              placeholder={copy.fields.productInterest}
+              aria-label={copy.fields.productInterest}
+              onChange={(event) => updateField('productInterest', event.target.value)}
+            />
+            <input
+              className={inputClass}
+              type="text"
+              value={form.targetMarket}
+              placeholder={copy.fields.targetMarket}
+              aria-label={copy.fields.targetMarket}
+              onChange={(event) => updateField('targetMarket', event.target.value)}
+            />
+            <textarea
+              className="w-full rounded-xl border border-forest-950/15 bg-white px-4 py-3 text-sm text-forest-950 transition-colors placeholder:text-forest-950/35 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30 focus:outline-none sm:col-span-2"
+              rows="6"
+              required
+              value={form.message}
+              placeholder={copy.fields.message}
+              aria-label={copy.fields.message}
+              onChange={(event) => updateField('message', event.target.value)}
+            />
+            {feedback.message ? (
+              <p
+                className={`text-sm font-medium sm:col-span-2 ${
+                  feedback.type === 'error' ? 'text-red-600' : 'text-forest-700'
+                }`}
+              >
+                {feedback.message}
+              </p>
+            ) : null}
+            <p className="text-xs text-forest-950/45 sm:col-span-2 sm:text-right">{copy.requiredHint}</p>
+            <button
+              type="submit"
+              className="inline-flex h-12 cursor-pointer items-center justify-center rounded-full bg-gold-500 px-8 text-sm font-semibold text-forest-950 transition-colors hover:bg-gold-400 disabled:cursor-not-allowed disabled:opacity-60 sm:col-span-2 sm:justify-self-start"
+              disabled={submitting}
+            >
+              {submitting ? copy.sending : copy.fields.submit}
+            </button>
+          </form>
+        </div>
       </section>
 
       <SuccessModal

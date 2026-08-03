@@ -44,9 +44,9 @@ export function PhoneInput({
   const countryOptions = useMemo(() => buildCountryOptions(), [])
 
   return (
-    <div className="phone-input-group">
+    <div className="flex gap-2">
       <select
-        className="phone-dial-select"
+        className="h-12 w-[7.5rem] shrink-0 cursor-pointer rounded-xl border border-forest-950/15 bg-white px-2.5 text-sm text-forest-950 transition-colors focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30 focus:outline-none"
         value={dialCode}
         aria-label="Mã vùng quốc gia"
         onChange={(e) => onDialCodeChange(e.target.value)}
@@ -61,7 +61,7 @@ export function PhoneInput({
         })}
       </select>
       <input
-        className="phone-number-input"
+        className="h-12 min-w-0 flex-1 rounded-xl border border-forest-950/15 bg-white px-4 text-sm text-forest-950 transition-colors placeholder:text-forest-950/35 focus:border-gold-500 focus:ring-2 focus:ring-gold-500/30 focus:outline-none"
         type="tel"
         required={required}
         value={localNumber}

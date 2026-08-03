@@ -1,0 +1,179 @@
+/*
+ * Tailwind v4 entry for the public site redesign.
+ * Preflight is intentionally NOT imported: legacy-admin.css and admin-theme.css
+ * already define their own base styles and the admin area must stay untouched.
+ */
+@layer theme, legacy, utilities;
+@import 'tailwindcss/theme.css' layer(theme);
+/* Legacy base + admin CSS lives in a lower layer so Tailwind utilities always win. */
+@import './legacy-admin.css' layer(legacy);
+@import 'tailwindcss/utilities.css' layer(utilities);
+
+@theme {
+  /* Brand — forest green from the FortisVN logo */
+  --color-forest-50: #f3f7f2;
+  --color-forest-100: #e2ece0;
+  --color-forest-200: #c5d9c2;
+  --color-forest-300: #9dbf99;
+  --color-forest-400: #6f9e6c;
+  --color-forest-500: #4d804b;
+  --color-forest-600: #3a663a;
+  --color-forest-700: #2f522f;
+  --color-forest-800: #274227;
+  --color-forest-900: #1d331e;
+  --color-forest-950: #0f1e10;
+
+  /* Accent — brand gold */
+  --color-gold-50: #fbf7ee;
+  --color-gold-100: #f5ecd5;
+  --color-gold-200: #ead7a8;
+  --color-gold-300: #ddbd74;
+  --color-gold-400: #d0a54c;
+  --color-gold-500: #b8893c;
+  --color-gold-600: #9f742d;
+  --color-gold-700: #7f5a26;
+  --color-gold-800: #6a4a25;
+  --color-gold-900: #5a3e23;
+
+  /* Warm neutrals */
+  --color-stone-25: #fcfbf9;
+
+  --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --shadow-card: 0 1px 2px rgba(15, 30, 16, 0.05), 0 8px 24px rgba(15, 30, 16, 0.06);
+  --shadow-card-hover: 0 2px 4px rgba(15, 30, 16, 0.06), 0 16px 40px rgba(15, 30, 16, 0.12);
+
+  --ease-out-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Minimal element reset scoped to the public site shell (no Tailwind preflight is
+   loaded, so UA defaults would otherwise leak through; admin keeps its own styles). */
+@layer legacy {
+  .site-shell button {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: inherit;
+    text-align: inherit;
+    cursor: pointer;
+  }
+
+  .site-shell input,
+  .site-shell select,
+  .site-shell textarea {
+    border: 0;
+    background: transparent;
+    color: inherit;
+  }
+
+  .site-shell h1,
+  .site-shell h2,
+  .site-shell h3,
+  .site-shell p,
+  .site-shell dl,
+  .site-shell dd,
+  .site-shell ul {
+    margin: 0;
+  }
+
+  .site-shell ul {
+    padding: 0;
+    list-style: none;
+  }
+
+  .site-shell a {
+    text-decoration: none;
+  }
+}
+
+/* Rich text rendered from the admin editor (sanitized HTML). */
+@layer legacy {
+  .prose-fortis {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: rgba(15, 30, 16, 0.75);
+  }
+
+  .prose-fortis p + p,
+  .prose-fortis ul + p,
+  .prose-fortis p + ul {
+    margin-top: 0.85em;
+  }
+
+  .prose-fortis strong,
+  .prose-fortis b {
+    color: #0f1e10;
+  }
+
+  .prose-fortis ul,
+  .prose-fortis ol {
+    padding-left: 1.25em;
+    list-style: disc;
+  }
+
+  .prose-fortis ol {
+    list-style: decimal;
+  }
+
+  .prose-fortis li + li {
+    margin-top: 0.35em;
+  }
+}
+
+/* Swiper chrome for the hero banner (unlayered on purpose so it beats swiper's own CSS). */
+
+/* Swiper sets `.swiper-slide { height: 100% }`; against an auto-height wrapper that
+   resolves to `auto`, so each slide shrink-wraps its own copy and the banners end up
+   different heights. Resetting to `auto` lets the flex row stretch them all to match. */
+.fortis-hero-swiper .swiper-slide {
+  height: auto;
+  display: flex;
+}
+.fortis-hero-swiper .swiper-button-prev,
+.fortis-hero-swiper .swiper-button-next {
+  width: 44px;
+  height: 44px;
+  border-radius: 999px;
+  background: rgba(15, 30, 16, 0.45);
+  color: #ffffff;
+  backdrop-filter: blur(4px);
+  transition: background-color 200ms ease;
+}
+
+.fortis-hero-swiper .swiper-button-prev:hover,
+.fortis-hero-swiper .swiper-button-next:hover {
+  background: rgba(15, 30, 16, 0.7);
+}
+
+.fortis-hero-swiper .swiper-button-prev::after,
+.fortis-hero-swiper .swiper-button-next::after {
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.fortis-hero-swiper .swiper-pagination-bullet {
+  width: 32px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  opacity: 1;
+  transition: background-color 200ms ease;
+}
+
+.fortis-hero-swiper .swiper-pagination-bullet-active {
+  background: #d0a54c;
+}
+
+@media (max-width: 640px) {
+  .fortis-hero-swiper .swiper-button-prev,
+  .fortis-hero-swiper .swiper-button-next {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fortis-hero-swiper .swiper-wrapper {
+    transition-duration: 1ms !important;
+  }
+}
