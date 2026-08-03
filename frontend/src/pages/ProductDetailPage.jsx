@@ -1,6 +1,8 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
+import { PageLoading } from '../components/PageLoading'
 import { SectionHeading } from '../components/SectionHeading'
+import { useBackendData } from '../hooks/useBackendData'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
 import { SEO, buildProductSeo, buildProductSchema } from '../data/seoConfig'
@@ -8,7 +10,7 @@ import { loadProductCatalog } from '../services/productCatalogApi'
 
 const DETAIL_COPY = {
   vi: {
-    fallback: 'Đang hiển thị dữ liệu mẫu vì backend chưa sẵn sàng.',
+    notFoundDescription: 'Sản phẩm này không tồn tại hoặc đã bị gỡ khỏi catalog.',
     backToCatalog: 'Quay lại',
     downloadSpec: 'Tải file kỹ thuật',
     quote: 'Nhận báo giá',
@@ -27,7 +29,7 @@ const DETAIL_COPY = {
     viewDetail: 'Xem chi tiết',
   },
   en: {
-    fallback: 'Showing fallback content because the backend is not available.',
+    notFoundDescription: 'This product does not exist or has been removed from the catalog.',
     backToCatalog: 'Back',
     downloadSpec: 'Download spec sheet',
     quote: 'Get a quote',
@@ -47,7 +49,7 @@ const DETAIL_COPY = {
     viewDetail: 'View detail',
   },
   zh: {
-    fallback: '由于后端暂不可用，正在显示备用内容。',
+    notFoundDescription: '该产品不存在或已从目录中移除。',
     backToCatalog: '返回',
     downloadSpec: '下载技术文件',
     quote: '获取报价',
@@ -69,30 +71,12 @@ const DETAIL_COPY = {
 
 export function ProductDetailPage({ locale }) {
   const { slug } = useParams()
-  const [catalogData, setCatalogData] = useState(null)
+  const catalogData = useBackendData((signal) => loadProductCatalog(locale, signal), [locale])
   const [selectedImage, setSelectedImage] = useState('')
   const copy = DETAIL_COPY[locale] ?? DETAIL_COPY.en
 
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function hydrateCatalog() {
-      try {
-        const result = await loadProductCatalog(locale, controller.signal)
-        setCatalogData(result.data)
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setCatalogData(null)
-        }
-      }
-    }
-
-    hydrateCatalog()
-    return () => controller.abort()
-  }, [locale])
-
   const product = useMemo(() => {
-    return catalogData?.products.find((item) => item.slug === slug) ?? null
+    return catalogData?.products?.find((item) => item.slug === slug) ?? null
   }, [catalogData, slug])
 
   const relatedProducts = useMemo(() => {
@@ -129,7 +113,11 @@ export function ProductDetailPage({ locale }) {
   const selectedImageUrl =
     product?.gallery?.includes(selectedImage) ? selectedImage : product?.gallery?.[0] ?? product?.image ?? ''
 
-  if (catalogData && !product) {
+  if (!catalogData) {
+    return <PageLoading locale={locale} />
+  }
+
+  if (!product) {
     return (
       <main>
         <section className="catalog-hero">
@@ -137,7 +125,7 @@ export function ProductDetailPage({ locale }) {
             <SectionHeading
               eyebrow={copy.breadcrumbProducts}
               title={copy.notFound}
-              description={copy.fallback}
+              description={copy.notFoundDescription}
             />
             <Link className="secondary-button detail-back-link" to="/products">
               {copy.backToCatalog}
@@ -146,10 +134,6 @@ export function ProductDetailPage({ locale }) {
         </section>
       </main>
     )
-  }
-
-  if (!catalogData || !product) {
-    return null
   }
 
   return (

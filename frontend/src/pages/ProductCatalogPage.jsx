@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { PageLoading } from '../components/PageLoading'
 import { PhoneInput } from '../components/PhoneInput'
 import { ProductCard } from '../components/ProductCard'
 import { SectionHeading } from '../components/SectionHeading'
 import { SuccessModal } from '../components/SuccessModal'
+import { useBackendData } from '../hooks/useBackendData'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
-import { getFallbackProductCatalog } from '../data/productCatalogFallback'
 import { SEO, buildOrganizationSchema } from '../data/seoConfig'
 import { submitContactRequest } from '../services/publicContactApi'
 import { loadProductCatalog } from '../services/productCatalogApi'
 import { filterProducts, getSpecificationOptions } from '../utils/productCatalog'
 
 const PRODUCTS_PER_PAGE = 8
+const EMPTY_PRODUCTS = []
 
 const FILTER_COPY = {
   vi: {
@@ -99,7 +101,7 @@ const QUOTE_STATUS_COPY = {
 }
 
 export function ProductCatalogPage({ locale }) {
-  const [catalogData, setCatalogData] = useState(() => getFallbackProductCatalog(locale))
+  const catalogData = useBackendData((signal) => loadProductCatalog(locale, signal), [locale])
   const [selectedCategoryId, setSelectedCategoryId] = useState('all')
   const [selectedProductId, setSelectedProductId] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
@@ -121,47 +123,32 @@ export function ProductCatalogPage({ locale }) {
   const [quoteSuccess, setQuoteSuccess] = useState(false)
 
   useEffect(() => {
-    const controller = new AbortController()
-
-    async function hydrateCatalog() {
-      try {
-        const result = await loadProductCatalog(locale, controller.signal)
-        setCatalogData(result.data)
-        setSelectedCategoryId('all')
-        setSelectedProductId(result.data.products[0]?.id ?? null)
-        setCurrentPage(1)
-        setSearch('')
-        setSelectedSpecification('')
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          const fallback = getFallbackProductCatalog(locale)
-          setCatalogData(fallback)
-          setSelectedProductId(fallback.products[0]?.id ?? null)
-        }
-      }
+    if (!catalogData) {
+      return
     }
-
-    hydrateCatalog()
-
-    return () => controller.abort()
-  }, [locale])
+    setSelectedCategoryId('all')
+    setSelectedProductId(catalogData.products[0]?.id ?? null)
+    setCurrentPage(1)
+    setSearch('')
+    setSelectedSpecification('')
+  }, [catalogData])
 
   const seo = SEO.products[locale] ?? SEO.products.en
   useSeoMeta({ title: seo.title, description: seo.description, path: seo.path, locale })
   useJsonLd('organization', buildOrganizationSchema())
 
-  const labels = catalogData.labels
   const filterCopy = FILTER_COPY[locale] ?? FILTER_COPY.en
   const quoteStatusCopy = QUOTE_STATUS_COPY[locale] ?? QUOTE_STATUS_COPY.en
+  const catalogProducts = catalogData?.products ?? EMPTY_PRODUCTS
 
   const filteredProducts = useMemo(() => {
-    return filterProducts(catalogData.products, {
+    return filterProducts(catalogProducts, {
       categoryId: selectedCategoryId,
       search,
       specification: selectedSpecification,
     })
   }, [
-    catalogData.products,
+    catalogProducts,
     search,
     selectedCategoryId,
     selectedSpecification,
@@ -191,13 +178,13 @@ export function ProductCatalogPage({ locale }) {
   const availableFilterOptions = useMemo(() => {
     const categoryScopedProducts =
       selectedCategoryId === 'all'
-        ? catalogData.products
-        : catalogData.products.filter((product) => product.categoryId === selectedCategoryId)
+        ? catalogProducts
+        : catalogProducts.filter((product) => product.categoryId === selectedCategoryId)
 
     return {
       specifications: getSpecificationOptions(categoryScopedProducts),
     }
-  }, [catalogData.products, selectedCategoryId])
+  }, [catalogProducts, selectedCategoryId])
 
   function handleSelectCategory(categoryId) {
     setSelectedCategoryId(categoryId)
@@ -259,6 +246,12 @@ export function ProductCatalogPage({ locale }) {
       setQuoteSubmitting(false)
     }
   }
+
+  if (!catalogData) {
+    return <PageLoading locale={locale} />
+  }
+
+  const labels = catalogData.labels
 
   return (
     <main className="b2b-catalog-page">

@@ -21,7 +21,9 @@ import { RfqManagementPage } from './pages/admin/RfqManagementPage'
 import { UserManagementPage } from './pages/admin/UserManagementPage'
 import { ProductCatalogPage } from './pages/ProductCatalogPage'
 import { ProductDetailPage } from './pages/ProductDetailPage'
-import { loadNavigation, getFallbackNavigation } from './services/navigationApi'
+import { PageLoading } from './components/PageLoading'
+import { useBackendData } from './hooks/useBackendData'
+import { loadNavigation } from './services/navigationApi'
 import { fetchCurrentAdminUser } from './services/admin/adminAuthApi'
 import {
   clearStoredAdminAuth,
@@ -73,7 +75,7 @@ function loadStoredPublicLocale() {
 
 function App() {
   const [locale, setLocale] = useState(() => loadStoredPublicLocale())
-  const [navigation, setNavigation] = useState(() => getFallbackNavigation('en'))
+  const navigation = useBackendData((signal) => loadNavigation(locale, signal), [locale])
   const [adminAuth, setAdminAuth] = useState(() => loadStoredAdminAuth())
   const [authBootstrapped, setAuthBootstrapped] = useState(false)
 
@@ -102,24 +104,6 @@ function App() {
     hydrateAdminSession()
   }, [])
 
-  useEffect(() => {
-    const controller = new AbortController()
-
-    async function hydrateNavigation() {
-      try {
-        const result = await loadNavigation(locale, controller.signal)
-        setNavigation(result.data)
-      } catch (error) {
-        if (error.name !== 'AbortError') {
-          setNavigation(getFallbackNavigation(locale))
-        }
-      }
-    }
-
-    hydrateNavigation()
-    return () => controller.abort()
-  }, [locale])
-
   function handleAdminLogin(authState) {
     setAdminAuth(authState)
     saveStoredAdminAuth(authState)
@@ -145,8 +129,8 @@ function App() {
     }
   }
 
-  if (!authBootstrapped) {
-    return null
+  if (!authBootstrapped || !navigation) {
+    return <PageLoading locale={locale} />
   }
 
   const visibleMenuKeys = new Set((navigation.items ?? []).map((item) => item.key))
