@@ -4,9 +4,15 @@ import { motion } from 'framer-motion'
 import { FaqSection } from '../components/FaqSection'
 import { PageLoading } from '../components/PageLoading'
 import { SectionHeading } from '../components/SectionHeading'
+import { Marquee } from '../components/motion/Marquee'
+import { ParallaxImage } from '../components/motion/ParallaxImage'
+import { Reveal } from '../components/motion/Reveal'
+import { ScrollProgress } from '../components/motion/ScrollProgress'
+import { Stagger } from '../components/motion/Stagger'
 import { useBackendData } from '../hooks/useBackendData'
 import { useJsonLd } from '../hooks/useJsonLd'
 import { useSeoMeta } from '../hooks/useSeoMeta'
+import { clipReveal, revealTransition, useMotionSafe } from '../lib/motion'
 import { HeroBannerSection } from '../sections/HeroBannerSection'
 import { loadHomeContent } from '../services/homeContentApi'
 import {
@@ -30,12 +36,6 @@ const MEDIA = {
   certificate: 'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?auto=format&fit=crop&w=600&q=85',
 }
 
-const reveal = {
-  hidden: { opacity: 0, y: 34 },
-  visible: { opacity: 1, y: 0 },
-}
-
-const MotionArticle = motion.article
 const MotionDiv = motion.div
 
 const CONTENT = {
@@ -222,13 +222,105 @@ export function HomePage({ locale, visibleMenuKeys }) {
 
   return (
     <main className="home-page overflow-x-clip">
+      <ScrollProgress />
       <HeroBannerSection slides={heroSlides} />
+      <PartnerMarqueeSection partners={pageData.partners} />
       {showServices ? <CategorySection copy={copy.categories} /> : null}
+      <CoreValuesSection section={pageData.coreValuesSection} values={pageData.coreValues} />
       <FeaturedProductsSection section={featuredProductsSection} products={products} />
       <ExportMarketNewsSection section={copy.news} />
       <FaqSection locale={locale} />
       {showAbout ? <CompanyProfileSection section={companyProfileSection} certificates={pageData.certificates} /> : null}
     </main>
+  )
+}
+
+/**
+ * Ticker of the export markets returned by the API. These are real partner
+ * regions from the backend, not decorative filler, so an empty list hides the
+ * whole band rather than rendering a placeholder.
+ */
+function PartnerMarqueeSection({ partners }) {
+  const items = (partners ?? [])
+    .map((partner) => [partner.name, partner.region].filter(Boolean).join(' — '))
+    .filter(Boolean)
+
+  if (items.length === 0) {
+    return null
+  }
+
+  return (
+    <section className="relative overflow-hidden bg-forest-900 py-5" aria-label="Export markets">
+      <Marquee items={items} speed={34} />
+      {/* Feathered edges so items enter and leave instead of popping at the bezel. */}
+      <div
+        className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-forest-900 to-transparent sm:w-28"
+        aria-hidden="true"
+      />
+      <div
+        className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-forest-900 to-transparent sm:w-28"
+        aria-hidden="true"
+      />
+    </section>
+  )
+}
+
+/**
+ * Core values from the API. This content has always been served by the backend
+ * but was not rendered anywhere on the homepage before.
+ */
+function CoreValuesSection({ section, values }) {
+  const items = values ?? []
+
+  if (!section || items.length === 0) {
+    return null
+  }
+
+  return (
+    <section className="relative overflow-hidden bg-white" id="core-values">
+      {/* Ambient wash; purely decorative and dropped under reduced motion. */}
+      <div
+        className="fortis-float pointer-events-none absolute -top-24 -right-24 h-80 w-80 rounded-full bg-forest-100/50 blur-3xl"
+        aria-hidden="true"
+      />
+      <div className="relative mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
+        <SectionHeading eyebrow={section.eyebrow} title={section.title} description={section.description} />
+        <Stagger className="mt-10 grid gap-px overflow-hidden rounded-2xl bg-forest-950/8 sm:grid-cols-2 lg:mt-14" each={0.09}>
+          {items.map((value) => (
+            <Reveal
+              child
+              as="article"
+              variant="rise"
+              duration={0.6}
+              key={value.title}
+              className="group relative bg-white p-7 transition-colors duration-300 hover:bg-stone-25 lg:p-9"
+            >
+              {/* Oversized ghost numeral; the API supplies the '01'–'04' labels. */}
+              <span
+                className="pointer-events-none absolute top-4 right-5 font-display text-6xl font-semibold text-forest-950/5 transition-colors duration-300 group-hover:text-gold-500/15 lg:text-7xl"
+                aria-hidden="true"
+              >
+                {value.highlight}
+              </span>
+              <span className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-forest-50 font-display text-sm font-semibold text-forest-700 ring-1 ring-forest-950/5">
+                {value.highlight}
+              </span>
+              <h3 className="relative mt-5 font-display text-xl leading-snug font-semibold text-forest-950">
+                {value.title}
+              </h3>
+              <p className="relative mt-3 text-sm leading-relaxed text-forest-950/60">
+                {value.description}
+              </p>
+              {/* Underline grows from the left on hover. */}
+              <span
+                className="mt-6 block h-px w-10 bg-gold-500 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-20"
+                aria-hidden="true"
+              />
+            </Reveal>
+          ))}
+        </Stagger>
+      </div>
+    </section>
   )
 }
 
@@ -345,40 +437,62 @@ function CategorySection({ copy }) {
     <section className="bg-white" id="categories">
       <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <SectionHeading eyebrow={copy.eyebrow} title={copy.title} description={copy.description} />
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3 lg:gap-6">
+        <Stagger className="mt-10 grid gap-5 sm:grid-cols-2 lg:mt-14 lg:grid-cols-3 lg:gap-6" each={0.12}>
           {categories.map((category, index) => (
-            <MotionArticle
-              className="group relative h-[420px] overflow-hidden rounded-2xl lg:h-[480px]"
-              key={category.title}
-              variants={reveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.55, delay: index * 0.08 }}
-            >
-              <img
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                src={category.image}
-                alt={category.alt}
-                loading="lazy"
-                decoding="async"
-              />
-              <div
-                className="absolute inset-0 bg-gradient-to-t from-forest-950/90 via-forest-950/35 to-forest-950/5"
-                aria-hidden="true"
-              />
-              <div className="absolute inset-x-0 bottom-0 p-6 lg:p-8">
-                <span className="font-display text-sm font-semibold text-gold-300">
-                  {String(index + 1).padStart(2, '0')}
-                </span>
-                <h3 className="mt-2 font-display text-2xl font-semibold text-white">{category.title}</h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/75">{category.description}</p>
-              </div>
-            </MotionArticle>
+            <CategoryCard category={category} index={index} key={category.title} />
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
+  )
+}
+
+function CategoryCard({ category, index }) {
+  const safe = useMotionSafe()
+
+  return (
+    <Reveal
+      child
+      as="article"
+      variant="rise"
+      duration={0.7}
+      className="group relative h-[420px] overflow-hidden rounded-2xl lg:h-[480px]"
+    >
+      {/* The picture is wiped in by an expanding window rather than sliding, so it
+          never fights the card's own rise. */}
+      <MotionDiv
+        className="absolute inset-0"
+        variants={clipReveal({ safe })}
+        transition={revealTransition({ duration: 0.9, safe })}
+      >
+        <img
+          className="h-full w-full object-cover transition-transform duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-110"
+          src={category.image}
+          alt={category.alt}
+          loading="lazy"
+          decoding="async"
+        />
+      </MotionDiv>
+      <div
+        className="absolute inset-0 bg-gradient-to-t from-forest-950/92 via-forest-950/40 to-forest-950/5 transition-opacity duration-500 group-hover:from-forest-950/95"
+        aria-hidden="true"
+      />
+      <div className="absolute inset-x-0 bottom-0 p-6 lg:p-8">
+        <span className="font-display text-sm font-semibold text-gold-300">
+          {String(index + 1).padStart(2, '0')}
+        </span>
+        <h3 className="mt-2 font-display text-2xl font-semibold text-white">{category.title}</h3>
+        {/* Always readable: the copy is real content, so hover only brightens it
+            rather than being the thing that reveals it. */}
+        <p className="mt-3 text-sm leading-relaxed text-white/75 transition-colors duration-300 group-hover:text-white/95">
+          {category.description}
+        </p>
+        <span
+          className="mt-4 block h-0.5 w-12 origin-left bg-gold-400 transition-transform duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-[2.2]"
+          aria-hidden="true"
+        />
+      </div>
+    </Reveal>
   )
 }
 
@@ -387,16 +501,15 @@ function FeaturedProductsSection({ section, products }) {
     <section className="bg-stone-25" id="featured-products">
       <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <SectionHeading eyebrow={section.eyebrow} title={section.title} description={section.description} />
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:mt-14 xl:grid-cols-4">
-          {products.map((product, index) => (
-            <MotionArticle
-              className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-shadow duration-300 hover:shadow-card-hover"
+        <Stagger className="mt-10 grid gap-6 sm:grid-cols-2 lg:mt-14 xl:grid-cols-4" each={0.1}>
+          {products.map((product) => (
+            <Reveal
+              child
+              as="article"
+              variant="rise"
+              duration={0.65}
+              className="group flex flex-col overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-card-hover hover:ring-gold-500/25"
               key={product.name}
-              variants={reveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.55, delay: index * 0.08 }}
             >
               <a href={product.href} className="relative block aspect-[4/3] overflow-hidden">
                 <img
@@ -453,9 +566,9 @@ function FeaturedProductsSection({ section, products }) {
                   </svg>
                 </a>
               </div>
-            </MotionArticle>
+            </Reveal>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   )
@@ -487,39 +600,44 @@ function ExportMarketNewsSection({ section }) {
     <section className="bg-white" id="export-market">
       <div className="mx-auto max-w-[1240px] px-4 py-16 sm:px-6 lg:px-8 lg:py-24">
         <SectionHeading eyebrow={section.eyebrow} title={section.title} description={section.description} />
-        <div className="mt-10 grid gap-6 md:grid-cols-3 lg:mt-14">
-          {news.map((item, index) => (
-            <MotionArticle
-              className="group overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-shadow duration-300 hover:shadow-card-hover"
+        <Stagger className="mt-10 grid gap-6 md:grid-cols-3 lg:mt-14" each={0.12}>
+          {news.map((item) => (
+            <Reveal
+              child
+              as="article"
+              variant="rise"
+              duration={0.65}
+              className="group overflow-hidden rounded-2xl bg-white shadow-card ring-1 ring-forest-950/5 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] hover:-translate-y-1.5 hover:shadow-card-hover"
               key={item.title}
-              variants={reveal}
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, amount: 0.25 }}
-              transition={{ duration: 0.55, delay: index * 0.1 }}
             >
               <a href={item.href} className="block cursor-pointer">
-                <span className="block aspect-[16/10] overflow-hidden">
-                  <img
-                    className="h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                    src={item.image}
-                    alt={item.alt}
-                    loading="lazy"
-                    decoding="async"
-                  />
-                </span>
+                {/* Slow, continuous drift as the card crosses the viewport. */}
+                <ParallaxImage
+                  className="block aspect-[16/10]"
+                  imgClassName="transition-transform duration-500 ease-out group-hover:scale-105"
+                  src={item.image}
+                  alt={item.alt}
+                  strength={26}
+                  loading="lazy"
+                  decoding="async"
+                />
                 <span className="block p-5 lg:p-6">
-                  <span className="text-xs font-semibold tracking-[0.2em] text-gold-600 uppercase">
+                  <span className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-gold-600 uppercase">
+                    <span className="h-px w-5 bg-gold-500/60" aria-hidden="true" />
                     Export market
                   </span>
                   <h3 className="mt-2 font-display text-lg leading-snug font-semibold text-forest-950 transition-colors group-hover:text-forest-700">
                     {item.title}
                   </h3>
+                  <span
+                    className="mt-4 block h-px w-8 bg-gold-500/70 transition-all duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:w-16"
+                    aria-hidden="true"
+                  />
                 </span>
               </a>
-            </MotionArticle>
+            </Reveal>
           ))}
-        </div>
+        </Stagger>
       </div>
     </section>
   )
@@ -527,17 +645,27 @@ function ExportMarketNewsSection({ section }) {
 
 function CompanyProfileSection({ section, certificates }) {
   return (
-    <section className="bg-forest-950" id="company-profile">
-      <MotionDiv
-        className="mx-auto grid max-w-[1240px] gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:items-start lg:px-8 lg:py-24"
-        initial={{ opacity: 0, y: 34 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.25 }}
-        transition={{ duration: 0.6 }}
+    <section className="relative overflow-hidden bg-forest-950" id="company-profile">
+      {/* Two slow-drifting washes give the dark panel some depth. Decorative only. */}
+      <div
+        className="fortis-float pointer-events-none absolute -top-32 -left-24 h-96 w-96 rounded-full bg-forest-700/25 blur-3xl"
+        aria-hidden="true"
+      />
+      <div
+        className="fortis-float pointer-events-none absolute -right-20 -bottom-24 h-80 w-80 rounded-full bg-gold-700/15 blur-3xl"
+        style={{ animationDelay: '-6s' }}
+        aria-hidden="true"
+      />
+      <Stagger
+        className="relative mx-auto grid max-w-[1240px] gap-12 px-4 py-16 sm:px-6 lg:grid-cols-[1.2fr_1fr] lg:items-start lg:px-8 lg:py-24"
+        each={0.1}
       >
-        <div>
-          <p className="text-xs font-semibold tracking-[0.25em] text-gold-400 uppercase">{section.eyebrow}</p>
-          <h2 className="mt-3 font-display text-3xl leading-tight font-semibold text-white lg:text-4xl">
+        <Reveal child variant="left" duration={0.7}>
+          <p className="flex items-center gap-3 text-xs font-semibold tracking-[0.25em] text-gold-400 uppercase">
+            <span className="h-px w-7 bg-gold-400/70" aria-hidden="true" />
+            {section.eyebrow}
+          </p>
+          <h2 className="mt-3 font-display text-3xl leading-tight font-semibold text-white lg:text-[2.5rem]">
             {section.title}
           </h2>
           <div className="mt-5 space-y-4">
@@ -573,38 +701,51 @@ function CompanyProfileSection({ section, certificates }) {
           </dl>
           <div className="mt-8">
             <a
-              className="inline-flex h-12 cursor-pointer items-center gap-2 rounded-full bg-gold-500 px-7 text-sm font-semibold text-forest-950 transition-colors duration-200 hover:bg-gold-400"
+              className="group inline-flex h-12 cursor-pointer items-center gap-2 rounded-full bg-gold-500 px-7 text-sm font-semibold text-forest-950 transition-all duration-200 hover:bg-gold-400 hover:shadow-[0_8px_28px_rgba(208,165,76,0.35)]"
               href="/company-profile.pdf"
               download="PROFILE-FORTISVN.pdf"
             >
-              <svg width="15" height="15" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+              <svg
+                className="transition-transform duration-200 group-hover:translate-y-0.5"
+                width="15"
+                height="15"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
                 <path d="M8 2v8m0 0L5 7m3 3l3-3M3 13h10" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
               {section.profileButton}
             </a>
           </div>
-        </div>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+        </Reveal>
+        <Stagger child className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1" each={0.09}>
           {(certificates ?? []).slice(0, 4).map((certificate) => (
-            <article
+            <Reveal
+              child
+              as="article"
+              variant="right"
+              duration={0.6}
               key={certificate.name}
-              className="flex items-start gap-4 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10"
+              className="group flex items-start gap-4 rounded-2xl bg-white/5 p-5 ring-1 ring-white/10 transition-all duration-300 hover:bg-white/[0.08] hover:ring-gold-400/30"
             >
               <img
-                className="h-14 w-14 shrink-0 rounded-xl object-cover"
+                className="h-14 w-14 shrink-0 rounded-xl object-cover transition-transform duration-400 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-105"
                 src={MEDIA.certificate}
                 alt={`${certificate.name} certificate badge`}
                 loading="lazy"
                 decoding="async"
               />
               <div>
-                <strong className="block text-sm font-semibold text-white">{certificate.name}</strong>
+                <strong className="block text-sm font-semibold text-white transition-colors duration-300 group-hover:text-gold-300">
+                  {certificate.name}
+                </strong>
                 <p className="mt-1 text-xs leading-relaxed text-white/60">{certificate.description}</p>
               </div>
-            </article>
+            </Reveal>
           ))}
-        </div>
-      </MotionDiv>
+        </Stagger>
+      </Stagger>
     </section>
   )
 }
