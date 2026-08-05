@@ -121,6 +121,53 @@
   }
 }
 
+/* Infinite ticker. Two identical tracks sit side by side and the pair slides by
+   exactly -50%, so copy 2 lands where copy 1 began and the seam is invisible. */
+@keyframes fortis-marquee-scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.fortis-marquee-track {
+  animation: fortis-marquee-scroll linear infinite;
+  will-change: transform;
+}
+
+.fortis-marquee:hover .fortis-marquee-track {
+  animation-play-state: paused;
+}
+
+/* Slow, continuous ambient drift for decorative background blobs. */
+@keyframes fortis-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(0, -22px, 0) scale(1.04);
+  }
+}
+
+.fortis-float {
+  animation: fortis-float 13s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fortis-marquee-track,
+  .fortis-float {
+    animation: none !important;
+  }
+
+  /* Without the animation the duplicate track would just overflow unreachably. */
+  .fortis-marquee {
+    overflow-x: auto;
+  }
+}
+
 /* Swiper chrome for the hero banner (unlayered on purpose so it beats swiper's own CSS). */
 
 /* Swiper sets `.swiper-slide { height: 100% }`; against an auto-height wrapper that
