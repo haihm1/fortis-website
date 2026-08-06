@@ -4,6 +4,7 @@ import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { QuickContactIcon } from '../components/QuickContactIcon'
 import { COMPANY_CONTACT } from '../data/companyContact'
 import { useBreadcrumbJsonLd } from '../hooks/useBreadcrumbJsonLd'
+import { useHashScroll } from '../hooks/useHashScroll'
 import { loadHomeContent } from '../services/homeContentApi'
 import fortisLogo from '../image/LOGO Ngang.png'
 
@@ -83,6 +84,7 @@ const MOBILE_LANGUAGE_OPTIONS = [
 export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
   const copy = LAYOUT_COPY[locale] ?? LAYOUT_COPY.en
   useBreadcrumbJsonLd({ locale, navigationItems })
+  useHashScroll()
 
   const [wechatCopied, setWechatCopied] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
@@ -184,7 +186,7 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
     ? navigationItems
     : [
         { key: 'home', label: copy.home, path: '/' },
-        { key: 'about', label: copy.about, path: '/#company-profile' },
+        { key: 'about', label: copy.about, path: '/about' },
         { key: 'services', label: copy.services, path: '/#categories' },
         { key: 'products', label: copy.products, path: '/products' },
         { key: 'export-market', label: copy.exportMarket, path: '/export-market' },

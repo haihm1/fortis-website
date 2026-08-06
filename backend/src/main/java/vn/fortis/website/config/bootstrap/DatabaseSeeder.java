@@ -27,6 +27,9 @@ import vn.fortis.website.repository.ProductRepository;
 @Configuration
 public class DatabaseSeeder {
 
+	/** The anchor the "about" menu item used before /about existed as a real page. */
+	private static final String LEGACY_ABOUT_PATH = "/#company-profile";
+
 	@Bean
 	ApplicationRunner seedDatabase(
 			AdminAccountRepository adminAccountRepository,
@@ -45,6 +48,7 @@ public class DatabaseSeeder {
 			seedAccounts(adminAccountRepository, passwordEncoder);
 			seedContent(contentProfileRepository, homeBannerRepository, defaultAddress, defaultHotline, defaultEmail);
 			seedNavigation(navigationMenuRepository);
+			migrateAboutMenuPath(navigationMenuRepository);
 			seedCatalog(productCategoryRepository, productRepository);
 			seedExportMarket(exportMarketArticleRepository);
 		};
@@ -164,11 +168,30 @@ public class DatabaseSeeder {
 
 		navigationMenuRepository.saveAll(List.of(
 				buildMenu("home", "Trang chủ", "Home", "首页", "/", 10, true),
-				buildMenu("about", "About Us", "About Us", "关于我们", "/#company-profile", 20, true),
+				buildMenu("about", "About Us", "About Us", "关于我们", "/about", 20, true),
 				buildMenu("services", "Services", "Services", "服务", "/#categories", 30, true),
 				buildMenu("products", "Sản phẩm", "Products", "产品", "/products", 40, true),
 				buildMenu("export-market", "Export Market", "Export Market", "出口市场", "/export-market", 50, true)
 		));
+	}
+
+	/**
+	 * Repoints the "about" menu entry at the dedicated /about page.
+	 *
+	 * seedNavigation() bails out as soon as the table has any rows, so changing the
+	 * seed alone would only ever affect a brand-new database — every existing
+	 * environment would keep the old "/#company-profile" anchor and the menu item
+	 * would still land on the home page. This runs on every boot but only rewrites
+	 * the one stale value, so an admin who deliberately edits the path in the
+	 * navigation screen will not have their change reverted on the next restart.
+	 */
+	private void migrateAboutMenuPath(NavigationMenuRepository navigationMenuRepository) {
+		navigationMenuRepository.findById("about")
+				.filter(menu -> LEGACY_ABOUT_PATH.equals(menu.getPath()))
+				.ifPresent(menu -> {
+					menu.setPath("/about");
+					navigationMenuRepository.save(menu);
+				});
 	}
 
 	private NavigationMenuEntity buildMenu(
