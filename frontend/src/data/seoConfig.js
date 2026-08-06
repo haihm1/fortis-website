@@ -21,6 +21,26 @@ export const SEO = {
       path: '/',
     },
   },
+  about: {
+    vi: {
+      title: 'Về FortisVN – Hồ sơ năng lực công ty',
+      description:
+        'Giới thiệu Công ty TNHH FortisVN: câu chuyện thương hiệu, tầm nhìn – sứ mệnh – giá trị cốt lõi, lĩnh vực hoạt động, chuỗi cung ứng khép kín, năng lực vận hành và cam kết chất lượng với đối tác xuất khẩu.',
+      path: '/about',
+    },
+    en: {
+      title: 'About FortisVN – Company Profile',
+      description:
+        'Learn about FortisVN Company Limited: brand story, vision, mission and core values, business activities, closed-loop supply chain, operational capabilities and quality commitments to export partners.',
+      path: '/about',
+    },
+    zh: {
+      title: '关于 FortisVN — 公司简介',
+      description:
+        '了解 FortisVN 有限公司：品牌故事、愿景使命与核心价值、业务领域、闭环供应链、运营能力，以及对出口伙伴的品质承诺。',
+      path: '/about',
+    },
+  },
   products: {
     vi: {
       title: 'Catalog Nông Sản Xuất Khẩu',

@@ -3,6 +3,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AdminLayout } from './admin/AdminLayout'
 import { AdminRoute } from './components/admin/AdminRoute'
 import { SiteLayout } from './layouts/SiteLayout'
+import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { ExportMarketDetailPage } from './pages/ExportMarketDetailPage'
 import { ExportMarketPage } from './pages/ExportMarketPage'
@@ -183,6 +184,7 @@ function App() {
           element={<SiteLayout locale={locale} onChangeLocale={handlePublicLocaleChange} navigationItems={navigation.items} />}
         >
           <Route index element={guarded('home', <HomePage locale={locale} visibleMenuKeys={visibleMenuKeys} />)} />
+          <Route path="/about" element={guarded('about', <AboutPage locale={locale} />)} />
           <Route path="/export-market" element={guarded('export-market', <ExportMarketPage locale={locale} />)} />
           <Route path="/export-market/:slug" element={guarded('export-market', <ExportMarketDetailPage locale={locale} />)} />
           <Route path="/products" element={guarded('products', <ProductCatalogPage locale={locale} />)} />
