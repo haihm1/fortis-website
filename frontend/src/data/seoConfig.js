@@ -21,6 +21,65 @@ export const SEO = {
       path: '/',
     },
   },
+  charcoalHome: {
+    vi: {
+      title: 'Than mùn cưa ép & than BBQ xuất khẩu – FortisVN',
+      description:
+        'FortisVN cung ứng than mùn cưa ép, than trắng và than gáo dừa cho khách hàng công nghiệp, nhà hàng và nhà nhập khẩu quốc tế. Nhận OEM, đóng gói theo yêu cầu từng thị trường.',
+      path: '/',
+    },
+    en: {
+      title: 'Pressed Sawdust & BBQ Charcoal Export – FortisVN',
+      description:
+        'FortisVN supplies pressed sawdust briquettes, white charcoal and coconut shell charcoal to industrial buyers, restaurants and importers worldwide. OEM and market-specific packing available.',
+      path: '/',
+    },
+    zh: {
+      title: '机制锯末炭与烧烤炭出口 – FortisVN',
+      description:
+        'FortisVN 向工业客户、餐饮企业与国际进口商供应机制锯末炭、白炭及椰壳炭，可接受 OEM 及按市场要求的定制包装。',
+      path: '/',
+    },
+  },
+  charcoalProducts: {
+    vi: {
+      title: 'Sản phẩm than – Than mùn cưa, than trắng, than gáo dừa',
+      description:
+        'Danh mục than của FortisVN: than mùn cưa ép lục giác và vuông, than trắng Binchotan, than gáo dừa. Thông số kỹ thuật gửi kèm báo giá theo từng thị trường.',
+      path: '/products',
+    },
+    en: {
+      title: 'Charcoal Products – Sawdust Briquettes, White & Coconut Charcoal',
+      description:
+        'FortisVN charcoal range: hexagonal and square sawdust briquettes, Binchotan white charcoal and coconut shell charcoal. Technical specifications issued with each quotation.',
+      path: '/products',
+    },
+    zh: {
+      title: '木炭产品 – 机制锯末炭、白炭与椰壳炭',
+      description:
+        'FortisVN 木炭产品线：六角与方形机制锯末炭、备长白炭及椰壳炭。技术参数随报价按市场要求提供。',
+      path: '/products',
+    },
+  },
+  charcoalContact: {
+    vi: {
+      title: 'Liên hệ báo giá than – FortisVN',
+      description:
+        'Liên hệ đội ngũ xuất khẩu FortisVN để nhận báo giá và mẫu thử than mùn cưa, than trắng và than gáo dừa.',
+      path: '/contact',
+    },
+    en: {
+      title: 'Charcoal Enquiries & Quotations – FortisVN',
+      description:
+        'Contact the FortisVN export team for quotations and samples of sawdust briquettes, white charcoal and coconut shell charcoal.',
+      path: '/contact',
+    },
+    zh: {
+      title: '木炭询价与报价 – FortisVN',
+      description: '联系 FortisVN 出口团队，获取机制锯末炭、白炭及椰壳炭的报价与样品。',
+      path: '/contact',
+    },
+  },
   about: {
     vi: {
       title: 'Về FortisVN – Hồ sơ năng lực công ty',
