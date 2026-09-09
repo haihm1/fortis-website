@@ -128,7 +128,15 @@ export function CharcoalLayout({ locale, onChangeLocale, prefix }) {
         ) : null}
       </header>
 
-      <main className="flex-1">
+      {/*
+        Keyed on locale so the whole page subtree remounts when the language changes.
+        Reveal/Stagger trigger with `whileInView` + `once: true`: once a container has
+        fired, it stops observing. Switching language replaces its children (their keys
+        are the translated strings) but not the container itself, so the new children
+        mount in the `hidden` state with nothing left to trigger them and the section
+        goes blank. Remounting the container re-attaches the observer.
+      */}
+      <main className="flex-1" key={locale}>
         <Outlet />
       </main>
 
