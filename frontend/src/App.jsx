@@ -2,7 +2,13 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { AdminLayout } from './admin/AdminLayout'
 import { AdminRoute } from './components/admin/AdminRoute'
+import { BrandChooser } from './components/BrandChooser'
+import { CharcoalLayout } from './layouts/CharcoalLayout'
 import { SiteLayout } from './layouts/SiteLayout'
+import { CharcoalContactPage } from './pages/charcoal/CharcoalContactPage'
+import { CharcoalHomePage } from './pages/charcoal/CharcoalHomePage'
+import { CharcoalProductsPage } from './pages/charcoal/CharcoalProductsPage'
+import { BRAND, brandPath, resolveBrand } from './lib/brand'
 import { AboutPage } from './pages/AboutPage'
 import { ContactPage } from './pages/ContactPage'
 import { ExportMarketDetailPage } from './pages/ExportMarketDetailPage'
@@ -76,7 +82,18 @@ function loadStoredPublicLocale() {
 
 function App() {
   const [locale, setLocale] = useState(() => loadStoredPublicLocale())
-  const navigation = useBackendData((signal) => loadNavigation(locale, signal), [locale])
+  // Resolved once per load: which of the two sites this hostname/path belongs to.
+  const [{ brand, prefix: charcoalPrefix }] = useState(() => resolveBrand())
+  /*
+   * The charcoal site renders entirely from local content and is served from its
+   * own origin, so calling the agricultural navigation API there fails CORS — and
+   * useBackendData retries every 4s, so it would fail forever. Skip the request.
+   */
+  const navigation = useBackendData(
+    (signal) =>
+      brand === BRAND.CHARCOAL ? Promise.resolve({ items: [] }) : loadNavigation(locale, signal),
+    [locale, brand],
+  )
   const [adminAuth, setAdminAuth] = useState(() => loadStoredAdminAuth())
   const [authBootstrapped, setAuthBootstrapped] = useState(false)
 
@@ -128,6 +145,42 @@ function App() {
     } catch {
       // Ignore storage failures; the in-memory state still updates for this session.
     }
+  }
+
+  /*
+   * The charcoal site renders from hard-coded content, so it must not sit behind the
+   * agricultural navigation fetch: gating it there would leave it stuck on a spinner
+   * whenever that backend is slow or down, for content that never needed it.
+   */
+  if (brand === BRAND.CHARCOAL) {
+    return (
+      <BrowserRouter>
+        <Routes>
+          <Route
+            element={
+              <CharcoalLayout
+                locale={locale}
+                onChangeLocale={handlePublicLocaleChange}
+                prefix={charcoalPrefix}
+              />
+            }
+            path={brandPath('/', charcoalPrefix)}
+          >
+            <Route index element={<CharcoalHomePage locale={locale} prefix={charcoalPrefix} />} />
+            <Route
+              path={brandPath('/products', charcoalPrefix)}
+              element={<CharcoalProductsPage locale={locale} prefix={charcoalPrefix} />}
+            />
+            <Route
+              path={brandPath('/contact', charcoalPrefix)}
+              element={<CharcoalContactPage locale={locale} />}
+            />
+          </Route>
+          {/* Any other path on the charcoal host belongs to the agricultural site. */}
+          <Route path="*" element={<Navigate to={brandPath('/', charcoalPrefix)} replace />} />
+        </Routes>
+      </BrowserRouter>
+    )
   }
 
   if (!authBootstrapped || !navigation) {
@@ -183,13 +236,36 @@ function App() {
         <Route
           element={<SiteLayout locale={locale} onChangeLocale={handlePublicLocaleChange} navigationItems={navigation.items} />}
         >
-          <Route index element={guarded('home', <HomePage locale={locale} visibleMenuKeys={visibleMenuKeys} />)} />
+          <Route
+            index
+            element={
+              <>
+                <BrandChooser locale={locale} />
+                {guarded('home', <HomePage locale={locale} visibleMenuKeys={visibleMenuKeys} />)}
+              </>
+            }
+          />
           <Route path="/about" element={guarded('about', <AboutPage locale={locale} />)} />
           <Route path="/export-market" element={guarded('export-market', <ExportMarketPage locale={locale} />)} />
           <Route path="/export-market/:slug" element={guarded('export-market', <ExportMarketDetailPage locale={locale} />)} />
           <Route path="/products" element={guarded('products', <ProductCatalogPage locale={locale} />)} />
           <Route path="/products/:slug" element={guarded('products', <ProductDetailPage locale={locale} />)} />
           <Route path="/contact" element={<ContactPage locale={locale} />} />
+        </Route>
+
+        {/* Charcoal pages are also reachable under /charcoal on the main host — that
+            is how they are developed locally, and where the brand chooser points when
+            the subdomain is not resolvable. A sibling of the SiteLayout route, not a
+            child: the charcoal site brings its own header and footer. */}
+        <Route
+          element={
+            <CharcoalLayout locale={locale} onChangeLocale={handlePublicLocaleChange} prefix="/charcoal" />
+          }
+          path="/charcoal"
+        >
+          <Route index element={<CharcoalHomePage locale={locale} prefix="/charcoal" />} />
+          <Route path="/charcoal/products" element={<CharcoalProductsPage locale={locale} prefix="/charcoal" />} />
+          <Route path="/charcoal/contact" element={<CharcoalContactPage locale={locale} />} />
         </Route>
       </Routes>
     </BrowserRouter>
