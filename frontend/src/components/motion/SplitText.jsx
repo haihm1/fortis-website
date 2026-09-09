@@ -1,3 +1,4 @@
+import { Fragment } from 'react'
 import { motion } from 'framer-motion'
 import { EASE_OUT_EXPO, VIEWPORT, useMotionSafe } from '../../lib/motion'
 
@@ -48,22 +49,26 @@ export function SplitText({ as = 'span', text, className, delay = 0, each = 0.04
         {words.map((word, index) => (
           /*
            * Words repeat inside a headline so the index has to be part of the key.
-           * The inter-word gap is a right margin rather than a literal space: a
-           * space placed inside the clipping span is swallowed by overflow-hidden.
+           *
+           * The separator is a real space text node placed BETWEEN the clipping
+           * spans, not a margin. A margin looks identical but leaves the heading's
+           * textContent as "Threecoreareasofoperation." — which is what search
+           * engines index, what a reader copies, and what find-in-page searches.
+           * Inside the clipping span the space would be swallowed by overflow-hidden;
+           * outside it, it renders as an ordinary word gap.
            */
-          <span
-            className="inline-block overflow-hidden pb-[0.08em] align-bottom"
-            key={`${word}-${index}`}
-            style={index < words.length - 1 ? { marginRight: '0.26em' } : undefined}
-          >
-            <MotionSpan
-              className="inline-block"
-              variants={WORD}
-              transition={{ duration: 0.75, ease: EASE_OUT_EXPO }}
-            >
-              {word}
-            </MotionSpan>
-          </span>
+          <Fragment key={`${word}-${index}`}>
+            <span className="inline-block overflow-hidden pb-[0.08em] align-bottom">
+              <MotionSpan
+                className="inline-block"
+                variants={WORD}
+                transition={{ duration: 0.75, ease: EASE_OUT_EXPO }}
+              >
+                {word}
+              </MotionSpan>
+            </span>
+            {index < words.length - 1 ? ' ' : null}
+          </Fragment>
         ))}
       </MotionSpan>
     </Component>
