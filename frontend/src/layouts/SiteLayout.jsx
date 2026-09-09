@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link, NavLink, Outlet } from 'react-router-dom'
 import { LanguageSwitcher } from '../components/LanguageSwitcher'
 import { QuickContactIcon } from '../components/QuickContactIcon'
@@ -321,7 +321,17 @@ export function SiteLayout({ locale, onChangeLocale, navigationItems = [] }) {
         </div>
       ) : null}
 
-      <Outlet />
+      {/*
+        Keyed on locale so the whole page subtree remounts when the language changes.
+        Reveal/Stagger trigger with `whileInView` + `once: true`: once a container has
+        fired, it stops observing. Switching language replaces its children (their keys
+        are the translated strings) but not the container itself, so the new children
+        mount in the `hidden` state with nothing left to trigger them and the section
+        goes blank. Remounting the container re-attaches the observer.
+      */}
+      <Fragment key={locale}>
+        <Outlet />
+      </Fragment>
 
       <div
         className="fixed right-4 bottom-6 z-30 flex flex-col items-end gap-3 sm:right-6"
