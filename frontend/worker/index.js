@@ -54,8 +54,25 @@ export default {
     // Unknown charcoal routes get the home shell, mirroring the SPA fallback; the
     // client router then redirects them to the charcoal root.
     const page = CHARCOAL_PAGES.has(segment) ? segment : ''
-    const target = new URL(`${PRERENDER_PREFIX}/${page ? `${page}/` : ''}index.html`, url.origin)
 
-    return env.ASSETS.fetch(new Request(target, request))
+    // Ask for the DIRECTORY form ("/__charcoal/products/"), never the file
+    // ("/__charcoal/products/index.html"). The asset handler's default
+    // auto-trailing-slash handling answers the file form with a 307 to the
+    // directory form; returned as-is, that redirect sent browsers to
+    // "/__charcoal/…", which this worker refuses — so the whole charcoal site
+    // rendered as a 404. The directory form is served directly.
+    const target = new URL(`${PRERENDER_PREFIX}/${page ? `${page}/` : ''}`, url.origin)
+    let response = await env.ASSETS.fetch(new Request(target, request))
+
+    // Belt and braces: if the asset handler still answers with a redirect, follow
+    // it here rather than leaking an internal URL to the client.
+    if (response.status >= 300 && response.status < 400 && response.headers.get('location')) {
+      const next = new URL(response.headers.get('location'), url.origin)
+      if (next.pathname.startsWith(`${PRERENDER_PREFIX}/`)) {
+        response = await env.ASSETS.fetch(new Request(next, request))
+      }
+    }
+
+    return response
   },
 }
