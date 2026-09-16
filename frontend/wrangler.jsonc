@@ -5,9 +5,31 @@
   "observability": {
     "enabled": true
   },
+  // Edge entry that swaps in the charcoal site's prerendered HTML for requests on
+  // the charcoal host. See worker/index.js for why static assets alone cannot do it.
+  "main": "worker/index.js",
   "assets": {
     "directory": "./dist",
-    "not_found_handling": "single-page-application"
+    "binding": "ASSETS",
+    "not_found_handling": "single-page-application",
+    // Only these paths reach the worker; everything else is served by the asset
+    // handler directly, exactly as before. The list is the charcoal site's routes
+    // (which collide with agricultural paths and so need the hostname check), the
+    // /charcoal fallback prefix, and the prerender directory the worker must hide.
+    // Keep in step with CHARCOAL_PAGES in worker/index.js.
+    "run_worker_first": [
+      "/",
+      "/index.html",
+      "/products",
+      "/products/",
+      "/products/index.html",
+      "/contact",
+      "/contact/",
+      "/contact/index.html",
+      "/charcoal",
+      "/charcoal/*",
+      "/__charcoal/*"
+    ]
   },
   "compatibility_flags": [
     "nodejs_compat"
