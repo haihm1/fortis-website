@@ -1,6 +1,10 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { CHARCOAL_CONTENT } from '../src/data/charcoalContent.js'
+import { CHARCOAL_MEDIA } from '../src/data/charcoalMedia.js'
+import { COMPANY_CONTACT } from '../src/data/companyContact.js'
+import { CHARCOAL_HOST, CHARCOAL_PRERENDER_DIR } from '../src/lib/brand.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const projectRoot = path.resolve(__dirname, '..')
@@ -8,6 +12,7 @@ const distDir = path.join(projectRoot, 'dist')
 const templatePath = path.join(distDir, 'index.html')
 
 const SITE_URL = stripTrailingSlash(process.env.VITE_SITE_URL || 'https://fortisvn.com')
+const CHARCOAL_SITE_URL = stripTrailingSlash(process.env.VITE_CHARCOAL_SITE_URL || `https://${CHARCOAL_HOST}`)
 const API_BASE_URL = stripTrailingSlash(process.env.PRERENDER_API_BASE_URL || process.env.VITE_API_BASE_URL || '')
 const SITE_TITLE = 'FortisVN'
 const MAX_TITLE_LENGTH = 60
@@ -22,7 +27,33 @@ const STATIC_ROUTES = [
   },
 ]
 
+/*
+ * Titles and descriptions for the charcoal site. These mirror SEO.charcoal* in
+ * src/data/seoConfig.js, which cannot be imported here because it reads
+ * import.meta.env at module scope (Vite-only). The agricultural home route above
+ * is duplicated the same way for the same reason. Keep the two in step by hand.
+ */
+const CHARCOAL_SEO = {
+  home: {
+    title: 'Pressed Sawdust & BBQ Charcoal Export',
+    description:
+      'FortisVN supplies pressed sawdust briquettes, white charcoal and coconut shell charcoal to industrial buyers, restaurants and importers worldwide. OEM and market-specific packing available.',
+  },
+  products: {
+    title: 'Charcoal Products – Sawdust, White & Coconut',
+    description:
+      'FortisVN charcoal range: hexagonal and square sawdust briquettes, Binchotan white charcoal and coconut shell charcoal. Technical specifications issued with each quotation.',
+  },
+  contact: {
+    title: 'Charcoal Enquiries & Quotations',
+    description:
+      'Contact the FortisVN export team for quotations and samples of sawdust briquettes, white charcoal and coconut shell charcoal.',
+  },
+}
+
 async function main() {
+  // Read the Vite output before any route overwrites dist/index.html: every
+  // variant, agricultural or charcoal, must carry the same hashed script tags.
   const template = await readFile(templatePath, 'utf8')
   const catalog = await loadCatalog()
   const routes = [
@@ -30,6 +61,7 @@ async function main() {
     ...(catalog
       ? [buildProductsRoute(catalog), ...catalog.products.map((product) => buildProductRoute(product))]
       : []),
+    ...buildCharcoalRoutes(),
   ]
 
   for (const route of routes) {
@@ -164,6 +196,94 @@ function buildProductRoute(product) {
   }
 }
 
+/*
+ * Charcoal variants. They are written under dist/__charcoal/ rather than at
+ * their real paths because those paths ("/", "/products", "/contact") are
+ * already taken by the agricultural site; worker/index.js swaps them in when
+ * the request arrives on the charcoal host. Canonical and og:url point at the
+ * charcoal subdomain so the /charcoal fallback path on the main host
+ * consolidates onto it instead of competing with it.
+ */
+function buildCharcoalRoutes() {
+  const copy = CHARCOAL_CONTENT.en
+  const shared = {
+    siteUrl: CHARCOAL_SITE_URL,
+    image: CHARCOAL_MEDIA.heroEmber,
+    style: CHARCOAL_STYLE,
+  }
+
+  return [
+    {
+      ...shared,
+      path: '/',
+      outputPath: path.join(distDir, CHARCOAL_PRERENDER_DIR, 'index.html'),
+      title: CHARCOAL_SEO.home.title,
+      description: CHARCOAL_SEO.home.description,
+      html: `
+        <main class="seo-prerender-page seo-charcoal">
+          <p>${escapeHtml(copy.hero.slides[0].eyebrow)}</p>
+          <h1>${escapeHtml(copy.hero.slides[0].title)}</h1>
+          <p>${escapeHtml(copy.hero.slides[0].description)}</p>
+          <section>
+            <h2>${escapeHtml(copy.intro.title)}</h2>
+            ${copy.intro.paragraphs.map((paragraph) => `<p>${escapeHtml(paragraph)}</p>`).join('')}
+          </section>
+          <section>
+            <h2>${escapeHtml(copy.products.title)}</h2>
+            <ul>${copy.products.items.map((item) => `<li><a href="/products">${escapeHtml(item.name)}</a></li>`).join('')}</ul>
+          </section>
+          <section>
+            <h2>${escapeHtml(copy.markets.title)}</h2>
+            <ul>${copy.markets.items.map((market) => `<li>${escapeHtml(market)}</li>`).join('')}</ul>
+          </section>
+        </main>
+      `,
+    },
+    {
+      ...shared,
+      path: '/products',
+      outputPath: path.join(distDir, CHARCOAL_PRERENDER_DIR, 'products', 'index.html'),
+      title: CHARCOAL_SEO.products.title,
+      description: CHARCOAL_SEO.products.description,
+      html: `
+        <main class="seo-prerender-page seo-charcoal">
+          <nav><a href="/">Home</a> / <span>Products</span></nav>
+          <h1>${escapeHtml(copy.products.title)}</h1>
+          <p>${escapeHtml(copy.products.description)}</p>
+          <section class="seo-product-grid">
+            ${copy.products.items.map((item) => `
+              <article class="seo-product-card">
+                <h2>${escapeHtml(item.name)}</h2>
+                <p>${escapeHtml(item.summary)}</p>
+                <ul>${item.attributes.map((attribute) => `<li>${escapeHtml(attribute)}</li>`).join('')}</ul>
+              </article>
+            `).join('')}
+          </section>
+        </main>
+      `,
+    },
+    {
+      ...shared,
+      path: '/contact',
+      outputPath: path.join(distDir, CHARCOAL_PRERENDER_DIR, 'contact', 'index.html'),
+      title: CHARCOAL_SEO.contact.title,
+      description: CHARCOAL_SEO.contact.description,
+      html: `
+        <main class="seo-prerender-page seo-charcoal">
+          <nav><a href="/">Home</a> / <span>Contact</span></nav>
+          <h1>${escapeHtml(copy.contact.title)}</h1>
+          <p>${escapeHtml(copy.cta.description)}</p>
+          ${renderSpecList([
+            [copy.contact.labels.address, COMPANY_CONTACT.addressEn],
+            [copy.contact.labels.hotline, COMPANY_CONTACT.hotlineDisplay],
+            [copy.contact.labels.email, COMPANY_CONTACT.email],
+          ])}
+        </main>
+      `,
+    },
+  ]
+}
+
 function renderHomeHtml() {
   return `
     <main class="seo-prerender-page">
@@ -210,17 +330,47 @@ function renderListSection(title, items) {
 
 async function writeRoute(template, route) {
   const html = renderHtml(template, route)
-  const outputPath = route.path === '/'
-    ? path.join(distDir, 'index.html')
-    : path.join(distDir, route.path.replace(/^\/+/, ''), 'index.html')
+  const outputPath = route.outputPath
+    ?? (route.path === '/'
+      ? path.join(distDir, 'index.html')
+      : path.join(distDir, route.path.replace(/^\/+/, ''), 'index.html'))
 
   await mkdir(path.dirname(outputPath), { recursive: true })
   await writeFile(outputPath, html, 'utf8')
 }
 
+const AGRI_STYLE = `
+      .seo-prerender-page{font-family:Inter,Arial,sans-serif;max-width:1120px;margin:0 auto;padding:96px 24px 48px;color:#12391c}
+      .seo-prerender-page h1{font-size:clamp(2rem,4vw,4rem);line-height:1.05;margin:0 0 18px}
+      .seo-prerender-page h2{font-size:1.25rem;margin:24px 0 12px}
+      .seo-prerender-page p{line-height:1.7;color:#53635a}
+      .seo-product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:28px}
+      .seo-product-card{border:1px solid #dfe8d7;padding:18px}
+      .seo-product-card img,.seo-product-detail img{width:100%;aspect-ratio:4/3;object-fit:cover;margin-bottom:14px}
+      .seo-prerender-page dl{display:grid;gap:8px}
+      .seo-prerender-page dl div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #dfe8d7;padding-bottom:8px}
+      .seo-prerender-page dt{font-weight:700;color:#1b5929}
+      .seo-prerender-page dd{margin:0;text-align:right}`
+
+/* Same skeleton in the charcoal palette, so a no-JS visitor sees the right site. */
+const CHARCOAL_STYLE = `
+      body{background:#0d0c0b}
+      .seo-prerender-page{font-family:Inter,Arial,sans-serif;max-width:1120px;margin:0 auto;padding:96px 24px 48px;color:#f6f6f5}
+      .seo-prerender-page h1{font-size:clamp(2rem,4vw,4rem);line-height:1.05;margin:0 0 18px}
+      .seo-prerender-page h2{font-size:1.25rem;margin:24px 0 12px}
+      .seo-prerender-page p,.seo-prerender-page li{line-height:1.7;color:#c9c7c3}
+      .seo-prerender-page a{color:#eba76e}
+      .seo-product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:28px}
+      .seo-product-card{border:1px solid #35322d;padding:18px}
+      .seo-prerender-page dl{display:grid;gap:8px}
+      .seo-prerender-page dl div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #35322d;padding-bottom:8px}
+      .seo-prerender-page dt{font-weight:700;color:#e2823f}
+      .seo-prerender-page dd{margin:0;text-align:right}`
+
 function renderHtml(template, route) {
   const fullTitle = formatTitle(route.title)
-  const canonicalUrl = `${SITE_URL}${route.path}`
+  const siteUrl = route.siteUrl ?? SITE_URL
+  const canonicalUrl = `${siteUrl}${route.path === '/' ? '/' : route.path}`
   const meta = [
     `<title>${escapeHtml(fullTitle)}</title>`,
     `<meta name="description" content="${escapeAttr(route.description)}" />`,
@@ -236,18 +386,7 @@ function renderHtml(template, route) {
     `<meta name="twitter:title" content="${escapeAttr(fullTitle)}" />`,
     `<meta name="twitter:description" content="${escapeAttr(route.description)}" />`,
     route.image ? `<meta name="twitter:image" content="${escapeAttr(route.image)}" />` : '',
-    `<style>
-      .seo-prerender-page{font-family:Inter,Arial,sans-serif;max-width:1120px;margin:0 auto;padding:96px 24px 48px;color:#12391c}
-      .seo-prerender-page h1{font-size:clamp(2rem,4vw,4rem);line-height:1.05;margin:0 0 18px}
-      .seo-prerender-page h2{font-size:1.25rem;margin:24px 0 12px}
-      .seo-prerender-page p{line-height:1.7;color:#53635a}
-      .seo-product-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:20px;margin-top:28px}
-      .seo-product-card{border:1px solid #dfe8d7;padding:18px}
-      .seo-product-card img,.seo-product-detail img{width:100%;aspect-ratio:4/3;object-fit:cover;margin-bottom:14px}
-      .seo-prerender-page dl{display:grid;gap:8px}
-      .seo-prerender-page dl div{display:flex;justify-content:space-between;gap:16px;border-bottom:1px solid #dfe8d7;padding-bottom:8px}
-      .seo-prerender-page dt{font-weight:700;color:#1b5929}
-      .seo-prerender-page dd{margin:0;text-align:right}
+    `<style>${route.style ?? AGRI_STYLE}
     </style>`,
   ].filter(Boolean).join('\n    ')
 

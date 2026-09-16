@@ -18,6 +18,14 @@ export const CHARCOAL_HOST = 'charcoal.fortisvn.com'
 /** Path prefix used when the charcoal site is served from the main host. */
 export const CHARCOAL_PATH_PREFIX = '/charcoal'
 
+/**
+ * Directory under dist/ where the build writes the charcoal site's prerendered
+ * HTML (home, products, contact). Shared by scripts/prerender-seo.mjs, which
+ * writes there, and worker/index.js, which swaps those files in for requests on
+ * the charcoal host — the two must agree or the swap silently serves nothing.
+ */
+export const CHARCOAL_PRERENDER_DIR = '__charcoal'
+
 export const BRAND_CHOICE_STORAGE_KEY = 'fortis:brand-choice'
 
 /** True when `hostname` is the charcoal site's own host. */
